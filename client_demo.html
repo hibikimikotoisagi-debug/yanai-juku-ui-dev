@@ -14,7 +14,7 @@ body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-se
 .watermark-text { position:fixed; bottom:50%; left:50%; transform:translate(-50%,50%) rotate(-30deg); font-size:80px; font-weight:900; color:rgba(255,255,255,0.03); pointer-events:none; z-index:9999; white-space:nowrap; }
 
 /* 機密注意ヘッダ */
-.notice { background:linear-gradient(90deg,#7f1d1d,#991b1b); padding:10px 24px; text-align:center; font-size:12px; color:white; font-weight:600; border-radius:8px; margin-bottom:16px; }
+.notice { background:linear-gradient(90deg,#7f1d1d,#991b1b); padding:10px 24px; text-align:center; font-size:17px; color:white; font-weight:600; border-radius:8px; margin-bottom:16px; }
 
 .hero { background:linear-gradient(135deg,#0c4a6e 0%,#1e293b 50%,#3b0764 100%); padding:36px 40px; border-radius:18px; margin-bottom:24px; border:1px solid #06b6d4; }
 .hero h1 { font-size:30px; font-weight:800; background:linear-gradient(90deg,#fbbf24,#06b6d4,#a855f7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px; }
@@ -31,7 +31,7 @@ body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-se
 
 .kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
 .kpi { background:#1e293b; padding:18px; border-radius:10px; border:1px solid #334155; text-align:center; }
-.kpi-label { font-size:11px; color:#94a3b8; margin-bottom:4px; }
+.kpi-label { font-size:16px; color:#94a3b8; margin-bottom:4px; }
 .kpi-value { font-size:28px; font-weight:800; }
 .kpi-value.cyan { background:linear-gradient(90deg,#06b6d4,#0ea5e9); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 .kpi-value.gold { background:linear-gradient(90deg,#fbbf24,#f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
@@ -42,8 +42,8 @@ body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-se
 .layer-stack { display:flex; flex-direction:column; gap:10px; margin-top:14px; }
 .layer-row { display:grid; grid-template-columns:120px 1fr; gap:14px; align-items:stretch; }
 .l-label { background:#0f172a; border-radius:10px; padding:14px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; border-left:4px solid; }
-.l-label .num { font-size:11px; color:#94a3b8; font-weight:700; }
-.l-label .name { font-size:12px; color:white; font-weight:700; margin-top:4px; }
+.l-label .num { font-size:16px; color:#94a3b8; font-weight:700; }
+.l-label .name { font-size:17px; color:white; font-weight:700; margin-top:4px; }
 .bl1 { border-left-color:#fbbf24; } .bl2 { border-left-color:#06b6d4; } .bl3 { border-left-color:#ec4899; } .bl4 { border-left-color:#10b981; } .bl5 { border-left-color:#a855f7; } .bl6 { border-left-color:#22d3ee; }
 
 .row-content { display:grid; gap:8px; }
@@ -52,13 +52,13 @@ body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-se
 .block { background:#0f172a; padding:14px; border-radius:8px; border-top:3px solid #94a3b8; }
 .block.gold { border-top-color:#fbbf24; } .block.cyan { border-top-color:#06b6d4; } .block.pink { border-top-color:#ec4899; } .block.green { border-top-color:#10b981; } .block.purple { border-top-color:#a855f7; } .block.cy2 { border-top-color:#22d3ee; }
 .block .name { font-size:13px; font-weight:700; color:white; margin-bottom:4px; }
-.block .desc { font-size:11px; color:#cbd5e1; line-height:1.5; }
+.block .desc { font-size:16px; color:#cbd5e1; line-height:1.5; }
 
 /* Hub例 */
 .hub-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px; }
 .hub-card { background:#0f172a; padding:18px; border-radius:10px; border-left:4px solid #06b6d4; }
 .hub-card h3 { font-size:14px; color:#22d3ee; margin-bottom:6px; font-weight:700; }
-.hub-card p { font-size:12px; color:#cbd5e1; line-height:1.6; }
+.hub-card p { font-size:17px; color:#cbd5e1; line-height:1.6; }
 
 /* ベネフィット */
 .benefit-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px; }
@@ -66,7 +66,7 @@ body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-se
 .benefit-card .icon { font-size:36px; margin-bottom:8px; }
 .benefit-card h3 { font-size:14px; color:#fbbf24; margin-bottom:6px; font-weight:700; }
 .benefit-card .num { font-size:32px; font-weight:800; background:linear-gradient(90deg,#fbbf24,#f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin:8px 0; }
-.benefit-card p { font-size:11px; color:#cbd5e1; }
+.benefit-card p { font-size:16px; color:#cbd5e1; }
 
 /* テーブル */
 .tbl { width:100%; border-collapse:collapse; margin-top:14px; font-size:13px; }
@@ -78,14 +78,14 @@ body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-se
 .flow-step { padding:14px 10px; background:#0f172a; border-radius:8px; border-top:3px solid #06b6d4; text-align:center; position:relative; }
 .flow-step::after { content:'→'; position:absolute; right:-12px; top:50%; transform:translateY(-50%); color:#06b6d4; font-size:20px; font-weight:bold; z-index:10; }
 .flow-step:last-child::after { display:none; }
-.flow-num { font-size:10px; color:#22d3ee; font-weight:700; }
-.flow-name { font-size:12px; font-weight:700; color:white; margin:4px 0; }
-.flow-desc { font-size:10px; color:#94a3b8; line-height:1.4; }
+.flow-num { font-size:16px; color:#22d3ee; font-weight:700; }
+.flow-name { font-size:17px; font-weight:700; color:white; margin:4px 0; }
+.flow-desc { font-size:16px; color:#94a3b8; line-height:1.4; }
 
 .note { padding:14px 18px; background:rgba(6,182,212,0.1); border-left:3px solid #06b6d4; border-radius:6px; margin:14px 0; font-size:13px; line-height:1.7; color:#cbd5e1; }
 .warn { padding:14px 18px; background:rgba(239,68,68,0.1); border-left:3px solid #ef4444; border-radius:6px; margin:14px 0; font-size:13px; line-height:1.7; color:#cbd5e1; }
 
-.footer { padding:24px; text-align:center; color:#64748b; font-size:11px; margin-top:32px; border-top:1px solid #334155; }
+.footer { padding:24px; text-align:center; color:#64748b; font-size:16px; margin-top:32px; border-top:1px solid #334155; }
 .footer .copyright { color:#fbbf24; font-weight:700; margin-bottom:8px; }
 </style>
 </head>
@@ -240,17 +240,17 @@ body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-se
 <a href="client_hub_marketing.html" target="_blank" class="hub-card" style="text-decoration:none; color:white; cursor:pointer; transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
 <h3>📊 ① マーケティングHub サンプル</h3>
 <p>広告→LP→メルマガ→成約のファネル可視化／KPI4枚／ROAS推移グラフ／媒体別パフォーマンス</p>
-<div style="margin-top:8px;font-size:11px;color:#fbbf24;font-weight:700;">▶ 開く</div>
+<div style="margin-top:8px;font-size:16px;color:#fbbf24;font-weight:700;">▶ 開く</div>
 </a>
 <a href="client_hub_kpi.html" target="_blank" class="hub-card" style="text-decoration:none; color:white; cursor:pointer; transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
 <h3>📈 ② 数値管理Hub サンプル</h3>
 <p>売上・利益・人件費の月次推移／6つのKPI／異常値AIアラート／撤退判断ランキング</p>
-<div style="margin-top:8px;font-size:11px;color:#fbbf24;font-weight:700;">▶ 開く</div>
+<div style="margin-top:8px;font-size:16px;color:#fbbf24;font-weight:700;">▶ 開く</div>
 </a>
 <a href="client_hub_pdca.html" target="_blank" class="hub-card" style="text-decoration:none; color:white; cursor:pointer; transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'">
 <h3>🔄 ③ PDCA定例Hub サンプル</h3>
 <p>今週の議題／AI自動レポート／タスクボード（カンバン）／週次進捗ガント</p>
-<div style="margin-top:8px;font-size:11px;color:#fbbf24;font-weight:700;">▶ 開く</div>
+<div style="margin-top:8px;font-size:16px;color:#fbbf24;font-weight:700;">▶ 開く</div>
 </a>
 </div>
 </div>
