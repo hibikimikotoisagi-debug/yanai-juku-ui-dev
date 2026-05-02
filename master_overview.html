@@ -2,19 +2,73 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>🌐 柳井塾 業務自動化 マスタービュー v1.0｜全体俯瞰地図</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌐 柳井塾 業務自動化 マスタービュー v2.0｜全体俯瞰地図</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; background:#0a0e1a; color:#e2e8f0; padding:24px; line-height:1.6; }
-.container { max-width:1500px; margin:0 auto; }
+body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; background:#0a0e1a; color:#e2e8f0; line-height:1.6; }
 
-.hero { background:linear-gradient(135deg,#0c4a6e 0%,#1e293b 50%,#3b0764 100%); padding:36px 40px; border-radius:18px; margin-bottom:24px; border:1px solid #06b6d4; }
-.hero h1 { font-size:32px; font-weight:800; background:linear-gradient(90deg,#fbbf24,#06b6d4,#a855f7,#ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px; }
-.hero .v { font-size:13px; color:#94a3b8; margin-bottom:14px; }
-.hero .lead { font-size:15px; color:#cbd5e1; line-height:1.8; }
+/* ===== レイアウト ===== */
+.app { display:grid; grid-template-columns:280px 1fr; min-height:100vh; }
 
-.section { background:#1e293b; padding:28px 32px; border-radius:14px; margin-bottom:22px; border:1px solid #334155; }
-.section-title { font-size:22px; font-weight:800; margin-bottom:18px; padding-left:12px; border-left:4px solid; }
+/* ===== サイドバー ===== */
+.sidebar { background:#0f172a; border-right:1px solid #334155; padding:20px 0; position:sticky; top:0; height:100vh; overflow-y:auto; }
+.brand { padding:0 20px 16px; border-bottom:1px solid #334155; margin-bottom:16px; }
+.brand h1 { font-size:16px; font-weight:800; background:linear-gradient(90deg,#fbbf24,#06b6d4,#a855f7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.brand .v { font-size:11px; color:#64748b; margin-top:4px; }
+
+.search-box { padding:0 16px 16px; }
+.search-box input { width:100%; padding:8px 12px; background:#1e293b; color:white; border:1px solid #334155; border-radius:6px; font-size:12px; }
+.search-box input::placeholder { color:#64748b; }
+
+.filter-row { padding:0 16px 16px; display:flex; gap:4px; flex-wrap:wrap; }
+.filter-btn { padding:4px 8px; background:#1e293b; color:#cbd5e1; border:1px solid #334155; border-radius:6px; font-size:10px; cursor:pointer; }
+.filter-btn.active { background:#06b6d4; color:white; border-color:#06b6d4; }
+.filter-btn:hover { background:#334155; }
+
+.nav-section { font-size:10px; color:#64748b; padding:12px 20px 6px; text-transform:uppercase; letter-spacing:0.5px; font-weight:700; }
+.nav { padding:0 12px; }
+.nav-item { display:flex; align-items:center; gap:8px; padding:8px 10px; margin-bottom:2px; border-radius:6px; cursor:pointer; transition:all 0.15s; font-size:12px; color:#cbd5e1; text-decoration:none; }
+.nav-item:hover { background:#1e293b; color:white; }
+.nav-item.active { background:linear-gradient(90deg,#0ea5e9,#06b6d4); color:white; font-weight:600; }
+.nav-icon { font-size:13px; width:16px; text-align:center; flex-shrink:0; }
+.nav-status { margin-left:auto; font-size:9px; padding:2px 5px; border-radius:8px; }
+.s-active { background:rgba(16,185,129,0.2); color:#34d399; }
+.s-defined { background:rgba(251,191,36,0.2); color:#fbbf24; }
+.s-pending { background:rgba(239,68,68,0.2); color:#f87171; }
+.s-prototype { background:rgba(168,85,247,0.2); color:#c084fc; }
+.s-secret { background:rgba(100,116,139,0.2); color:#94a3b8; }
+
+/* ===== メイン ===== */
+.main { background:#0a0e1a; padding:24px 32px; max-width:1500px; }
+
+.topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid #1e293b; }
+.topbar-title { font-size:14px; color:#94a3b8; }
+.topbar-actions { display:flex; gap:8px; }
+.tb-btn { padding:8px 14px; background:#334155; color:white; border:none; border-radius:6px; font-size:12px; cursor:pointer; text-decoration:none; }
+.tb-btn:hover { background:#475569; }
+.tb-btn.primary { background:linear-gradient(90deg,#06b6d4,#0ea5e9); }
+.tb-btn.gold { background:linear-gradient(90deg,#fbbf24,#f59e0b); color:#000; }
+
+.hero { background:linear-gradient(135deg,#0c4a6e 0%,#1e293b 50%,#3b0764 100%); padding:32px 36px; border-radius:18px; margin-bottom:24px; border:1px solid #06b6d4; }
+.hero h2 { font-size:28px; font-weight:800; background:linear-gradient(90deg,#fbbf24,#06b6d4,#a855f7,#ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px; }
+.hero .lead { font-size:14px; color:#cbd5e1; line-height:1.7; }
+
+/* ===== クイックHub アクセスカード ===== */
+.quick-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px; margin:14px 0 24px; }
+.qcard { background:#1e293b; padding:16px; border-radius:10px; border-left:4px solid; cursor:pointer; transition:all 0.2s; text-decoration:none; color:white; display:block; }
+.qcard:hover { transform:translateY(-3px); box-shadow:0 6px 20px rgba(0,0,0,0.4); }
+.qcard.q-active { border-left-color:#10b981; }
+.qcard.q-defined { border-left-color:#fbbf24; }
+.qcard.q-pending { border-left-color:#ef4444; opacity:0.7; cursor:not-allowed; }
+.qcard.q-prototype { border-left-color:#a855f7; }
+.qcard.q-secret { border-left-color:#94a3b8; opacity:0.6; cursor:not-allowed; }
+.qcard h3 { font-size:13px; margin-bottom:4px; font-weight:700; }
+.qcard p { font-size:11px; color:#cbd5e1; line-height:1.5; }
+.qcard .tag { display:inline-block; padding:2px 6px; border-radius:4px; font-size:9px; margin-top:8px; background:#0f172a; }
+
+.section { background:#1e293b; padding:24px 28px; border-radius:14px; margin-bottom:20px; border:1px solid #334155; }
+.section-title { font-size:20px; font-weight:800; margin-bottom:16px; padding-left:12px; border-left:4px solid; }
 .t1 { color:#fbbf24; border-left-color:#fbbf24; }
 .t2 { color:#06b6d4; border-left-color:#06b6d4; }
 .t3 { color:#a855f7; border-left-color:#a855f7; }
@@ -22,10 +76,10 @@ body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-se
 .t5 { color:#ec4899; border-left-color:#ec4899; }
 .t6 { color:#22d3ee; border-left-color:#22d3ee; }
 
-.kpi-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin-bottom:24px; }
-.kpi { background:#1e293b; padding:16px; border-radius:10px; border:1px solid #334155; text-align:center; }
+.kpi-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:10px; margin-bottom:20px; }
+.kpi { background:#1e293b; padding:14px; border-radius:10px; border:1px solid #334155; text-align:center; }
 .kpi-label { font-size:10px; color:#94a3b8; margin-bottom:4px; }
-.kpi-value { font-size:22px; font-weight:800; }
+.kpi-value { font-size:20px; font-weight:800; }
 .kpi-value.cyan { background:linear-gradient(90deg,#06b6d4,#0ea5e9); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 .kpi-value.gold { background:linear-gradient(90deg,#fbbf24,#f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 .kpi-value.purple { background:linear-gradient(90deg,#a855f7,#7c3aed); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
@@ -34,49 +88,46 @@ body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-se
 .kpi-value.cy2 { background:linear-gradient(90deg,#22d3ee,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
 
 /* レイヤー図 */
-.layer-stack { display:flex; flex-direction:column; gap:10px; margin-top:14px; }
-.layer-row { display:grid; grid-template-columns:120px 1fr; gap:14px; align-items:stretch; }
+.layer-stack { display:flex; flex-direction:column; gap:8px; }
+.layer-row { display:grid; grid-template-columns:120px 1fr; gap:12px; align-items:stretch; }
 .l-label { background:#0f172a; border-radius:10px; padding:14px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; border-left:4px solid; }
 .l-label .num { font-size:11px; color:#94a3b8; font-weight:700; }
 .l-label .name { font-size:12px; color:white; font-weight:700; margin-top:4px; }
-.bl1 { border-left-color:#fbbf24; }
-.bl2 { border-left-color:#06b6d4; }
-.bl3 { border-left-color:#ec4899; }
-.bl4 { border-left-color:#10b981; }
-.bl5 { border-left-color:#a855f7; }
-.bl6 { border-left-color:#22d3ee; }
+.bl1 { border-left-color:#fbbf24; } .bl2 { border-left-color:#06b6d4; } .bl3 { border-left-color:#ec4899; } .bl4 { border-left-color:#10b981; } .bl5 { border-left-color:#a855f7; } .bl6 { border-left-color:#22d3ee; }
 
 .row-content { display:grid; gap:8px; }
-.row-1 { grid-template-columns:1fr; }
-.row-2 { grid-template-columns:1fr 1fr; }
-.row-3 { grid-template-columns:1fr 1fr 1fr; }
-.row-4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+.row-1 { grid-template-columns:1fr; } .row-2 { grid-template-columns:1fr 1fr; } .row-3 { grid-template-columns:1fr 1fr 1fr; } .row-4 { grid-template-columns:1fr 1fr 1fr 1fr; }
 
 .block { background:#0f172a; padding:14px; border-radius:8px; border-top:3px solid #94a3b8; }
-.block.gold { border-top-color:#fbbf24; }
-.block.cyan { border-top-color:#06b6d4; }
-.block.pink { border-top-color:#ec4899; }
-.block.green { border-top-color:#10b981; }
-.block.purple { border-top-color:#a855f7; }
-.block.cy2 { border-top-color:#22d3ee; }
+.block.gold { border-top-color:#fbbf24; } .block.cyan { border-top-color:#06b6d4; } .block.pink { border-top-color:#ec4899; } .block.green { border-top-color:#10b981; } .block.purple { border-top-color:#a855f7; } .block.cy2 { border-top-color:#22d3ee; }
 .block .name { font-size:13px; font-weight:700; color:white; margin-bottom:4px; }
 .block .desc { font-size:11px; color:#cbd5e1; line-height:1.5; }
-
-/* 物理資産マップ */
-.asset-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:14px; }
-.asset-card { background:#0f172a; padding:18px; border-radius:10px; border-left:3px solid #06b6d4; }
-.asset-card h3 { font-size:14px; color:#22d3ee; margin-bottom:8px; font-weight:700; }
-.asset-card .where { font-size:11px; color:#fbbf24; margin-bottom:6px; }
-.asset-card ul { padding-left:18px; }
-.asset-card li { font-size:12px; line-height:1.7; color:#cbd5e1; }
-.asset-card a { color:#22d3ee; text-decoration:none; word-break:break-all; }
-.asset-card a:hover { text-decoration:underline; }
+.block a { color:#22d3ee; text-decoration:none; font-weight:600; }
+.block a:hover { text-decoration:underline; }
 
 /* テーブル */
-.tbl { width:100%; border-collapse:collapse; margin-top:14px; font-size:13px; }
-.tbl th { background:#0f172a; padding:12px 14px; text-align:left; color:#94a3b8; font-weight:600; border-bottom:1px solid #334155; }
-.tbl td { padding:12px 14px; border-bottom:1px solid #1e293b; vertical-align:top; }
-.tbl tr:hover td { background:#0f172a; }
+.tbl { width:100%; border-collapse:collapse; font-size:13px; }
+.tbl th { background:#0f172a; padding:10px 14px; text-align:left; color:#94a3b8; font-weight:600; border-bottom:1px solid #334155; }
+.tbl td { padding:10px 14px; border-bottom:1px solid #1e293b; vertical-align:top; }
+.tbl tr:hover td { background:#0f172a; cursor:pointer; }
+.tbl a { color:#22d3ee; text-decoration:none; }
+.tbl a:hover { text-decoration:underline; }
+
+/* PJマップ */
+.pj-map { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px; }
+.pj-col { background:#0f172a; padding:18px; border-radius:10px; border-top:4px solid; }
+.pj-col.l1c { border-top-color:#06b6d4; }
+.pj-col.l2c { border-top-color:#ec4899; }
+.pj-col.l3c { border-top-color:#a855f7; }
+.pj-col h3 { font-size:14px; margin-bottom:6px; font-weight:700; }
+.pj-col .role { font-size:11px; color:#94a3b8; font-style:italic; margin-bottom:10px; }
+.pj-col ul { list-style:none; padding:0; }
+.pj-col li { font-size:12px; padding:6px 8px; margin-bottom:3px; border-radius:6px; transition:background 0.15s; }
+.pj-col li:hover { background:rgba(6,182,212,0.1); }
+.pj-col li b { color:white; }
+.pj-col li a { color:#34d399; text-decoration:none; font-weight:600; }
+.pj-col li a:hover { text-decoration:underline; }
+.pj-col li .open-mark { font-size:10px; padding:2px 6px; background:rgba(16,185,129,0.2); color:#34d399; border-radius:4px; margin-left:4px; }
 
 /* データフロー */
 .flow { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-top:14px; }
@@ -88,51 +139,181 @@ body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-se
 .flow-desc { font-size:10px; color:#94a3b8; line-height:1.4; }
 
 /* 進捗バー */
-.progress-row { display:flex; align-items:center; gap:14px; margin-bottom:10px; }
-.progress-label { width:200px; font-size:13px; color:#cbd5e1; }
-.progress-bar { flex:1; background:#0f172a; border-radius:8px; height:24px; position:relative; overflow:hidden; }
-.progress-fill { background:linear-gradient(90deg,#06b6d4,#10b981); height:100%; border-radius:8px; }
-.progress-text { position:absolute; right:8px; top:50%; transform:translateY(-50%); font-size:11px; color:white; font-weight:700; }
+.progress-row { display:flex; align-items:center; gap:14px; margin-bottom:8px; cursor:pointer; padding:6px; border-radius:6px; transition:background 0.15s; }
+.progress-row:hover { background:rgba(6,182,212,0.05); }
+.progress-label { width:240px; font-size:12px; color:#cbd5e1; }
+.progress-bar { flex:1; background:#0f172a; border-radius:8px; height:22px; position:relative; overflow:hidden; }
+.progress-fill { background:linear-gradient(90deg,#06b6d4,#10b981); height:100%; border-radius:8px; transition:width 0.3s; }
+.progress-text { position:absolute; right:8px; top:50%; transform:translateY(-50%); font-size:10px; color:white; font-weight:700; }
 
-/* CTA */
-.cta-bar { display:flex; gap:8px; margin-top:18px; flex-wrap:wrap; }
-.cta { padding:8px 14px; border-radius:8px; background:#334155; color:white; text-decoration:none; font-size:12px; font-weight:600; }
-.cta.primary { background:linear-gradient(90deg,#06b6d4,#0ea5e9); }
-.cta.gold { background:linear-gradient(90deg,#fbbf24,#f59e0b); color:#000; }
-.cta.pink { background:linear-gradient(90deg,#ec4899,#a855f7); }
+/* 物理資産 */
+.asset-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+.asset-card { background:#0f172a; padding:18px; border-radius:10px; border-left:3px solid #06b6d4; }
+.asset-card h3 { font-size:14px; color:#22d3ee; margin-bottom:8px; font-weight:700; }
+.asset-card .where { font-size:11px; color:#fbbf24; margin-bottom:8px; }
+.asset-card ul { padding-left:18px; }
+.asset-card li { font-size:12px; line-height:1.7; color:#cbd5e1; }
+.asset-card a { color:#22d3ee; text-decoration:none; }
+.asset-card a:hover { text-decoration:underline; }
 
-.note { padding:14px 18px; background:rgba(6,182,212,0.1); border-left:3px solid #06b6d4; border-radius:6px; margin:14px 0; font-size:13px; line-height:1.7; color:#cbd5e1; }
+.note { padding:12px 16px; background:rgba(6,182,212,0.1); border-left:3px solid #06b6d4; border-radius:6px; margin:12px 0; font-size:13px; line-height:1.7; color:#cbd5e1; }
 
-/* PJ位置マップ */
-.pj-map { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px; }
-.pj-col { background:#0f172a; padding:18px; border-radius:10px; border-top:4px solid; }
-.pj-col.l1c { border-top-color:#06b6d4; }
-.pj-col.l2c { border-top-color:#ec4899; }
-.pj-col.l3c { border-top-color:#a855f7; }
-.pj-col h3 { font-size:14px; margin-bottom:6px; font-weight:700; }
-.pj-col .l1c-h { color:#22d3ee; }
-.pj-col .role { font-size:11px; color:#94a3b8; font-style:italic; margin-bottom:10px; }
-.pj-col ul { padding-left:18px; }
-.pj-col li { font-size:12px; color:#cbd5e1; line-height:1.7; margin-bottom:4px; }
-.pj-col li b { color:white; }
+.live-clock { font-size:11px; color:#64748b; }
+
+/* レスポンシブ */
+@media (max-width: 900px) {
+.app { grid-template-columns:1fr; }
+.sidebar { position:relative; height:auto; max-height:none; }
+.main { padding:16px; }
+.kpi-grid { grid-template-columns:repeat(3,1fr); }
+.pj-map { grid-template-columns:1fr; }
+.flow { grid-template-columns:1fr; }
+.flow-step::after { content:'↓'; right:50%; top:auto; bottom:-12px; transform:translateX(50%); }
+.layer-row { grid-template-columns:1fr; }
+.row-2,.row-3,.row-4 { grid-template-columns:1fr; }
+}
+
+/* 印刷モード */
+@media print {
+.sidebar,.topbar-actions { display:none; }
+.app { grid-template-columns:1fr; }
+body { background:white; color:black; }
+}
 </style>
 </head>
 <body>
-<div class="container">
+<div class="app">
 
-<div class="hero">
-<h1>🌐 柳井塾 業務自動化 マスタービュー v1.0</h1>
-<div class="v">「今の全体像」を1枚で把握する俯瞰地図 ｜ 2026-05-02 起票</div>
-<div class="lead">
-<b style="color:#fbbf24;">10の塊</b> × <b style="color:#06b6d4;">11Hub × 3層</b> × <b style="color:#ec4899;">5データフロー</b> × <b style="color:#10b981;">物理資産（Drive＋GitHub＋メモリ）</b> ＋ <b style="color:#a855f7;">進捗状況</b><br>
-これ1枚で「今、全体がどう繋がっていて・どこに何があり・どこまで進んだか」が完全に分かる。
+<!-- ===== サイドバー ===== -->
+<aside class="sidebar">
+<div class="brand">
+<h1>🌐 柳井塾<br>業務自動化 マスタービュー</h1>
+<div class="v">v2.0 ｜ 11Hub × 3層</div>
 </div>
-<div class="cta-bar">
-<a class="cta primary" href="automation_architecture.html">🏗 アーキテクチャ詳細</a>
-<a class="cta gold" href="ui_dev_ogsm.html">🎯 マスターOGSM v1.3</a>
-<a class="cta pink" href="positioning.html">📍 ポジショニング</a>
-<a class="cta" href="funnel_hub.html">🚀 ファネルHub</a>
-<a class="cta" href="master_pj_dashboard.html">🗺 全PJ俯瞰</a>
+
+<div class="search-box">
+<input type="text" id="searchBox" placeholder="🔍 Hub名・スタッフ名で検索..." onkeyup="filterNav()">
+</div>
+
+<div class="filter-row">
+<button class="filter-btn active" onclick="filterStatus('all',this)">全て</button>
+<button class="filter-btn" onclick="filterStatus('active',this)">🟢実装中</button>
+<button class="filter-btn" onclick="filterStatus('defined',this)">🟡定義済</button>
+<button class="filter-btn" onclick="filterStatus('pending',this)">🔴未着手</button>
+</div>
+
+<div class="nav-section">📊 全体俯瞰</div>
+<nav class="nav">
+<a class="nav-item" href="#home"><span class="nav-icon">🏠</span>ホーム</a>
+<a class="nav-item" href="#architecture"><span class="nav-icon">🏗</span>アーキテクチャ全体図</a>
+<a class="nav-item" href="#hub-map"><span class="nav-icon">🎯</span>11Hub × 3層マップ</a>
+<a class="nav-item" href="#flow"><span class="nav-icon">🔄</span>データフロー</a>
+<a class="nav-item" href="#assets"><span class="nav-icon">📦</span>物理資産マップ</a>
+<a class="nav-item" href="#connection"><span class="nav-icon">👥</span>接続マップ</a>
+<a class="nav-item" href="#progress"><span class="nav-icon">📈</span>進捗状況</a>
+<a class="nav-item" href="#actions"><span class="nav-icon">🎬</span>次のアクション</a>
+</nav>
+
+<div class="nav-section">⭐ 11 Hub（直接ジャンプ）</div>
+<nav class="nav" id="hubNav">
+<a class="nav-item nav-hub" data-status="active" data-name="動画LP制作Hub" href="video_lp_hub.html">
+<span class="nav-icon">📊</span>★1 動画LP制作 <span class="nav-status s-active">🟢</span></a>
+<a class="nav-item nav-hub" data-status="defined" data-name="数値管理シート自動化" onclick="alert('★2 数値管理シート自動化Hub は構築中です\nW2-3で着手予定（5/9〜5/22）');return false;" href="#">
+<span class="nav-icon">📈</span>★2 数値管理 <span class="nav-status s-defined">🟡</span></a>
+<a class="nav-item nav-hub" data-status="pending" data-name="経理人事 田口" onclick="alert('★3 経理・人事 自動化Hub は未着手です\nW7-8で着手予定（6/13〜6/26）／田口さん');return false;" href="#">
+<span class="nav-icon">💼</span>★3 経理・人事 <span class="nav-status s-pending">🔴</span></a>
+<a class="nav-item nav-hub" data-status="pending" data-name="PDCA定例" onclick="alert('★4 PDCA定例運用Hub は未着手です\nW9で着手予定');return false;" href="#">
+<span class="nav-icon">🔄</span>★4 PDCA定例 <span class="nav-status s-pending">🔴</span></a>
+<a class="nav-item nav-hub" data-status="pending" data-name="講座生コーチ 池田泉" onclick="alert('★5 講座生コーチ業務自動化Hub は未着手です\nW10で着手予定／池田泉さん');return false;" href="#">
+<span class="nav-icon">🎓</span>★5 講座生コーチ <span class="nav-status s-pending">🔴</span></a>
+<a class="nav-item nav-hub" data-status="defined" data-name="SNS自動投稿 島崎" onclick="alert('★6 SNS自動投稿管理Hub は構築中です\nW11で着手予定／島崎さん');return false;" href="#">
+<span class="nav-icon">📱</span>★6 SNS自動投稿 <span class="nav-status s-defined">🟡</span></a>
+<a class="nav-item nav-hub" data-status="pending" data-name="プロデュース" onclick="alert('★7 プロデュースPJ統合Hub は未着手です\nW12で着手予定');return false;" href="#">
+<span class="nav-icon">🤝</span>★7 プロデュース <span class="nav-status s-pending">🔴</span></a>
+<a class="nav-item nav-hub" data-status="prototype" data-name="全PJ俯瞰 master" href="master_pj_dashboard.html">
+<span class="nav-icon">🗺</span>★8 全PJ俯瞰 <span class="nav-status s-prototype">🟣</span></a>
+<a class="nav-item nav-hub" data-status="defined" data-name="ファネル自動構築 小川" href="funnel_hub.html">
+<span class="nav-icon">🚀</span>★9 ファネル自動構築 <span class="nav-status s-defined">🟡</span></a>
+<a class="nav-item nav-hub" data-status="secret" data-name="社長クローン" onclick="alert('★10 社長クローンHub は機密のため公開URLはありません\n本人専用クローン層で構築中（インタビュー進行中）');return false;" href="#">
+<span class="nav-icon">👤</span>★10 社長クローン <span class="nav-status s-secret">🔒</span></a>
+<a class="nav-item nav-hub" data-status="defined" data-name="自己育て直しコーチング" onclick="alert('★11 自己育て直しコーチングHub は構築中です\n理論完成済み（6歳ゴールデンエイジ／自己育て直し5ステップ）');return false;" href="#">
+<span class="nav-icon">🌱</span>★11 自己育て直し <span class="nav-status s-defined">🟡</span></a>
+</nav>
+
+<div class="nav-section">🔗 関連リソース</div>
+<nav class="nav">
+<a class="nav-item" href="ui_dev_ogsm.html"><span class="nav-icon">🎯</span>マスターOGSM v1.3</a>
+<a class="nav-item" href="positioning.html"><span class="nav-icon">📍</span>ポジショニング v1.1</a>
+<a class="nav-item" href="automation_architecture.html"><span class="nav-icon">🏗</span>アーキ詳細10の塊</a>
+<a class="nav-item" href="ui_design_method.html"><span class="nav-icon">🎨</span>UI設計メソッド</a>
+<a class="nav-item" href="mindmap.html"><span class="nav-icon">🧠</span>マインドマップ</a>
+<a class="nav-item" href="sitemap.html"><span class="nav-icon">🗺</span>サイト構造ツリー</a>
+<a class="nav-item" href="unified_report.html"><span class="nav-icon">📈</span>統合レポート</a>
+<a class="nav-item" href="index.html"><span class="nav-icon">📂</span>公開トップページ</a>
+</nav>
+
+<div class="nav-section">🛠 外部リンク</div>
+<nav class="nav">
+<a class="nav-item" href="https://drive.google.com/drive/folders/1JtW0V5nlXCoef0pV43x8sJaFSCjBFrJD" target="_blank"><span class="nav-icon">📂</span>Drive ROOT</a>
+<a class="nav-item" href="https://docs.google.com/spreadsheets/d/1g1YP3HrbdqLiFGjwag-CX7YbbT_54c7l2KZNpAJnaxs/edit" target="_blank"><span class="nav-icon">📊</span>マスターシート</a>
+<a class="nav-item" href="https://github.com/hibikimikotoisagi-debug/yanai-juku-ui-dev" target="_blank"><span class="nav-icon">🐙</span>GitHubリポジトリ</a>
+</nav>
+</aside>
+
+<!-- ===== メイン ===== -->
+<main class="main">
+
+<div class="topbar">
+<div class="topbar-title">📍 現在地：<b>マスタービュー（全体俯瞰）</b> ｜ <span class="live-clock" id="liveClock"></span></div>
+<div class="topbar-actions">
+<button class="tb-btn primary" onclick="window.print()">🖨 印刷/PDF</button>
+<a class="tb-btn gold" href="https://hibikimikotoisagi-debug.github.io/yanai-juku-ui-dev/master_overview.html" target="_blank">🔗 共有URL</a>
+</div>
+</div>
+
+<div class="hero" id="home">
+<h2>🌐 柳井塾 業務自動化 マスタービュー v2.0</h2>
+<div class="lead">
+<b style="color:#fbbf24;">10の塊</b> × <b style="color:#06b6d4;">11Hub × 3層</b> × <b style="color:#ec4899;">5データフロー</b> × <b style="color:#10b981;">物理資産</b><br>
+これ1枚で「今、全体がどう繋がっていて・どこに何があり・どこまで進んだか」が完全に分かる。<br>
+<b style="color:#22d3ee;">サイドバーから各Hubに直接ジャンプできます。</b>
+</div>
+</div>
+
+<!-- ===== クイックアクセス ===== -->
+<div class="section">
+<h2 class="section-title t1">⚡ クイックアクセス｜今すぐ使えるHub</h2>
+<div class="quick-grid" id="quickHubs">
+<a class="qcard q-active" data-status="active" data-name="動画LP制作" href="video_lp_hub.html">
+<h3>📊 ★1 動画LP制作Hub</h3>
+<p>動画LP・YouTube台本・撮影〜配信PDCA。柳井塾で唯一本格稼働中のHub。</p>
+<span class="tag" style="color:#34d399;">🟢 実装中v1.0 ▶ 開く</span>
+</a>
+<a class="qcard q-active" data-status="active" data-name="全PJ俯瞰" href="master_pj_dashboard.html">
+<h3>🗺 ★8 全PJ俯瞰マスターHub</h3>
+<p>全11Hubを横断的に見る。優先度マトリクス・撤退/投資判断。</p>
+<span class="tag" style="color:#a855f7;">🟣 原型あり ▶ 開く</span>
+</a>
+<a class="qcard q-defined" data-status="defined" data-name="ファネル自動構築" href="funnel_hub.html">
+<h3>🚀 ★9 ファネル自動構築Hub</h3>
+<p>SNS広告→LP→LINE→セミナー→成約 全自動。中小企業/個人向け販売候補。</p>
+<span class="tag" style="color:#fbbf24;">🟡 OGSM v0.1 ▶ 開く</span>
+</a>
+<a class="qcard q-defined" data-status="defined" data-name="マスターOGSM" href="ui_dev_ogsm.html">
+<h3>🎯 マスターOGSM v1.3</h3>
+<p>11Hub・3層構造・専門用語60語・教育パス・13週ロードマップ。</p>
+<span class="tag" style="color:#fbbf24;">📋 設計図 ▶ 開く</span>
+</a>
+<a class="qcard q-defined" data-status="defined" data-name="ポジショニング" href="positioning.html">
+<h3>📍 ポジショニング v1.1</h3>
+<p>STP・PS・vs SaaS/受託/AI単体・法人版＋個人版TAM拡張。</p>
+<span class="tag" style="color:#fbbf24;">💰 商品化 ▶ 開く</span>
+</a>
+<a class="qcard q-defined" data-status="defined" data-name="自動化アーキテクチャ" href="automation_architecture.html">
+<h3>🏗 自動化10の塊（CTM）</h3>
+<p>司令塔/倉庫/通信/生成/マーケ/配信/計測/認証/自動化/開発環境</p>
+<span class="tag" style="color:#fbbf24;">🏗 アーキテクチャ ▶ 開く</span>
+</a>
 </div>
 </div>
 
@@ -145,18 +326,18 @@ body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-se
 <div class="kpi"><div class="kpi-label">公開HTML</div><div class="kpi-value cy2">12本</div></div>
 </div>
 
-<!-- ===== 1. アーキテクチャ全体図（10の塊×6階層） ===== -->
-<div class="section">
+<!-- ===== 1. アーキテクチャ全体図 ===== -->
+<div class="section" id="architecture">
 <h2 class="section-title t1">🏗 1. アーキテクチャ全体図｜10の塊 × 6階層</h2>
-<div class="note">
-全業務自動化を支える基盤構造。下から上へ：基盤 → 思考 → 流通 → 制作 → 顧客接点 → UI出力。
-</div>
+<div class="note">全業務自動化を支える基盤構造。下から上へ：基盤 → 思考 → 流通 → 制作 → 顧客接点 → UI出力。<a href="automation_architecture.html" style="color:#22d3ee;">▶ 詳細版を別ページで開く</a></div>
 
 <div class="layer-stack">
 <div class="layer-row">
 <div class="l-label bl6"><div class="num">L6 出力</div><div class="name">UI</div></div>
 <div class="row-content row-1">
-<div class="block cy2"><div class="name">⭐ 11 Hub（柳井さん／スタッフ／顧客が見る画面）</div><div class="desc">★1動画LP制作／★2数値管理／★3経理人事／★4PDCA定例／★5講座生コーチ業務自動化／★6SNS投稿管理／★7プロデュース／★8全PJ俯瞰／★9ファネル自動構築／★10社長クローン／★11自己育て直しコーチング</div></div>
+<div class="block cy2"><div class="name">⭐ 11 Hub（柳井さん／スタッフ／顧客が見る画面）</div><div class="desc">
+<a href="video_lp_hub.html">★1動画LP制作</a>／<span style="color:#fbbf24;">★2数値管理(構築中)</span>／<span style="color:#94a3b8;">★3経理人事</span>／<span style="color:#94a3b8;">★4PDCA定例</span>／<span style="color:#94a3b8;">★5講座生コーチ</span>／<span style="color:#fbbf24;">★6SNS投稿管理(構築中)</span>／<span style="color:#94a3b8;">★7プロデュース</span>／<a href="master_pj_dashboard.html">★8全PJ俯瞰</a>／<a href="funnel_hub.html">★9ファネル自動構築</a>／<span style="color:#94a3b8;">★10社長クローン(機密)</span>／<span style="color:#fbbf24;">★11自己育て直し(構築中)</span>
+</div></div>
 </div>
 </div>
 
@@ -179,7 +360,7 @@ body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-se
 <div class="layer-row">
 <div class="l-label bl2"><div class="num">L3 流通</div><div class="name">倉庫＆通信</div></div>
 <div class="row-content row-2">
-<div class="block cyan"><div class="name">📂 情報倉庫（DB）②</div><div class="desc">Google Drive／Sheets（マスターシート群）／Docs／ローカル（~/yanai_juku/, ~/.claude/memory/）</div></div>
+<div class="block cyan"><div class="name">📂 情報倉庫（DB）②</div><div class="desc">Google Drive／Sheets（マスターシート群）／Docs／ローカル</div></div>
 <div class="block cyan"><div class="name">💬 コミュニケーション ③</div><div class="desc">ChatWork（社内本命）／LINE（顧客接点）／Zoom（会議）／Email（外部）</div></div>
 </div>
 </div>
@@ -187,41 +368,38 @@ body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-se
 <div class="layer-row">
 <div class="l-label bl1"><div class="num">L2 思考</div><div class="name">司令塔</div></div>
 <div class="row-content row-1">
-<div class="block gold"><div class="name">🧠 Claude Code（司令塔・実装エンジン）①</div><div class="desc">Claude本体（Opus 4.7・1Mコンテキスト）／60+スキル／メモリシステム（100+md）／hooks（自動承認・違反検知）／★10 社長クローン（裏側で動く判断補助）</div></div>
+<div class="block gold"><div class="name">🧠 Claude Code（司令塔・実装エンジン）①</div><div class="desc">Claude本体（Opus 4.7）／60+スキル／メモリシステム／hooks／★10 社長クローン</div></div>
 </div>
 </div>
 
 <div class="layer-row">
 <div class="l-label bl4"><div class="num">L1 基盤</div><div class="name">基盤・運用</div></div>
 <div class="row-content row-3">
-<div class="block purple"><div class="name">🔐 認証 ⑧</div><div class="desc">macOS Keychain／Google OAuth／ChatWork Token／各APIキー</div></div>
-<div class="block purple"><div class="name">🤖 自動化エンジン ⑨</div><div class="desc">launchd／hooks／/loop /schedule／定期スクリプト</div></div>
-<div class="block purple"><div class="name">🛠 開発・運用 ⑩</div><div class="desc">Mac／ターミナル／Cursor／Python・Node／git</div></div>
+<div class="block purple"><div class="name">🔐 認証 ⑧</div><div class="desc">macOS Keychain／Google OAuth／APIキー</div></div>
+<div class="block purple"><div class="name">🤖 自動化 ⑨</div><div class="desc">launchd／hooks／/loop /schedule</div></div>
+<div class="block purple"><div class="name">🛠 開発・運用 ⑩</div><div class="desc">Mac／ターミナル／Cursor／Python・Node</div></div>
 </div>
 </div>
 </div>
 </div>
 
 <!-- ===== 2. 11Hub × 3層構造マップ ===== -->
-<div class="section">
-<h2 class="section-title t2">🎯 2. 11Hub × 3層構造マップ</h2>
-<div class="note">
-社内最適化（手足）→ 外部販売（商品）→ 横串（頭脳）の3層が揃って初めて「AI右腕化」が完成し、自社実証→商品化→販売の循環が回る。
-</div>
+<div class="section" id="hub-map">
+<h2 class="section-title t2">🎯 2. 11Hub × 3層構造マップ｜クリックで該当Hubへ</h2>
 
 <div class="pj-map">
 <div class="pj-col l1c">
-<h3 class="l1c-h">第1層：社内業務最適化Hub（★1〜★8）</h3>
+<h3 class="l1c-h" style="color:#22d3ee;">第1層：社内業務最適化Hub（★1〜★8）</h3>
 <div class="role">右腕化メソッドの「手足」</div>
 <ul>
-<li><b>★1</b> 動画LP制作Hub 🟢</li>
-<li><b>★2</b> 数値管理シート自動化Hub 🟡</li>
-<li><b>★3</b> 経理・人事 自動化Hub 🔴</li>
-<li><b>★4</b> PDCA定例運用Hub 🔴</li>
-<li><b>★5</b> 講座生コーチ業務自動化Hub（スポーク1統合）🔴</li>
-<li><b>★6</b> SNS自動投稿管理Hub 🟡</li>
-<li><b>★7</b> プロデュースPJ統合Hub 🔴</li>
-<li><b>★8</b> 全PJ俯瞰マスターHub 🟣</li>
+<li><b>★1</b> <a href="video_lp_hub.html">動画LP制作Hub</a> 🟢 <span class="open-mark">▶ 開く</span></li>
+<li><b>★2</b> 数値管理シート自動化Hub 🟡 <span style="color:#94a3b8;font-size:10px;">構築中</span></li>
+<li><b>★3</b> 経理・人事 自動化Hub 🔴 <span style="color:#94a3b8;font-size:10px;">未着手・田口さん</span></li>
+<li><b>★4</b> PDCA定例運用Hub 🔴 <span style="color:#94a3b8;font-size:10px;">未着手</span></li>
+<li><b>★5</b> 講座生コーチ業務自動化Hub 🔴 <span style="color:#94a3b8;font-size:10px;">未着手・池田泉さん</span></li>
+<li><b>★6</b> SNS自動投稿管理Hub 🟡 <span style="color:#94a3b8;font-size:10px;">構築中・島崎さん</span></li>
+<li><b>★7</b> プロデュースPJ統合Hub 🔴 <span style="color:#94a3b8;font-size:10px;">未着手</span></li>
+<li><b>★8</b> <a href="master_pj_dashboard.html">全PJ俯瞰マスターHub</a> 🟣 <span class="open-mark">▶ 開く</span></li>
 </ul>
 </div>
 
@@ -229,9 +407,9 @@ body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-se
 <h3 style="color:#f472b6;">第2層：外部販売Hub（★9・★11）</h3>
 <div class="role">右腕化メソッドの「商品」</div>
 <ul>
-<li><b>★9 🚀</b> ファネル自動構築Hub<br>
+<li><b>★9 🚀</b> <a href="funnel_hub.html">ファネル自動構築Hub</a> <span class="open-mark">▶ 開く</span><br>
 <span style="font-size:10px;color:#94a3b8;">SNS広告→LP→LINE→セミナー→成約 全自動<br>→ 中小企業／個人事業主向け販売</span></li>
-<li><b>★11 🌱</b> 自己育て直しコーチングHub<br>
+<li><b>★11 🌱</b> 自己育て直しコーチングHub <span style="font-size:10px;color:#94a3b8;">構築中</span><br>
 <span style="font-size:10px;color:#94a3b8;">週1ライブ／6歳ゴールデンエイジ理論<br>→ 毒親育ち起業家向け販売</span></li>
 </ul>
 </div>
@@ -240,43 +418,38 @@ body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-se
 <h3 style="color:#c084fc;">第3層：横串Hub（★10）</h3>
 <div class="role">右腕化メソッドの「頭脳」</div>
 <ul>
-<li><b>★10 👤</b> 社長クローンHub<br>
-<span style="font-size:10px;color:#94a3b8;">柳井さんの思想・戦略・価値観・判断基準を<br>Claudeメモリ化（7階層×100問インタビュー）<br>→ 全Hubの裏側で「社長判断」を提供<br>→ 将来商品化候補</span></li>
+<li><b>★10 👤</b> 社長クローンHub <span style="font-size:10px;color:#f87171;">🔒 機密</span><br>
+<span style="font-size:10px;color:#94a3b8;">柳井さんの思想・戦略・価値観・判断基準を<br>Claudeメモリ化／全Hubの裏側で「社長判断」を提供<br>→ 将来商品化候補</span></li>
 </ul>
 </div>
 </div>
 </div>
 
-<!-- ===== 3. データフロー（5ステップ） ===== -->
-<div class="section">
+<!-- ===== 3. データフロー ===== -->
+<div class="section" id="flow">
 <h2 class="section-title t3">🔄 3. データフロー｜5ステップで1サイクル</h2>
 <div class="flow">
 <div class="flow-step"><div class="flow-num">STEP 1</div><div class="flow-name">📊 データ収集</div><div class="flow-desc">YouTube/Meta/IG/LINE/UTAGE API から日次取込→Sheets格納</div></div>
-<div class="flow-step"><div class="flow-num">STEP 2</div><div class="flow-name">📂 倉庫格納</div><div class="flow-desc">Drive/Sheetsに構造化／ローカルメモリにも反映</div></div>
-<div class="flow-step"><div class="flow-num">STEP 3</div><div class="flow-name">🧠 Claude判断</div><div class="flow-desc">司令塔がスキル＋メモリ＋クローン参照→次アクション決定</div></div>
-<div class="flow-step"><div class="flow-num">STEP 4</div><div class="flow-name">🎨 制作・配信</div><div class="flow-desc">AI生成エンジン群で出力→マーケ/配信レイヤーへ</div></div>
-<div class="flow-step"><div class="flow-num">STEP 5</div><div class="flow-name">🎯 UI可視化</div><div class="flow-desc">Hub画面で人間が確認→ChatWork承認→STEP 1へ</div></div>
+<div class="flow-step"><div class="flow-num">STEP 2</div><div class="flow-name">📂 倉庫格納</div><div class="flow-desc">Drive/Sheetsに構造化／メモリにも反映</div></div>
+<div class="flow-step"><div class="flow-num">STEP 3</div><div class="flow-name">🧠 Claude判断</div><div class="flow-desc">司令塔がスキル＋メモリ＋クローン参照</div></div>
+<div class="flow-step"><div class="flow-num">STEP 4</div><div class="flow-name">🎨 制作・配信</div><div class="flow-desc">AI生成エンジン→マーケ/配信</div></div>
+<div class="flow-step"><div class="flow-num">STEP 5</div><div class="flow-name">🎯 UI可視化</div><div class="flow-desc">Hub→ChatWork承認→STEP 1へ</div></div>
 </div>
 </div>
 
-<!-- ===== 4. 物理資産マップ（どこに何があるか） ===== -->
-<div class="section">
+<!-- ===== 4. 物理資産マップ ===== -->
+<div class="section" id="assets">
 <h2 class="section-title t4">📦 4. 物理資産マップ｜どこに何があるか</h2>
-<div class="note">
-全資産が「どこに格納されているか」を一覧化。Drive＋GitHub＋ローカル＋メモリの4箇所に分散。
-</div>
 
 <div class="asset-grid">
-
 <div class="asset-card">
 <h3>📂 Google Drive</h3>
 <div class="where">業務自動化/UI開発プロジェクト/</div>
 <ul>
 <li>🎨 ROOT: <a href="https://drive.google.com/drive/folders/1JtW0V5nlXCoef0pV43x8sJaFSCjBFrJD" target="_blank">UI開発プロジェクト</a></li>
-<li>📊 マスターシート（15タブ・ヘッダ22pt/本文20pt）: <a href="https://docs.google.com/spreadsheets/d/1g1YP3HrbdqLiFGjwag-CX7YbbT_54c7l2KZNpAJnaxs/edit" target="_blank">開く</a></li>
-<li>📁 22フォルダ（00_テンプレート〜07_HTMLファイル_公開可能）</li>
-<li>🔒 機密フォルダ: 06_HTMLファイル/_機密_本人専用/（clone系2本）</li>
-<li>🌐 公開HTML: 07_HTMLファイル_公開可能/（12本・リンク共有設定済）</li>
+<li>📊 マスターシート（15タブ）: <a href="https://docs.google.com/spreadsheets/d/1g1YP3HrbdqLiFGjwag-CX7YbbT_54c7l2KZNpAJnaxs/edit" target="_blank">開く</a></li>
+<li>📁 22フォルダ＋HTML 14本</li>
+<li>🔒 機密フォルダ＋🌐公開フォルダで分離</li>
 </ul>
 </div>
 
@@ -284,108 +457,68 @@ body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-se
 <h3>🌐 GitHub Pages（公開URL）</h3>
 <div class="where">https://hibikimikotoisagi-debug.github.io/yanai-juku-ui-dev/</div>
 <ul>
-<li>📂 リポジトリ: <a href="https://github.com/hibikimikotoisagi-debug/yanai-juku-ui-dev" target="_blank">github.com/hibikimikotoisagi-debug/yanai-juku-ui-dev</a></li>
-<li>🌐 公開URL: <a href="https://hibikimikotoisagi-debug.github.io/yanai-juku-ui-dev/" target="_blank">公開トップページ</a></li>
-<li>🌐 12本HTML をブラウザで直接表示可</li>
-<li>🔄 git push で1分以内に更新反映</li>
-<li>🔒 機密2本は除外（公開しない）</li>
+<li>📂 <a href="https://github.com/hibikimikotoisagi-debug/yanai-juku-ui-dev" target="_blank">GitHub リポジトリ</a></li>
+<li>🌐 <a href="https://hibikimikotoisagi-debug.github.io/yanai-juku-ui-dev/" target="_blank">公開トップ</a>（誰でも開ける）</li>
+<li>🔄 git push で1分で更新反映</li>
+<li>🔒 機密2本は除外</li>
 </ul>
 </div>
 
 <div class="asset-card">
 <h3>💾 Claude Code メモリ</h3>
-<div class="where">~/.claude/projects/-Users-seiyuikeda-Downloads/memory/</div>
+<div class="where">~/.claude/projects/.../memory/</div>
 <ul>
-<li>📚 100+ md ファイル（user/feedback/project/reference/clone）</li>
-<li>📖 MEMORY.md（インデックス・常時読込）</li>
-<li>👤 clone/ サブフォルダ：社長クローンインタビュー記録（L1階層8本）</li>
-<li>🎯 重要：project_ui_dev_master_objective_goal.md（OGSM v1.0）</li>
-<li>🎯 重要：reference_yanai_juku_automation_architecture.md（10の塊）</li>
-</ul>
-</div>
-
-<div class="asset-card">
-<h3>🛠 ローカル開発環境</h3>
-<div class="where">/tmp/scenario_viz/dashboard/ ＋ ~/yanai_juku/</div>
-<ul>
-<li>📁 /tmp/scenario_viz/dashboard/：14本のHTML（最新版）</li>
-<li>📁 /tmp/yanai_pub/：GitHub Pages公開用ステージング</li>
-<li>📁 ~/yanai_juku/：本業のスクリプト群（gdrive/, project_tracker/, course_platform/）</li>
-<li>🔧 ~/yanai_juku/scripts/gdrive/gdrive_helpers.py：Drive権限付与共通ヘルパー</li>
-<li>🔧 ~/yanai_juku/scripts/gdrive/setup_ui_dev_project.py：本PJ構築スクリプト</li>
+<li>📚 100+ md ファイル</li>
+<li>📖 MEMORY.md（インデックス）</li>
+<li>👤 clone/サブフォルダ：社長クローン記録</li>
 </ul>
 </div>
 
 <div class="asset-card">
 <h3>🛠 Claude Code スキル</h3>
-<div class="where">~/.claude/skills/ ＋ プラグイン</div>
+<div class="where">~/.claude/skills/</div>
 <ul>
-<li>📚 60+スキル（kamishibai-design / video-lp-scenario / lp-fv-creator etc.）</li>
-<li>🎨 視覚系：gemini-visual-creator / lp-fv-creator / instagram-carousel</li>
-<li>🎬 動画系：edit-video / video-lp-scenario / video-render</li>
-<li>📝 文章系：copy-connotation-auditor / tenioha-checker / lp-catchcopy-creator</li>
-<li>🤖 メタ系：advanced-skill-creator / skill-improver / shadow-approver</li>
+<li>📚 60+スキル</li>
+<li>🎨 視覚／🎬 動画／📝 文章／🤖 メタ系</li>
 </ul>
 </div>
-
-<div class="asset-card">
-<h3>💬 ChatWork（コミュニケーション）</h3>
-<div class="where">柳井塾の社内コミュチャネル本命</div>
-<ul>
-<li>👥 メンバー：柳井／池田／田口／藤田／島崎／奥村／小川 他</li>
-<li>📂 PJ別ルーム多数（Room IDメモリ管理）</li>
-<li>🤖 send-staff スキルで自動送信可</li>
-<li>📊 PDCA定例ルーム（Room 401453543）</li>
-<li>📨 経費削減指示は組織-自動化会議へルーティング</li>
-</ul>
-</div>
-
 </div>
 </div>
 
-<!-- ===== 5. 接続マップ（誰が何をどこで使うか） ===== -->
-<div class="section">
+<!-- ===== 5. 接続マップ ===== -->
+<div class="section" id="connection">
 <h2 class="section-title t5">👥 5. 接続マップ｜誰が・何を・どこで使うか</h2>
-
 <table class="tbl">
-<thead>
-<tr>
-<th style="width:120px;">利用者</th>
-<th>使うHub</th>
-<th>使うツール</th>
-<th>主な目的</th>
-</tr>
-</thead>
+<thead><tr><th style="width:140px;">利用者</th><th>使うHub</th><th>使うツール</th><th>主な目的</th></tr></thead>
 <tbody>
-<tr><td><b>柳井さん</b></td><td>★8（俯瞰）／★1〜★11全部</td><td>Claude Code＋Drive＋ChatWork＋GitHub Pages</td><td>判断・戦略・優先順位決定</td></tr>
-<tr><td>池田さん（池田泉さん）</td><td>★5（講座生コーチ業務自動化）／★1（動画LP）／★2（数値管理）</td><td>Drive＋ChatWork＋スポーク1マスター（11FXOg...）</td><td>講座生コーチ業務 30業務の自動化（受講生対応・宿題確認・進捗管理・コーチング記録・成果報告 等）</td></tr>
+<tr><td><b>柳井さん</b></td><td><a href="master_pj_dashboard.html">★8</a>／<a href="video_lp_hub.html">★1</a>〜★11全部</td><td>Claude Code＋Drive＋ChatWork＋GitHub</td><td>判断・戦略・優先順位決定</td></tr>
+<tr><td>池田さん（池田泉さん）</td><td>★5（講座生コーチ業務自動化）／<a href="video_lp_hub.html">★1</a>／★2</td><td>Drive＋ChatWork＋スポーク1マスター</td><td>講座生コーチ業務 30業務の自動化</td></tr>
 <tr><td>田口さん</td><td>★3（経理・人事）</td><td>Drive＋ChatWork＋スポーク3マスター</td><td>経理・人事業務の自動化</td></tr>
 <tr><td>島崎さん</td><td>★6（SNS自動投稿管理Hub 担当）</td><td>Drive＋ChatWork＋SNS各種</td><td>SNS自動投稿の構築・運用</td></tr>
 <tr><td>奥村さん</td><td>★7（プロデュース／パートナー）</td><td>Drive＋ChatWork</td><td>SNS運用代行パートナー</td></tr>
 <tr><td>藤田さん</td><td>★7（プロデュース／菊池PJ）</td><td>ChatWork＋PJ別シート</td><td>菊池JV PJ管理</td></tr>
-<tr><td>小川さん</td><td>★1（動画LP関連／特典・動線）</td><td>ChatWork＋Drive</td><td>特典設置・動線改善</td></tr>
+<tr><td>小川さん</td><td><a href="funnel_hub.html">★9</a>（ファネル自動構築）／<a href="video_lp_hub.html">★1</a>（動画LP関連）</td><td>ChatWork＋Drive</td><td>ファネル自社実証／動線改善</td></tr>
 <tr><td>受講生</td><td>★11（コーチング）</td><td>講座PF＋LINE＋Zoom</td><td>自己育て直し学習</td></tr>
-<tr><td>顧客（個人事業主）</td><td>★9販売版／★11販売版</td><td>UTAGE LP＋LINE＋Zoom</td><td>「右腕化メソッド」購入・受講</td></tr>
-<tr><td>顧客（法人）</td><td>★9販売版（オーダーメイド）</td><td>UTAGE＋専用ChatWorkルーム</td><td>「AI右腕化」サービス購入</td></tr>
+<tr><td>顧客（個人事業主）</td><td><a href="funnel_hub.html">★9</a>販売版／★11販売版</td><td>UTAGE＋LINE＋Zoom</td><td>右腕化メソッド購入</td></tr>
 </tbody>
 </table>
 </div>
 
 <!-- ===== 6. 進捗状況 ===== -->
-<div class="section">
+<div class="section" id="progress">
 <h2 class="section-title t6">📊 6. 進捗状況｜13週ロードマップとクローン構築</h2>
 
-<h3 style="font-size:15px; color:#22d3ee; margin-top:6px; margin-bottom:10px;">▼ 13週ロードマップ（2026-05-02〜2026-08-02）</h3>
-<div class="progress-row">
-<div class="progress-label">W1: ★1動画LP制作Hub</div>
+<h3 style="font-size:14px; color:#22d3ee; margin-top:6px; margin-bottom:10px;">▼ 13週ロードマップ（〜2026-08-02）</h3>
+<div class="progress-row" onclick="window.location.href='video_lp_hub.html'">
+<div class="progress-label">W1: ★1動画LP制作Hub ▶</div>
 <div class="progress-bar"><div class="progress-fill" style="width:80%;"></div><div class="progress-text">80% 進行中</div></div>
 </div>
 <div class="progress-row">
 <div class="progress-label">W2-3: ★2数値管理Hub</div>
 <div class="progress-bar"><div class="progress-fill" style="width:20%;"></div><div class="progress-text">20% OGSM定義済</div></div>
 </div>
-<div class="progress-row">
-<div class="progress-label">W4-5: ★9ファネル自動構築</div>
+<div class="progress-row" onclick="window.location.href='funnel_hub.html'">
+<div class="progress-label">W4-5: ★9ファネル自動構築 ▶</div>
 <div class="progress-bar"><div class="progress-fill" style="width:15%;"></div><div class="progress-text">15% v0.1ワイヤー</div></div>
 </div>
 <div class="progress-row">
@@ -401,68 +534,104 @@ body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-se
 <div class="progress-bar"><div class="progress-fill" style="width:0%;"></div><div class="progress-text" style="color:#94a3b8;">0% 未着手</div></div>
 </div>
 
-<h3 style="font-size:15px; color:#22d3ee; margin-top:24px; margin-bottom:10px;">▼ 社長クローン構築進捗（★10）</h3>
-<div class="progress-row">
-<div class="progress-label">L1 人生背景・原体験</div>
-<div class="progress-bar"><div class="progress-fill" style="width:75%;"></div><div class="progress-text">75% Q1-1とQ1-8深掘り完了</div></div>
-</div>
-<div class="progress-row">
-<div class="progress-label">L2 価値観・思想</div>
-<div class="progress-bar"><div class="progress-fill" style="width:40%;"></div><div class="progress-text">40% L1から派生</div></div>
-</div>
-<div class="progress-row">
-<div class="progress-label">L3 経営理念・ミッション</div>
-<div class="progress-bar"><div class="progress-fill" style="width:50%;"></div><div class="progress-text">50% 紙芝居メソッド確定</div></div>
-</div>
-<div class="progress-row">
-<div class="progress-label">L4 戦略・優先順位</div>
-<div class="progress-bar"><div class="progress-fill" style="width:60%;"></div><div class="progress-text">60% 倍々成長/プロデューサーモデル</div></div>
-</div>
-<div class="progress-row">
-<div class="progress-label">L5 判断パターン</div>
-<div class="progress-bar"><div class="progress-fill" style="width:55%;"></div><div class="progress-text">55% 3年前気づき/逃げ癖自覚</div></div>
-</div>
-<div class="progress-row">
-<div class="progress-label">L6 言葉・人格</div>
-<div class="progress-bar"><div class="progress-fill" style="width:30%;"></div><div class="progress-text">30% 自然蓄積中</div></div>
-</div>
-<div class="progress-row">
-<div class="progress-label">L7 専門知識</div>
-<div class="progress-bar"><div class="progress-fill" style="width:65%;"></div><div class="progress-text">65% 6歳GE理論/失敗成功パターン</div></div>
-</div>
+<h3 style="font-size:14px; color:#22d3ee; margin-top:24px; margin-bottom:10px;">▼ 社長クローン構築進捗（★10）</h3>
+<div class="progress-row"><div class="progress-label">L1 人生背景・原体験</div><div class="progress-bar"><div class="progress-fill" style="width:75%;"></div><div class="progress-text">75%</div></div></div>
+<div class="progress-row"><div class="progress-label">L2 価値観・思想</div><div class="progress-bar"><div class="progress-fill" style="width:40%;"></div><div class="progress-text">40%</div></div></div>
+<div class="progress-row"><div class="progress-label">L3 経営理念・ミッション</div><div class="progress-bar"><div class="progress-fill" style="width:50%;"></div><div class="progress-text">50%</div></div></div>
+<div class="progress-row"><div class="progress-label">L4 戦略・優先順位</div><div class="progress-bar"><div class="progress-fill" style="width:60%;"></div><div class="progress-text">60%</div></div></div>
+<div class="progress-row"><div class="progress-label">L5 判断パターン</div><div class="progress-bar"><div class="progress-fill" style="width:55%;"></div><div class="progress-text">55%</div></div></div>
+<div class="progress-row"><div class="progress-label">L6 言葉・人格</div><div class="progress-bar"><div class="progress-fill" style="width:30%;"></div><div class="progress-text">30%</div></div></div>
+<div class="progress-row"><div class="progress-label">L7 専門知識</div><div class="progress-bar"><div class="progress-fill" style="width:65%;"></div><div class="progress-text">65%</div></div></div>
 </div>
 
 <!-- ===== 7. 次のアクション ===== -->
-<div class="section">
+<div class="section" id="actions">
 <h2 class="section-title t1">🎬 7. 次のアクション（優先順位順）</h2>
-
 <table class="tbl">
-<thead>
-<tr>
-<th style="width:60px;">優先</th>
-<th>アクション</th>
-<th>担当</th>
-<th>期限</th>
-</tr>
-</thead>
+<thead><tr><th style="width:60px;">優先</th><th>アクション</th><th>担当</th><th>期限</th></tr></thead>
 <tbody>
-<tr><td>P1</td><td>★1 動画LP制作Hub 残機能完成（KPI/ROI/設定ページ100%）</td><td>柳井／池田</td><td>W1（〜5/8）</td></tr>
-<tr><td>P1</td><td>★2 数値管理シート自動化Hub 構築開始（Sheets API連携）</td><td>柳井／池田</td><td>W2-3（〜5/22）</td></tr>
+<tr onclick="window.location.href='video_lp_hub.html'"><td>P1</td><td><a href="video_lp_hub.html">★1 動画LP制作Hub</a> 残機能完成（KPI/ROI/設定100%）</td><td>柳井／池田</td><td>W1（〜5/8）</td></tr>
+<tr><td>P1</td><td>★2 数値管理シート自動化Hub 構築開始</td><td>柳井／池田</td><td>W2-3（〜5/22）</td></tr>
 <tr><td>P1</td><td>社長クローン L1残り＋L2価値観 集中インタビュー</td><td>柳井</td><td>継続中</td></tr>
-<tr><td>P2</td><td>★9 ファネル自動構築Hub 自社実証開始</td><td>柳井／小川</td><td>W4-5（〜6/5）</td></tr>
+<tr onclick="window.location.href='funnel_hub.html'"><td>P2</td><td><a href="funnel_hub.html">★9 ファネル自動構築Hub</a> 自社実証開始</td><td>柳井／小川</td><td>W4-5（〜6/5）</td></tr>
 <tr><td>P2</td><td>共通デザインシステム抽出（design-system.css）</td><td>柳井</td><td>W6（〜6/12）</td></tr>
-<tr><td>P3</td><td>★3 経理・人事 Hub 構築（田口さん向け）</td><td>田口さん／柳井</td><td>W7-8</td></tr>
-<tr><td>P3</td><td>残り★4〜★8、★11 順次構築</td><td>各担当</td><td>W9-13</td></tr>
+<tr><td>P3</td><td>★3 経理・人事 Hub 構築</td><td>田口さん／柳井</td><td>W7-8</td></tr>
+<tr><td>P3</td><td>★4〜★8、★11 順次構築</td><td>各担当</td><td>W9-13</td></tr>
 <tr style="background:rgba(251,191,36,0.08);"><td>🎯</td><td><b>3ヶ月ゴール達成評価</b></td><td>柳井</td><td><b>2026-08-02</b></td></tr>
 </tbody>
 </table>
 </div>
 
-<div style="text-align:center; padding:24px; color:#64748b; font-size:12px;">
-🌐 柳井塾 業務自動化 マスタービュー v1.0 ｜ 2026-05-02 起票<br>
-公開URL: <a href="https://hibikimikotoisagi-debug.github.io/yanai-juku-ui-dev/master_overview.html" style="color:#22d3ee;">https://hibikimikotoisagi-debug.github.io/yanai-juku-ui-dev/master_overview.html</a>
+<div style="text-align:center; padding:24px; color:#64748b; font-size:11px;">
+🌐 柳井塾 業務自動化 マスタービュー v2.0 ｜ 2026-05-02 公開<br>
+公開URL: <a href="https://hibikimikotoisagi-debug.github.io/yanai-juku-ui-dev/master_overview.html" style="color:#22d3ee;">github.io/yanai-juku-ui-dev/master_overview.html</a>
 </div>
 
+</main>
 </div>
+
+<script>
+// ===== 機能1：ライブクロック =====
+function tick() {
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('liveClock').textContent =
+    `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+tick(); setInterval(tick, 1000);
+
+// ===== 機能2：検索 =====
+function filterNav() {
+  const q = document.getElementById('searchBox').value.toLowerCase();
+  document.querySelectorAll('#hubNav .nav-hub').forEach(el => {
+    const name = (el.dataset.name || '').toLowerCase() + el.textContent.toLowerCase();
+    el.style.display = name.includes(q) ? '' : 'none';
+  });
+  document.querySelectorAll('#quickHubs .qcard').forEach(el => {
+    const name = (el.dataset.name || '').toLowerCase() + el.textContent.toLowerCase();
+    el.style.display = name.includes(q) ? '' : 'none';
+  });
+}
+
+// ===== 機能3：ステータスフィルター =====
+function filterStatus(status, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#hubNav .nav-hub').forEach(el => {
+    el.style.display = (status === 'all' || el.dataset.status === status) ? '' : 'none';
+  });
+}
+
+// ===== 機能4：スクロール時の現在地ハイライト =====
+const sections = ['home','architecture','hub-map','flow','assets','connection','progress','actions'];
+window.addEventListener('scroll', () => {
+  let current = 'home';
+  for (const id of sections) {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < 100) current = id;
+  }
+  document.querySelectorAll('.nav .nav-item').forEach(item => {
+    item.classList.remove('active');
+    if (item.getAttribute('href') === '#' + current) item.classList.add('active');
+  });
+});
+
+// ===== 機能5：スムーススクロール =====
+document.querySelectorAll('.nav-item[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+});
+
+// ===== 機能6：キーボードショートカット =====
+document.addEventListener('keydown', e => {
+  if (e.key === '/' && !['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) {
+    e.preventDefault();
+    document.getElementById('searchBox').focus();
+  }
+});
+</script>
 </body>
 </html>
