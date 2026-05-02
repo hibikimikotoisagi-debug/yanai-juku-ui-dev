@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>🎯 商品化ポジショニング｜柳井塾 右腕化メソッド</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; background:#0a0e1a; color:#e2e8f0; padding:24px; line-height:1.6; }
+.container { max-width:1500px; margin:0 auto; }
+
+.hero { background:linear-gradient(135deg,#0c4a6e 0%,#1e293b 100%); padding:36px 40px; border-radius:18px; margin-bottom:28px; border:1px solid #06b6d4; }
+.hero h1 { font-size:30px; font-weight:800; background:linear-gradient(90deg,#fbbf24,#06b6d4,#a855f7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px; }
+.hero .v { font-size:13px; color:#94a3b8; margin-bottom:14px; }
+.hero .lead { font-size:16px; color:#cbd5e1; line-height:1.7; }
+
+.section { background:#1e293b; padding:28px 32px; border-radius:14px; margin-bottom:22px; border:1px solid #334155; }
+.section-title { font-size:22px; font-weight:800; margin-bottom:18px; padding-left:12px; border-left:4px solid; color:#fbbf24; border-left-color:#fbbf24; }
+
+/* ポジショニングマップ */
+.pmap { position:relative; width:100%; height:560px; background:#0a0e1a; border:1px solid #334155; border-radius:12px; margin-top:16px; }
+.pmap-axis-x { position:absolute; left:5%; right:5%; top:50%; height:2px; background:#475569; }
+.pmap-axis-y { position:absolute; top:5%; bottom:5%; left:50%; width:2px; background:#475569; }
+.pmap-arrow-r { position:absolute; right:3%; top:calc(50% - 6px); border:6px solid transparent; border-left-color:#475569; }
+.pmap-arrow-l { position:absolute; left:3%; top:calc(50% - 6px); border:6px solid transparent; border-right-color:#475569; }
+.pmap-arrow-t { position:absolute; top:3%; left:calc(50% - 6px); border:6px solid transparent; border-bottom-color:#475569; }
+.pmap-arrow-b { position:absolute; bottom:3%; left:calc(50% - 6px); border:6px solid transparent; border-top-color:#475569; }
+
+.pmap-label-x-pos { position:absolute; right:5%; top:54%; color:#fbbf24; font-size:13px; font-weight:700; }
+.pmap-label-x-neg { position:absolute; left:5%; top:54%; color:#94a3b8; font-size:13px; }
+.pmap-label-y-pos { position:absolute; top:3%; left:52%; color:#10b981; font-size:13px; font-weight:700; }
+.pmap-label-y-neg { position:absolute; bottom:3%; left:52%; color:#94a3b8; font-size:13px; }
+
+.pmap-quadrant-label { position:absolute; font-size:10px; color:#475569; font-weight:600; padding:4px 8px; }
+
+.pmap-dot { position:absolute; padding:8px 14px; border-radius:8px; font-size:12px; font-weight:700; color:white; cursor:pointer; transform:translate(-50%,-50%); transition:all 0.2s; box-shadow:0 4px 10px rgba(0,0,0,0.4); white-space:nowrap; }
+.pmap-dot:hover { transform:translate(-50%,-50%) scale(1.15); z-index:10; }
+.dot-us { background:linear-gradient(135deg,#fbbf24,#f59e0b); color:#000; border:2px solid #fbbf24; padding:12px 18px; font-size:14px; box-shadow:0 0 25px rgba(251,191,36,0.6); }
+.dot-saas-low { background:#0891b2; }
+.dot-saas-mid { background:#3b82f6; }
+.dot-saas-high { background:#7c3aed; }
+.dot-nocode { background:#10b981; }
+.dot-custom { background:#ef4444; }
+.dot-ai { background:#ec4899; }
+
+/* STPテーブル */
+.stp-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:18px; margin-top:14px; }
+.stp-card { background:#0f172a; padding:22px; border-radius:12px; border-top:4px solid; }
+.stp-s { border-top-color:#06b6d4; }
+.stp-t { border-top-color:#fbbf24; }
+.stp-p { border-top-color:#a855f7; }
+.stp-card h3 { font-size:18px; font-weight:800; margin-bottom:6px; }
+.stp-s h3 { color:#22d3ee; }
+.stp-t h3 { color:#fbbf24; }
+.stp-p h3 { color:#c084fc; }
+.stp-card .stp-sub { font-size:11px; color:#94a3b8; margin-bottom:14px; }
+.stp-card ul { padding-left:18px; }
+.stp-card li { font-size:13px; line-height:1.8; color:#cbd5e1; margin-bottom:6px; }
+.stp-card b { color:white; }
+
+/* ライバル比較 */
+.cmp-table { width:100%; border-collapse:collapse; margin-top:14px; font-size:13px; }
+.cmp-table th { background:#0f172a; padding:12px 10px; text-align:center; color:#94a3b8; font-weight:600; border-bottom:1px solid #334155; }
+.cmp-table th:first-child { text-align:left; }
+.cmp-table td { padding:12px 10px; border-bottom:1px solid #1e293b; text-align:center; }
+.cmp-table td:first-child { text-align:left; font-weight:600; }
+.cmp-table .col-us { background:rgba(251,191,36,0.08); }
+.cmp-table .col-us-th { background:rgba(251,191,36,0.15); color:#fbbf24; }
+.cmp-rank-h { color:#34d399; font-weight:700; }
+.cmp-rank-m { color:#fbbf24; }
+.cmp-rank-l { color:#f87171; }
+
+/* PSカード */
+.ps-card { background:linear-gradient(135deg,#1e293b 0%,#0c4a6e 100%); padding:32px 36px; border-radius:14px; border:2px solid #06b6d4; margin-top:14px; }
+.ps-label { font-size:11px; color:#06b6d4; font-weight:700; letter-spacing:1px; margin-bottom:10px; }
+.ps-text { font-size:17px; line-height:2.0; color:white; }
+.ps-text b { color:#fbbf24; }
+.ps-text .keyword { color:#34d399; font-weight:700; }
+
+.diff-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px; }
+.diff-card { background:#0f172a; padding:18px; border-radius:10px; border-left:3px solid #fbbf24; }
+.diff-card h4 { color:#fbbf24; font-size:14px; margin-bottom:8px; font-weight:700; }
+.diff-card p { font-size:12px; color:#cbd5e1; line-height:1.7; }
+
+.legend { display:flex; gap:14px; flex-wrap:wrap; margin-top:14px; padding:14px; background:#0a0e1a; border-radius:8px; font-size:11px; }
+.legend-item { display:flex; align-items:center; gap:6px; color:#cbd5e1; }
+.legend-dot { width:12px; height:12px; border-radius:3px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="hero">
+<h1>🎯 柳井塾 右腕化メソッド｜商品化ポジショニング v1.0</h1>
+<div class="v">中小企業向け「Claude Code × 業務全体UI化」サービス｜2026-05-02 起票</div>
+<div class="lead">
+人件費を<b style="color:#fbbf24;">3ヶ月で1/3</b>にする実証済みメソッドを、月人件費300〜1000万円帯の中小企業へ展開。<br>
+SaaS／ノーコード／受託開発のいずれとも違う、<b style="color:#34d399;">「AI×フルカスタム×短期間×低コスト」</b>という新カテゴリーを取りに行く。
+</div>
+</div>
+
+<!-- ===== ポジショニングマップ① ===== -->
+<div class="section">
+<h2 class="section-title">📍 ポジショニングマップ①｜カスタマイズ性 × 導入スピード/コスト効率</h2>
+<p style="font-size:13px; color:#94a3b8;">縦軸：早く・安く立ち上がるか／横軸：自社業務に完全フィットするか。<b style="color:#fbbf24;">右上＝唯一無二の象限</b>に当社が単独で存在。</p>
+
+<div class="pmap">
+<div class="pmap-axis-x"></div><div class="pmap-axis-y"></div>
+<div class="pmap-arrow-r"></div><div class="pmap-arrow-l"></div>
+<div class="pmap-arrow-t"></div><div class="pmap-arrow-b"></div>
+
+<div class="pmap-label-x-pos">→ フルカスタム（業務完全フィット）</div>
+<div class="pmap-label-x-neg">汎用テンプレ ←</div>
+<div class="pmap-label-y-pos">↑ 短期間・低コスト</div>
+<div class="pmap-label-y-neg">↓ 長期間・高コスト</div>
+
+<div class="pmap-quadrant-label" style="top:8%; right:8%;">★唯一無二の象限</div>
+<div class="pmap-quadrant-label" style="top:8%; left:8%;">汎用速攻型</div>
+<div class="pmap-quadrant-label" style="bottom:8%; left:8%;">重量級SaaS</div>
+<div class="pmap-quadrant-label" style="bottom:8%; right:8%;">受託開発型</div>
+
+<!-- 当社（右上・唯一） -->
+<div class="pmap-dot dot-us" style="top:18%; left:78%;">⭐ 柳井塾 右腕化メソッド</div>
+
+<!-- 第2象限：汎用×速い・安い -->
+<div class="pmap-dot dot-nocode" style="top:30%; left:25%;">kintone</div>
+<div class="pmap-dot dot-saas-low" style="top:22%; left:35%;">Notion</div>
+<div class="pmap-dot dot-saas-low" style="top:38%; left:18%;">Monday.com</div>
+<div class="pmap-dot dot-saas-low" style="top:32%; left:42%;">Asana</div>
+<div class="pmap-dot dot-saas-low" style="top:42%; left:32%;">Trello</div>
+<div class="pmap-dot dot-ai" style="top:15%; left:48%;">ChatGPT Team</div>
+
+<!-- 第3象限：汎用×遅い・高い -->
+<div class="pmap-dot dot-saas-high" style="top:75%; left:22%;">Salesforce</div>
+<div class="pmap-dot dot-saas-high" style="top:82%; left:38%;">SAP / Oracle</div>
+<div class="pmap-dot dot-saas-mid" style="top:65%; left:30%;">HubSpot</div>
+
+<!-- 第4象限：フルカスタム×遅い・高い -->
+<div class="pmap-dot dot-custom" style="top:75%; left:72%;">受託開発（SIer）</div>
+<div class="pmap-dot dot-custom" style="top:82%; left:80%;">フルスクラッチ</div>
+<div class="pmap-dot dot-custom" style="top:65%; left:65%;">AppSheet/PowerApps</div>
+</div>
+
+<div class="legend">
+<div class="legend-item"><div class="legend-dot" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);"></div>当社（右腕化メソッド）</div>
+<div class="legend-item"><div class="legend-dot" style="background:#10b981;"></div>ノーコード</div>
+<div class="legend-item"><div class="legend-dot" style="background:#0891b2;"></div>軽量SaaS</div>
+<div class="legend-item"><div class="legend-dot" style="background:#7c3aed;"></div>重量級SaaS</div>
+<div class="legend-item"><div class="legend-dot" style="background:#ef4444;"></div>受託開発</div>
+<div class="legend-item"><div class="legend-dot" style="background:#ec4899;"></div>AI単体</div>
+</div>
+</div>
+
+<!-- ===== ポジショニングマップ② ===== -->
+<div class="section">
+<h2 class="section-title">📍 ポジショニングマップ②｜AI協働度 × 業務フィット度</h2>
+<p style="font-size:13px; color:#94a3b8;">縦軸：AI（Claude Code）が業務に深く入るか／横軸：業務全体をHub化できるか。<b style="color:#fbbf24;">右上＝AI×全体最適</b>の唯一象限。</p>
+
+<div class="pmap">
+<div class="pmap-axis-x"></div><div class="pmap-axis-y"></div>
+<div class="pmap-arrow-r"></div><div class="pmap-arrow-l"></div>
+<div class="pmap-arrow-t"></div><div class="pmap-arrow-b"></div>
+
+<div class="pmap-label-x-pos">→ 業務全体（経営〜現場〜お客様）</div>
+<div class="pmap-label-x-neg">単機能・部分最適 ←</div>
+<div class="pmap-label-y-pos">↑ AI協働度 高</div>
+<div class="pmap-label-y-neg">↓ 人手のみ</div>
+
+<div class="pmap-quadrant-label" style="top:8%; right:8%;">★AI×全体最適</div>
+<div class="pmap-quadrant-label" style="top:8%; left:8%;">AI×単機能</div>
+<div class="pmap-quadrant-label" style="bottom:8%; left:8%;">人手×単機能</div>
+<div class="pmap-quadrant-label" style="bottom:8%; right:8%;">人手×全体最適</div>
+
+<!-- 当社 -->
+<div class="pmap-dot dot-us" style="top:15%; left:78%;">⭐ 柳井塾 右腕化メソッド</div>
+
+<!-- AI×単機能 -->
+<div class="pmap-dot dot-ai" style="top:20%; left:18%;">ChatGPT</div>
+<div class="pmap-dot dot-ai" style="top:30%; left:28%;">Claude（単体）</div>
+<div class="pmap-dot dot-ai" style="top:25%; left:38%;">Copilot</div>
+<div class="pmap-dot dot-ai" style="top:35%; left:15%;">Perplexity</div>
+
+<!-- 人手×単機能 -->
+<div class="pmap-dot dot-nocode" style="top:65%; left:25%;">Trello</div>
+<div class="pmap-dot dot-saas-low" style="top:75%; left:35%;">Slack</div>
+<div class="pmap-dot dot-saas-low" style="top:70%; left:18%;">Asana</div>
+
+<!-- 人手×全体最適 -->
+<div class="pmap-dot dot-saas-mid" style="top:65%; left:65%;">kintone</div>
+<div class="pmap-dot dot-saas-high" style="top:75%; left:75%;">Salesforce</div>
+<div class="pmap-dot dot-saas-high" style="top:82%; left:62%;">SAP</div>
+<div class="pmap-dot dot-saas-mid" style="top:70%; left:80%;">Notion</div>
+
+<!-- AI×全体最適側で挑む候補 -->
+<div class="pmap-dot dot-saas-mid" style="top:35%; left:60%;">Glean</div>
+<div class="pmap-dot dot-saas-mid" style="top:40%; left:70%;">Cursor企業版</div>
+</div>
+
+<div class="legend">
+<div class="legend-item"><div class="legend-dot" style="background:linear-gradient(135deg,#fbbf24,#f59e0b);"></div>当社（唯一の右上）</div>
+<div class="legend-item"><div class="legend-dot" style="background:#ec4899;"></div>AI単体（部分最適）</div>
+<div class="legend-item"><div class="legend-dot" style="background:#3b82f6;"></div>SaaS</div>
+<div class="legend-item"><div class="legend-dot" style="background:#7c3aed;"></div>重量級SaaS</div>
+</div>
+</div>
+
+<!-- ===== ライバル比較 ===== -->
+<div class="section">
+<h2 class="section-title">⚔️ ライバル比較表（5軸スコア）</h2>
+<table class="cmp-table">
+<thead>
+<tr>
+<th>カテゴリー</th>
+<th class="col-us-th">⭐ 柳井塾</th>
+<th>kintone</th>
+<th>Notion</th>
+<th>Salesforce</th>
+<th>受託開発</th>
+<th>ChatGPT Team</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>業務フィット度</td><td class="col-us cmp-rank-h">100%</td><td class="cmp-rank-m">60%</td><td class="cmp-rank-m">50%</td><td class="cmp-rank-m">70%</td><td class="cmp-rank-h">95%</td><td class="cmp-rank-l">30%</td></tr>
+<tr><td>導入スピード</td><td class="col-us cmp-rank-h">3ヶ月</td><td class="cmp-rank-h">2週間</td><td class="cmp-rank-h">1週間</td><td class="cmp-rank-l">6ヶ月+</td><td class="cmp-rank-l">12ヶ月+</td><td class="cmp-rank-h">即日</td></tr>
+<tr><td>月額コスト（30人想定）</td><td class="col-us cmp-rank-h">¥0〜10万</td><td class="cmp-rank-m">¥45,000</td><td class="cmp-rank-m">¥48,000</td><td class="cmp-rank-l">¥30万〜</td><td class="cmp-rank-l">買切¥1500万+</td><td class="cmp-rank-m">¥75,000</td></tr>
+<tr><td>AI協働度</td><td class="col-us cmp-rank-h">★★★★★</td><td class="cmp-rank-l">★</td><td class="cmp-rank-m">★★</td><td class="cmp-rank-m">★★</td><td class="cmp-rank-l">★</td><td class="cmp-rank-h">★★★★</td></tr>
+<tr><td>人件費削減力</td><td class="col-us cmp-rank-h">2/3減</td><td class="cmp-rank-m">10〜20%減</td><td class="cmp-rank-l">5〜10%減</td><td class="cmp-rank-m">15〜25%減</td><td class="cmp-rank-m">業務次第</td><td class="cmp-rank-m">10〜20%減</td></tr>
+<tr><td>オーナー主導性</td><td class="col-us cmp-rank-h">100%</td><td class="cmp-rank-m">50%</td><td class="cmp-rank-m">60%</td><td class="cmp-rank-l">10%</td><td class="cmp-rank-l">5%</td><td class="cmp-rank-h">90%</td></tr>
+<tr><td>業務全体カバー</td><td class="col-us cmp-rank-h">★★★★★</td><td class="cmp-rank-m">★★★</td><td class="cmp-rank-m">★★★</td><td class="cmp-rank-h">★★★★</td><td class="cmp-rank-h">★★★★</td><td class="cmp-rank-l">★★</td></tr>
+<tr><td>属人化解消</td><td class="col-us cmp-rank-h">★★★★★</td><td class="cmp-rank-m">★★★</td><td class="cmp-rank-m">★★</td><td class="cmp-rank-h">★★★★</td><td class="cmp-rank-h">★★★★</td><td class="cmp-rank-l">★</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== STP ===== -->
+<div class="section">
+<h2 class="section-title">🎯 STP｜Segmentation × Targeting × Positioning</h2>
+<div class="stp-grid">
+
+<div class="stp-card stp-s">
+<h3>S｜Segmentation</h3>
+<div class="stp-sub">市場の切り分け（属性 × 課題）</div>
+<ul>
+<li><b>業種</b>：教育/コンサル/士業/治療院/サロン/制作会社/スタートアップ</li>
+<li><b>規模</b>：従業員5〜50名／月人件費300〜1000万円</li>
+<li><b>意思決定</b>：オーナー型（社長＝決裁者＝現場）</li>
+<li><b>IT成熟度</b>：SaaSは導入したが活用しきれていない／Excel・Sheets多用／属人化が深刻</li>
+<li><b>AI活用</b>：ChatGPT契約済だが業務に組み込めていない</li>
+<li><b>過去経験</b>：受託開発で痛い目／kintone挫折／高額コンサル疲れ</li>
+<li><b>感情</b>：「人を増やしたくない」「AIで何とかしたい」「でも何から手を付けるか分からない」</li>
+</ul>
+</div>
+
+<div class="stp-card stp-t">
+<h3>T｜Targeting</h3>
+<div class="stp-sub">狙う第一ターゲット（最初の100社）</div>
+<ul>
+<li>🎯 <b>人件費 月300〜500万円</b>のオーナー企業</li>
+<li>🎯 <b>「AIで業務を変えたい」</b>と本気で言ってる経営者</li>
+<li>🎯 <b>Claude Codeを触れる or 触れる人材1名以上</b>を確保できる</li>
+<li>🎯 <b>SaaSに月10万以上</b>払っているが効果実感が薄い</li>
+<li>🎯 <b>OGSM・KPIを言語化したい</b>と思ってる</li>
+<li>🎯 <b>属人化に危機感</b>（キーパーソン1人に依存）</li>
+<li>🎯 <b>柳井塾既存講座生</b>＋<b>奥村PJ・徳武JV経由</b>＋<b>片寄せ先生紹介</b></li>
+<li><b>除外</b>：大企業（決裁が遅い）／オーナーがITアレルギー／月人件費100万未満（ROI出ない）</li>
+</ul>
+</div>
+
+<div class="stp-card stp-p">
+<h3>P｜Positioning</h3>
+<div class="stp-sub">市場でのユニークな立ち位置</div>
+<ul>
+<li><b>カテゴリー</b>：「AI右腕化サービス」（新カテゴリー）</li>
+<li><b>1行</b>：オーナーがClaude Codeで業務全体をUI化し、人件費を3ヶ月で1/3にするメソッド</li>
+<li><b>SaaSとの違い</b>：汎用テンプレでなく、自社業務に100%フィット</li>
+<li><b>ノーコードとの違い</b>：単機能でなく、業務全体をHub化</li>
+<li><b>受託開発との違い</b>：1年・1500万円でなく、3ヶ月・月10万円</li>
+<li><b>AI単体との違い</b>：単発質問でなく、業務に深く根を張る</li>
+<li><b>コンサルとの違い</b>：助言でなく実装まで届く（Claude Codeが手を動かす）</li>
+<li><b>強烈な違い</b>：オーナー自身が育てる主導権を持つ</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- ===== ポジショニングステートメント ===== -->
+<div class="section">
+<h2 class="section-title">📝 ポジショニングステートメント（PS）</h2>
+
+<div class="ps-card">
+<div class="ps-label">▼ 公式PS（社外向け1枚）</div>
+<div class="ps-text">
+<b>人件費削減を本気で目指す、月人件費300〜1000万円のオーナー企業</b>にとって、<br>
+柳井塾の「<span class="keyword">AI右腕化メソッド</span>」は、<br>
+<b>SaaS（汎用すぎる）／ノーコード（単機能止まり）／受託開発（重く遅い）</b>と異なり、<br>
+<span class="keyword">Claude Code でオーナー自身が業務全体をUI化</span>し、<br>
+<span class="keyword">3ヶ月で人件費を1/3に圧縮</span>する実証済みメソッドである。<br>
+なぜなら、<b>柳井塾自身が月300万→100万を達成し、その全プロセスをテンプレ化</b>しているからだ。
+</div>
+</div>
+
+<div style="margin-top:18px;">
+<div class="ps-card" style="background:linear-gradient(135deg,#1e293b 0%,#3b0764 100%); border-color:#a855f7;">
+<div class="ps-label" style="color:#c084fc;">▼ 短縮版（広告/SNS用1行）</div>
+<div class="ps-text">
+SaaSでもなく、受託でもなく、AIでもない。<br>
+<b style="color:#fbbf24;">オーナーが Claude Code で業務全体をUI化する。</b><br>
+<span class="keyword">3ヶ月で人件費1/3。</span>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ===== 差別化要素3つ ===== -->
+<div class="section">
+<h2 class="section-title">⚡ コア差別化要素（PSの裏付け3点）</h2>
+<div class="diff-grid">
+<div class="diff-card">
+<h4>1️⃣ 自社実証（柳井塾が顧客第1号）</h4>
+<p>月人件費 300万 → 100万（▲66%）／3ヶ月で達成済み。<br>失敗パターン・成功パターンを全テンプレ化。<br>「やってみた」ではなく「やり切った」のメソッド。</p>
+</div>
+<div class="diff-card">
+<h4>2️⃣ オーナー主導（外注依存ゼロ）</h4>
+<p>受託開発・SIer・コンサルと違い、オーナー自身がClaude Codeで業務をUI化する。<br>主導権・進化スピード・コスト全てがオーナーに残る。</p>
+</div>
+<div class="diff-card">
+<h4>3️⃣ 業務全体カバー（部分最適禁止）</h4>
+<p>営業・経理・人事・SNS・PDCA・コンテンツ制作の全領域を統一デザインのHubでカバー。<br>SaaSの寄せ集め地獄から脱出。</p>
+</div>
+<div class="diff-card">
+<h4>4️⃣ OGSM必須化（数値で語る）</h4>
+<p>1PJ起票時に必ずOGSM 1ページ作成。<br>属人的判断・なんとなく改善を撲滅。<br>3ヶ月後の数値Before→Afterが必ず提示される。</p>
+</div>
+<div class="diff-card">
+<h4>5️⃣ メタプロセス標準化</h4>
+<p>「PJ進めながらUIを育てる」標準サイクル。<br>1PJ完了 = Hub1個誕生 = 翌PJのテンプレ。<br>導入が進むほど構築時間が76%短縮されていく。</p>
+</div>
+<div class="diff-card">
+<h4>6️⃣ AI×人の役割分離</h4>
+<p>Claude Code：実装・データ取込・レポート生成<br>オーナー：判断・優先順位・PDCA<br>スタッフ：例外対応・顧客接点。<br>AI不可能な業務だけ人間が残る設計。</p>
+</div>
+</div>
+</div>
+
+<!-- ===== 商品体系プレビュー ===== -->
+<div class="section">
+<h2 class="section-title">💰 想定プライシング（参考）</h2>
+<table class="cmp-table">
+<thead>
+<tr>
+<th>プラン</th>
+<th>対象</th>
+<th>初期費用</th>
+<th>月額</th>
+<th>納期</th>
+<th>成果コミット</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🥉 ライト</td><td>セルフ実装可能なオーナー</td><td>¥30万</td><td>¥5万</td><td>1ヶ月</td><td>OGSM 1Hub構築</td>
+</tr>
+<tr>
+<td class="col-us">🥈 スタンダード（本命）</td><td class="col-us">月人件費300〜500万企業</td><td class="col-us">¥100万</td><td class="col-us">¥15万</td><td class="col-us">3ヶ月</td><td class="col-us cmp-rank-h">人件費20〜30%減</td>
+</tr>
+<tr>
+<td>🥇 ゴールド</td><td>月人件費500〜1000万企業</td><td>¥300万</td><td>¥30万</td><td>6ヶ月</td><td>人件費1/3 / 8Hub完成</td>
+</tr>
+<tr>
+<td>💎 JV型</td><td>新規事業・成果報酬希望</td><td>¥0</td><td>¥0</td><td>6〜12ヶ月</td><td>成果から完全成果報酬</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== 個人事業主・フリーランス拡張 ===== -->
+<div class="section" style="border:2px solid #ec4899; background:linear-gradient(135deg,#1e293b 0%,#3b0764 100%);">
+<h2 class="section-title" style="color:#ec4899; border-left-color:#ec4899;">👤 拡張提案｜個人事業主・フリーランス版（v1.1）</h2>
+<p style="font-size:13px; color:#cbd5e1; line-height:1.8;">
+「人件費」がない一人プレイヤーには、<b style="color:#fbbf24;">"自分の時間"が最大コスト</b>。<br>
+法人版を簡易化して<b style="color:#34d399;">「時間取り戻し→売上倍増」</b>に翻訳すれば、TAM（市場規模）が10倍に拡大する。
+</p>
+
+<div class="diff-grid" style="margin-top:18px;">
+<div class="diff-card" style="border-left-color:#ec4899;">
+<h4 style="color:#ec4899;">🔁 軸の翻訳</h4>
+<p>
+<b>法人</b>：人件費削減（¥300→100万/月）<br>
+<b>個人</b>：作業時間削減（160h→40h/月）→ 浮いた120hを<b style="color:#fbbf24;">売上創出</b>に転用<br>
+→ 売上1.5〜3倍になる構造（時給単価アップ）
+</p>
+</div>
+<div class="diff-card" style="border-left-color:#ec4899;">
+<h4 style="color:#ec4899;">🎯 個人版の本質的価値</h4>
+<p>
+1人で全業務を回す = 完全な属人化＝<b style="color:#fbbf24;">外注時の引継ぎ困難</b>。<br>
+個人版Hubを作っておけば、将来法人化・スタッフ採用・外注時に<b style="color:#34d399;">そのまま渡せる資産</b>になる。<br>
+Hubは「未来の自分の右腕」への先行投資。
+</p>
+</div>
+<div class="diff-card" style="border-left-color:#ec4899;">
+<h4 style="color:#ec4899;">⚠️ 個人版の落とし穴と対策</h4>
+<p>
+<b>落とし穴</b>：3ヶ月続けられる人が少ない（自分以外の強制力がない）<br>
+<b>対策</b>：オンライングループコーチング型／週1チェックイン／コミュニティ運営／実装代行オプション併用
+</p>
+</div>
+</div>
+</div>
+
+<!-- 個人版STP -->
+<div class="section" style="border-left:4px solid #ec4899;">
+<h2 class="section-title" style="color:#ec4899; border-left-color:#ec4899;">🎯 個人版STP</h2>
+<div class="stp-grid">
+
+<div class="stp-card" style="border-top-color:#ec4899;">
+<h3 style="color:#f472b6;">S｜Segmentation（個人）</h3>
+<div class="stp-sub">市場の切り分け</div>
+<ul>
+<li><b>業種</b>：コーチ／コンサル／士業／治療家／講師／クリエイター／デザイナー／エンジニア／オンライン講座運営者／インフルエンサー</li>
+<li><b>規模</b>：年商300〜3000万円の一人事業</li>
+<li><b>労働時間</b>：週60〜80時間／作業に追われ商品開発が止まっている</li>
+<li><b>感情</b>：「外注したいが教えるのが面倒」「自分でやるのが速い病」「規模拡大したいが時間がない」</li>
+<li><b>ITリテラシー</b>：ChatGPT/NotionはOK／コーディング未経験〜中級</li>
+</ul>
+</div>
+
+<div class="stp-card" style="border-top-color:#ec4899;">
+<h3 style="color:#f472b6;">T｜Targeting（個人）</h3>
+<div class="stp-sub">狙う第一ターゲット</div>
+<ul>
+<li>🎯 <b>年商500〜2000万</b>のコーチ／コンサル／士業（柳井塾既存講座生＋柳井塾既存LP流入）</li>
+<li>🎯 <b>「自分の時間が足りない」</b>と週次で口にする一人事業主</li>
+<li>🎯 <b>SNS運用・コンテンツ制作・顧客対応</b>に時間を取られている</li>
+<li>🎯 <b>近い将来スタッフ採用・法人化</b>を視野に入れている</li>
+<li>🎯 <b>ChatGPT月¥3,000は払えるが、毎月¥15万は無理</b>な層</li>
+<li><b>除外</b>：年商300万未満（投資余力なし）／IT完全アレルギー／既にスタッフ3名以上（→法人版へ）</li>
+</ul>
+</div>
+
+<div class="stp-card" style="border-top-color:#ec4899;">
+<h3 style="color:#f472b6;">P｜Positioning（個人）</h3>
+<div class="stp-sub">市場でのユニークな立ち位置</div>
+<ul>
+<li><b>カテゴリー</b>：「未来の自分の右腕を、今日から育てる」</li>
+<li><b>1行</b>：一人事業主が Claude Code で作業時間を1/4にし、浮いた時間を売上創出に変えるメソッド</li>
+<li><b>ChatGPT個人との違い</b>：単発質問でなく、業務に根を張るHub化</li>
+<li><b>Notion個人との違い</b>：手動更新でなく、AI自動運用</li>
+<li><b>外注との違い</b>：教える時間ゼロ／知見が自分に蓄積</li>
+<li><b>強烈な違い</b>：今作るHub＝将来法人化時の資産になる「先行投資」</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- 個人版プライシング -->
+<div class="section" style="border-left:4px solid #ec4899;">
+<h2 class="section-title" style="color:#ec4899; border-left-color:#ec4899;">💰 個人版プライシング（4プラン）</h2>
+<table class="cmp-table">
+<thead>
+<tr>
+<th>プラン</th>
+<th>対象</th>
+<th>初期費用</th>
+<th>月額</th>
+<th>納期</th>
+<th>成果コミット</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>📚 セルフ学習</td><td>動画教材＋テンプレ</td><td>¥0</td><td>¥3,980</td><td>自走</td><td>テンプレ集／月次新教材</td>
+</tr>
+<tr style="background:rgba(236,72,153,0.08);">
+<td>🌟 グループ<br>コーチング（本命）</td><td>年商500〜2000万一人事業</td><td>¥9.8万</td><td>¥9,800</td><td>3ヶ月</td><td class="cmp-rank-h">作業時間40%減<br>1Hub完成</td>
+</tr>
+<tr>
+<td>🤝 1:1コーチング</td><td>年商1000万+ 急成長中</td><td>¥30万</td><td>¥3万</td><td>3ヶ月</td><td>2Hub完成<br>個別レビュー週1</td>
+</tr>
+<tr>
+<td>🛠 実装代行付</td><td>時間ゼロのトップ層</td><td>¥80万</td><td>¥5万</td><td>2ヶ月</td><td>Hub完成お渡し<br>運用引継ぎ</td>
+</tr>
+</tbody>
+</table>
+
+<div style="margin-top:18px; padding:16px; background:rgba(16,185,129,0.1); border-radius:10px; border:1px solid #10b981;">
+<div style="font-size:13px; font-weight:700; color:#34d399; margin-bottom:8px;">💡 アップセル経路（LTV最大化）</div>
+<div style="font-size:13px; color:#cbd5e1; line-height:1.9;">
+セルフ学習（¥3,980/月） → グループ（¥9,800/月） → 1:1（¥3万/月） → スタッフ採用・法人化したら<b style="color:#fbbf24;">法人版スタンダード（¥15万/月）</b>へ自然移行<br>
+個人版で作ったHub資産はそのまま法人版に移行可能 → 解約抵抗が低く、アップセル抵抗もゼロ
+</div>
+</div>
+</div>
+
+<!-- 個人版を入れた市場規模試算 -->
+<div class="section" style="border-left:4px solid #ec4899;">
+<h2 class="section-title" style="color:#ec4899; border-left-color:#ec4899;">📈 個人版追加でTAMはどう変わるか</h2>
+<table class="cmp-table">
+<thead>
+<tr>
+<th>セグメント</th>
+<th>日本国内母集団</th>
+<th>初年度獲得想定</th>
+<th>平均ARPU(年)</th>
+<th>初年度ARR</th>
+<th>3年LTV</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><b>法人版</b>（オーナー企業）</td>
+<td>約120万社</td>
+<td>30社</td><td>¥280万</td><td>¥8,400万</td><td>¥2.5億</td>
+</tr>
+<tr style="background:rgba(236,72,153,0.08);">
+<td><b>個人版グループ</b>（追加）</td>
+<td>約350万人（個人事業主）</td>
+<td>200人</td><td>¥21万</td><td>¥4,200万</td><td>¥1.3億</td>
+</tr>
+<tr style="background:rgba(236,72,153,0.05);">
+<td><b>個人版セルフ</b>（追加）</td>
+<td>同上</td>
+<td>1,000人</td><td>¥4.8万</td><td>¥4,800万</td><td>¥1.2億</td>
+</tr>
+<tr style="background:rgba(251,191,36,0.15);">
+<td><b>合算（v1.1）</b></td>
+<td>—</td><td>1,230社/人</td><td>—</td><td class="cmp-rank-h">¥1.74億</td><td class="cmp-rank-h">¥5億</td>
+</tr>
+</tbody>
+</table>
+
+<div style="margin-top:18px; padding:16px; background:rgba(251,191,36,0.1); border-radius:10px; border:1px solid #fbbf24;">
+<div style="font-size:13px; font-weight:700; color:#fbbf24; margin-bottom:8px;">🎯 戦略的意義</div>
+<div style="font-size:13px; color:#cbd5e1; line-height:1.9;">
+1. <b>初年度ARR が約2倍</b>（¥8,400万 → ¥1.74億）<br>
+2. <b>個人版が法人版のリード源</b>になる（教育→グループ→1:1→法人化）<br>
+3. <b>柳井塾既存講座生がそのままターゲット</b>（販売チャネル既存）<br>
+4. <b>SNS拡散性</b>：個人事業主のほうがSNSで成果発信してくれる → マーケコスト圧縮<br>
+5. <b>SaaSライバル不在</b>：このゾーンを取る競合は実質ゼロ
+</div>
+</div>
+</div>
+
+<!-- 個人版PS -->
+<div class="section" style="border-left:4px solid #ec4899;">
+<h2 class="section-title" style="color:#ec4899; border-left-color:#ec4899;">📝 個人版ポジショニングステートメント</h2>
+
+<div class="ps-card" style="background:linear-gradient(135deg,#1e293b 0%,#831843 100%); border-color:#ec4899;">
+<div class="ps-label" style="color:#f472b6;">▼ 個人版PS（公式）</div>
+<div class="ps-text">
+<b>「自分の時間が足りない」一人事業主・フリーランス</b>にとって、<br>
+柳井塾の「<span class="keyword">AI右腕化メソッド・個人版</span>」は、<br>
+<b>ChatGPT個人（単発で終わる）／Notion個人（手動更新）／外注（教える時間が無い）</b>と異なり、<br>
+<span class="keyword">Claude Code で自分の業務全体をHub化</span>し、<br>
+<span class="keyword">3ヶ月で作業時間を40%減らし、浮いた時間を売上創出に変える</span>メソッドである。<br>
+今作ったHubは、<b>将来スタッフ採用・法人化したときに、そのまま"右腕の右腕"として渡せる資産</b>になる。
+</div>
+</div>
+
+<div style="margin-top:14px;">
+<div class="ps-card" style="background:linear-gradient(135deg,#1e293b 0%,#3b0764 100%); border-color:#a855f7;">
+<div class="ps-label" style="color:#c084fc;">▼ 短縮版（SNS用1行）</div>
+<div class="ps-text">
+ChatGPTを業務に組み込めない人へ。<br>
+<b style="color:#fbbf24;">未来の自分の右腕を、今日から Claude Code で育てよう。</b><br>
+<span class="keyword">月¥9,800で、作業時間を半分に。</span>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 法人vs個人 比較 -->
+<div class="section" style="border-left:4px solid #ec4899;">
+<h2 class="section-title" style="color:#ec4899; border-left-color:#ec4899;">⚖️ 法人版 vs 個人版 比較サマリー</h2>
+<table class="cmp-table">
+<thead>
+<tr>
+<th>比較項目</th>
+<th>🏢 法人版（v1.0）</th>
+<th>👤 個人版（v1.1 追加）</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>主要KPI</td><td>人件費削減（300万→100万）</td><td>作業時間削減（160h→40h）→売上倍増</td></tr>
+<tr><td>主要ベネフィット</td><td>固定費圧縮</td><td>時間自由＋将来資産</td></tr>
+<tr><td>本命プラン月額</td><td>¥15万（スタンダード）</td><td>¥9,800（グループ）</td></tr>
+<tr><td>初期費用</td><td>¥100万</td><td>¥9.8万</td></tr>
+<tr><td>納期</td><td>3ヶ月</td><td>3ヶ月</td></tr>
+<tr><td>提供形式</td><td>専属コンサル＋実装伴走</td><td>グループコーチング＋テンプレ</td></tr>
+<tr><td>Hub数</td><td>8Hub完成</td><td>1〜2Hub完成</td></tr>
+<tr><td>既存ライバル</td><td>kintone/Salesforce/受託</td><td>ChatGPT/Notion/外注</td></tr>
+<tr><td>初年度獲得目標</td><td>30社</td><td>1,200人</td></tr>
+<tr><td>3年LTV</td><td>¥2.5億</td><td>¥2.5億（合算）</td></tr>
+<tr style="background:rgba(251,191,36,0.08);"><td>戦略上の位置</td><td>収益柱</td><td class="cmp-rank-h">リード源＋拡散源＋ボリューム</td></tr>
+</tbody>
+</table>
+</div>
+
+<div style="text-align:center; padding:24px; color:#64748b; font-size:12px;">
+🎯 柳井塾 右腕化メソッド 商品化ポジショニング v1.1（個人版拡張） ｜ 起票 2026-05-02 ｜ 法人＋個人で初年度ARR ¥1.74億・3年LTV ¥5億想定
+</div>
+
+</div>
+</body>
+</html>

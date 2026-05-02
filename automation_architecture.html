@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>🏗 柳井塾 自動化アーキテクチャ 10の塊｜v1.0</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; background:#0a0e1a; color:#e2e8f0; padding:24px; line-height:1.6; }
+.container { max-width:1500px; margin:0 auto; }
+
+.hero { background:linear-gradient(135deg,#0c4a6e 0%,#1e293b 50%,#3b0764 100%); padding:32px 40px; border-radius:18px; margin-bottom:24px; border:1px solid #06b6d4; }
+.hero h1 { font-size:28px; font-weight:800; background:linear-gradient(90deg,#fbbf24,#06b6d4,#a855f7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px; }
+.hero .v { font-size:13px; color:#94a3b8; margin-bottom:14px; }
+.hero .lead { font-size:14px; color:#cbd5e1; line-height:1.7; }
+
+.section { background:#1e293b; padding:28px 32px; border-radius:14px; margin-bottom:22px; border:1px solid #334155; }
+.section-title { font-size:22px; font-weight:800; margin-bottom:18px; padding-left:12px; border-left:4px solid #fbbf24; color:#fbbf24; }
+
+/* レイヤー構造図 */
+.layer-stack { display:flex; flex-direction:column; gap:12px; margin-top:16px; }
+.layer-row { display:grid; grid-template-columns:120px 1fr; gap:14px; align-items:stretch; }
+.layer-label { background:#0f172a; border-radius:10px; padding:14px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; border-left:4px solid; }
+.layer-label .l-num { font-size:11px; color:#94a3b8; font-weight:700; }
+.layer-label .l-name { font-size:13px; color:white; font-weight:700; margin-top:4px; }
+.l1 { border-left-color:#fbbf24; }
+.l2 { border-left-color:#06b6d4; }
+.l3 { border-left-color:#ec4899; }
+.l4 { border-left-color:#10b981; }
+.l5 { border-left-color:#a855f7; }
+.l6 { border-left-color:#22d3ee; }
+
+.blocks-row { display:grid; gap:10px; }
+.blocks-1 { grid-template-columns:1fr; }
+.blocks-2 { grid-template-columns:1fr 1fr; }
+.blocks-3 { grid-template-columns:1fr 1fr 1fr; }
+
+.block { background:#0f172a; padding:16px; border-radius:10px; border-top:3px solid; transition:all 0.2s; cursor:pointer; }
+.block:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.4); }
+.block-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.block-name { font-size:14px; font-weight:700; color:white; }
+.block-num { font-size:11px; color:#94a3b8; background:#1e293b; padding:2px 8px; border-radius:6px; }
+.block-role { font-size:11px; color:#94a3b8; margin-bottom:8px; font-style:italic; }
+.block-items { font-size:11px; color:#cbd5e1; line-height:1.6; }
+
+.b-cmd { border-top-color:#fbbf24; }
+.b-store { border-top-color:#06b6d4; }
+.b-comm { border-top-color:#0ea5e9; }
+.b-gen { border-top-color:#ec4899; }
+.b-mkt { border-top-color:#10b981; }
+.b-deliver { border-top-color:#34d399; }
+.b-measure { border-top-color:#22d3ee; }
+.b-auth { border-top-color:#a855f7; }
+.b-auto { border-top-color:#7c3aed; }
+.b-dev { border-top-color:#64748b; }
+.b-ui { border-top-color:#fbbf24; background:linear-gradient(135deg,#0f172a 0%,#3b0764 100%); }
+
+/* データフロー図 */
+.flow-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-top:14px; }
+.flow-step { padding:14px 10px; background:#0f172a; border-radius:8px; border-top:3px solid #06b6d4; text-align:center; position:relative; }
+.flow-step::after { content:'→'; position:absolute; right:-12px; top:50%; transform:translateY(-50%); color:#06b6d4; font-size:20px; font-weight:bold; z-index:10; }
+.flow-step:last-child::after { display:none; }
+.flow-num { font-size:10px; color:#22d3ee; font-weight:700; }
+.flow-name { font-size:12px; font-weight:700; color:white; margin:4px 0; }
+.flow-desc { font-size:10px; color:#94a3b8; line-height:1.4; }
+
+/* テーブル */
+.tbl { width:100%; border-collapse:collapse; margin-top:14px; font-size:13px; }
+.tbl th { background:#0f172a; padding:12px 14px; text-align:left; color:#94a3b8; font-weight:600; border-bottom:1px solid #334155; }
+.tbl td { padding:12px 14px; border-bottom:1px solid #1e293b; vertical-align:top; }
+
+.cta-bar { display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; }
+.cta-btn { padding:8px 14px; border-radius:8px; background:#334155; color:white; text-decoration:none; font-size:12px; font-weight:600; }
+.cta-btn.primary { background:linear-gradient(90deg,#06b6d4,#0ea5e9); }
+
+.kpi-row { display:grid; grid-template-columns:repeat(5,1fr); gap:12px; margin-bottom:24px; }
+.kpi-mini { background:#1e293b; padding:16px; border-radius:10px; border:1px solid #334155; text-align:center; }
+.kpi-mini-label { font-size:10px; color:#94a3b8; margin-bottom:4px; }
+.kpi-mini-value { font-size:22px; font-weight:800; }
+.kpi-mini-value.cyan { background:linear-gradient(90deg,#06b6d4,#0ea5e9); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi-mini-value.gold { background:linear-gradient(90deg,#fbbf24,#f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi-mini-value.purple { background:linear-gradient(90deg,#a855f7,#7c3aed); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi-mini-value.green { background:linear-gradient(90deg,#10b981,#059669); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi-mini-value.pink { background:linear-gradient(90deg,#ec4899,#f472b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="hero">
+<h1>🏗 柳井塾 自動化アーキテクチャ｜10の塊 v1.0</h1>
+<div class="v">UI開発プロジェクトの土台となる全体構造マップ｜2026-05-02 起票</div>
+<div class="lead">
+柳井塾の自動化を支える<b style="color:#fbbf24;">10の塊</b>を6階層で整理。<br>
+<b style="color:#34d399;">司令塔（Claude Code）→ 倉庫＆通信 → 生成 → マーケ・配信・計測 → 基盤 → UI</b> の流れで全体が動く。<br>
+これがUI（11Hub）が「どこから何のデータを取って何をしているか」の答え。
+</div>
+<div class="cta-bar">
+<a class="cta-btn primary" href="ui_dev_ogsm.html">🎯 マスターOGSM v1.3</a>
+<a class="cta-btn" href="master_pj_dashboard.html">🗺 全PJ俯瞰</a>
+<a class="cta-btn" href="positioning.html">📍 ポジショニング</a>
+<a class="cta-btn" href="funnel_hub.html">🚀 ファネルHub</a>
+</div>
+</div>
+
+<div class="kpi-row">
+<div class="kpi-mini"><div class="kpi-mini-label">塊の数</div><div class="kpi-mini-value cyan">10</div></div>
+<div class="kpi-mini"><div class="kpi-mini-label">階層</div><div class="kpi-mini-value gold">6</div></div>
+<div class="kpi-mini"><div class="kpi-mini-label">UIで束ねる</div><div class="kpi-mini-value purple">11 Hub</div></div>
+<div class="kpi-mini"><div class="kpi-mini-label">外部APIサービス</div><div class="kpi-mini-value green">15+</div></div>
+<div class="kpi-mini"><div class="kpi-mini-label">スキル統合</div><div class="kpi-mini-value pink">60+</div></div>
+</div>
+
+<!-- ===== レイヤー構造図 ===== -->
+<div class="section">
+<h2 class="section-title">🏗 6階層 × 10塊 アーキテクチャ図</h2>
+<p style="font-size:13px; color:#94a3b8;">下から上へ：基盤→倉庫→生成→市場接点→UI／全レイヤーが噛み合って初めて1サイクル回る。</p>
+
+<div class="layer-stack">
+
+<!-- L6 UI -->
+<div class="layer-row">
+<div class="layer-label l6">
+<div class="l-num">L6 出力</div>
+<div class="l-name">🎯 UI</div>
+</div>
+<div class="blocks-row blocks-1">
+<div class="block b-ui">
+<div class="block-head"><div class="block-name">⭐ 11 Hub（柳井さん／スタッフ／顧客が見る画面）</div><div class="block-num">UI</div></div>
+<div class="block-role">人間が「見て・判断・操作」するインターフェース層</div>
+<div class="block-items">★1 動画LP制作Hub ／ ★2 数値管理 ／ ★3 経理人事 ／ ★4 PDCA定例 ／ ★5 スポーク統合 ／ ★6 SNS自動投稿 ／ ★7 プロデュース ／ ★8 全PJ俯瞰 ／ ★9 ファネル自動構築 ／ ★10 社長クローン ／ ★11 自己育て直しコーチング</div>
+</div>
+</div>
+</div>
+
+<!-- L5 マーケ・配信・計測 -->
+<div class="layer-row">
+<div class="layer-label l5">
+<div class="l-num">L5 顧客接点</div>
+<div class="l-name">マーケ・配信・計測</div>
+</div>
+<div class="blocks-row blocks-3">
+<div class="block b-mkt">
+<div class="block-head"><div class="block-name">🛒 マーケ・販売</div><div class="block-num">⑥</div></div>
+<div class="block-role">顧客接点（出口）</div>
+<div class="block-items"><b>UTAGE</b>（LP/メルマガ/会員/決済）<br><b>Meta広告</b>（FB/IG）<br><b>YouTube</b>（動画コンテンツ）<br><b>Threads/IG/X/Facebook</b>（SNS発信）<br><b>LINE公式</b>（顧客直接接点）</div>
+</div>
+<div class="block b-deliver">
+<div class="block-head"><div class="block-name">🎓 講座・コンテンツ配信</div><div class="block-num">⑦</div></div>
+<div class="block-role">受講生に届ける</div>
+<div class="block-items"><b>講座プラットフォーム</b>（自社）<br><b>スライド・教科書</b>（Drive内）<br><b>動画コンテンツ</b>（Drive・YouTube非公開）<br><b>NotebookLM</b>（学習補助AI）</div>
+</div>
+<div class="block b-measure">
+<div class="block-head"><div class="block-name">📊 計測・分析</div><div class="block-num">⑤</div></div>
+<div class="block-role">数字を取る（入口）</div>
+<div class="block-items"><b>数値管理シート</b>（Sheets）<br><b>YouTube Analytics API</b><br><b>Meta広告マネージャー API</b><br><b>Instagram Insights / LINE Analytics</b><br><b>UTAGE分析 / Google Analytics</b></div>
+</div>
+</div>
+</div>
+
+<!-- L4 生成 -->
+<div class="layer-row">
+<div class="layer-label l3">
+<div class="l-num">L4 制作</div>
+<div class="l-name">AI生成</div>
+</div>
+<div class="blocks-row blocks-1">
+<div class="block b-gen">
+<div class="block-head"><div class="block-name">🎨 AI生成エンジン群（コンテンツを生む）</div><div class="block-num">④</div></div>
+<div class="block-role">テキスト・画像・動画・音声・コードの全生成</div>
+<div class="block-items"><b>Claude</b>（思考・テキスト・コード・LP・台本）／<b>Gemini</b>（画像・日本語テキスト一体／顧客向けは gemini-3-pro-image-preview）／<b>HeyGen</b>（アバター動画）／<b>ElevenLabs</b>（多言語音声）／<b>Cloud TTS Chirp3-HD-Sulafat</b>（日本語ナレーション標準）／<b>Whisper</b>（文字起こし）／<b>Remotion・FFmpeg</b>（動画合成・編集）</div>
+</div>
+</div>
+</div>
+
+<!-- L3 倉庫＆通信 -->
+<div class="layer-row">
+<div class="layer-label l2">
+<div class="l-num">L3 流通</div>
+<div class="l-name">倉庫＆通信</div>
+</div>
+<div class="blocks-row blocks-2">
+<div class="block b-store">
+<div class="block-head"><div class="block-name">📂 情報倉庫（DB）</div><div class="block-num">②</div></div>
+<div class="block-role">構造化データの格納場所</div>
+<div class="block-items"><b>Google Drive</b>（ファイル倉庫）<br><b>Google Sheets</b>（マスターシート群＝構造化DB）<br><b>Google Docs</b>（議事録・台本・資料）<br><b>ローカルファイル</b>（/tmp、~/yanai_juku/、~/.claude/memory/）</div>
+</div>
+<div class="block b-comm">
+<div class="block-head"><div class="block-name">💬 コミュニケーション</div><div class="block-num">③</div></div>
+<div class="block-role">人と人を繋ぐチャンネル</div>
+<div class="block-items"><b>ChatWork</b>（社内・本命・スタッフ全員）<br><b>LINE</b>（顧客接点・本命）<br><b>Zoom</b>（会議・コーチング・セミナー）<br><b>Email</b>（外部接点・契約系）</div>
+</div>
+</div>
+</div>
+
+<!-- L2 司令塔 -->
+<div class="layer-row">
+<div class="layer-label l1">
+<div class="l-num">L2 思考</div>
+<div class="l-name">司令塔</div>
+</div>
+<div class="blocks-row blocks-1">
+<div class="block b-cmd">
+<div class="block-head"><div class="block-name">🧠 Claude Code（司令塔・実装エンジン）</div><div class="block-num">①</div></div>
+<div class="block-role">全ての判断・実装・調整の中枢</div>
+<div class="block-items"><b>Claude本体</b>（Opus 4.7・1Mコンテキスト）／<b>60+スキル</b>（特化機能・kamishibai-design / video-lp-scenario etc.）／<b>メモリシステム</b>（柳井さん固有知・100+md）／<b>hooks</b>（自動承認・違反検知・visual-task-gate等）／<b>★10 社長クローン</b>（裏側で動く判断補助エンジン）</div>
+</div>
+</div>
+</div>
+
+<!-- L1 基盤 -->
+<div class="layer-row">
+<div class="layer-label l4">
+<div class="l-num">L1 基盤</div>
+<div class="l-name">基盤・運用</div>
+</div>
+<div class="blocks-row blocks-3">
+<div class="block b-auth">
+<div class="block-head"><div class="block-name">🔐 認証・セキュリティ</div><div class="block-num">⑧</div></div>
+<div class="block-role">全システムの通行証</div>
+<div class="block-items"><b>macOS Keychain</b>（APIキー全保管）<br><b>Google OAuth Token</b>（Drive/Sheets/Docs/Gmail）<br><b>ChatWork API Token</b><br><b>各種APIキー</b>（HeyGen/ElevenLabs/Gemini/Anthropic）<br><b>~/bin/claude-launch.sh</b> 経由起動</div>
+</div>
+<div class="block b-auto">
+<div class="block-head"><div class="block-name">🤖 自動化エンジン</div><div class="block-num">⑨</div></div>
+<div class="block-role">定時・自動実行</div>
+<div class="block-items"><b>launchd / cron</b>（macOS標準スケジューラ）<br><b>Claude Code hooks</b>（自動承認・違反検知）<br><b>/loop /schedule</b>（再帰実行）<br><b>定期スクリプト群</b>（売上集計・PDCAレポ）<br><b>shadow-approver</b>（自動承認エージェント）</div>
+</div>
+<div class="block b-dev">
+<div class="block-head"><div class="block-name">🛠 開発・運用環境</div><div class="block-num">⑩</div></div>
+<div class="block-role">全ての土台</div>
+<div class="block-items"><b>Macローカル</b>（このマシン・M4）<br><b>ターミナル</b>（zsh）<br><b>Cursor / VS Code</b>（IDE）<br><b>Python / Node.js</b>環境<br><b>git</b>（バージョン管理）</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ===== データフロー図 ===== -->
+<div class="section">
+<h2 class="section-title">🔄 データフロー（5ステップで1サイクル）</h2>
+<p style="font-size:13px; color:#94a3b8;">「誰が何を取って何を出すか」の標準サイクル。全Hubが共通でこの流れに従う。</p>
+
+<div class="flow-grid">
+<div class="flow-step">
+<div class="flow-num">STEP 1</div>
+<div class="flow-name">📊 データ収集</div>
+<div class="flow-desc">YouTube/Meta/IG/LINE/UTAGE API から日次取込→Sheets格納</div>
+</div>
+<div class="flow-step">
+<div class="flow-num">STEP 2</div>
+<div class="flow-name">📂 倉庫格納</div>
+<div class="flow-desc">Google Drive/Sheetsに構造化／ローカルmemoryにも反映</div>
+</div>
+<div class="flow-step">
+<div class="flow-num">STEP 3</div>
+<div class="flow-name">🧠 Claude判断</div>
+<div class="flow-desc">司令塔がスキル＋メモリ＋クローン参照→次アクション決定</div>
+</div>
+<div class="flow-step">
+<div class="flow-num">STEP 4</div>
+<div class="flow-name">🎨 制作・配信</div>
+<div class="flow-desc">AI生成エンジン群で出力→マーケ/配信レイヤーへ</div>
+</div>
+<div class="flow-step">
+<div class="flow-num">STEP 5</div>
+<div class="flow-name">🎯 UI可視化</div>
+<div class="flow-desc">Hub画面で人間が確認→💬 ChatWork で承認/指示→STEP 1へ</div>
+</div>
+</div>
+</div>
+
+<!-- ===== Hub別データソース紐付け ===== -->
+<div class="section">
+<h2 class="section-title">🔗 11 Hub × データソース紐付けマップ</h2>
+<p style="font-size:13px; color:#94a3b8;">各Hubが「どの塊からデータ取って・どこに出すか」の対応表。</p>
+
+<table class="tbl">
+<thead>
+<tr>
+<th style="width:60px;">Hub</th>
+<th>名前</th>
+<th>データ入力元</th>
+<th>処理エンジン</th>
+<th>出力先</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>★1</td><td>動画LP制作</td><td>Drive/Sheets（赤間ベンチ）／YouTube API</td><td>Claude＋video-lp-scenario他10スキル</td><td>Drive動画／YouTube／LP（UTAGE）</td></tr>
+<tr><td>★2</td><td>数値管理シート</td><td>YouTube/Meta/IG/LINE/UTAGE API群</td><td>Claude＋kpi-improvement</td><td>Sheets統合DB／PDCA Hub</td></tr>
+<tr><td>★3</td><td>経理・人事</td><td>会計ソフト／給与／PJ別売上Sheets</td><td>Claude＋スポーク3スキル群</td><td>経理レポート／人件費ダッシュ</td></tr>
+<tr><td>★4</td><td>PDCA定例</td><td>ChatWorkメッセージ／会議Zoom録画</td><td>Claude＋post-meeting＋project-comms-pipeline</td><td>議事録（Docs）／タスク（ChatWork）</td></tr>
+<tr><td>★5</td><td>スポーク統合</td><td>マスターシート群（スポーク1〜3）</td><td>Claude＋全スポークスキル</td><td>講座生コーチへの指示／ChatWork</td></tr>
+<tr><td>★6</td><td>SNS自動投稿</td><td>過去投稿ログ／競合観察／Threads/IG API</td><td>Claude＋Gemini＋sns-post-creator</td><td>Threads/IG/X/Facebook自動投稿</td></tr>
+<tr><td>★7</td><td>プロデュース統合</td><td>各クライアントPJシート／ChatWork DM</td><td>Claude＋send-staff</td><td>クライアント別レポ／ChatWork</td></tr>
+<tr><td>★8</td><td>全PJ俯瞰</td><td>全Hub出力／全マスターシート</td><td>Claude（メタHub）</td><td>経営判断ダッシュボード／撤退/投資レポ</td></tr>
+<tr><td>★9</td><td>🚀ファネル自動構築</td><td>商品コンセプトシート（OGSM入力）</td><td>Claude＋10+スキル一気通貫</td><td>SNS広告／LP／LINE 14通／セミナー／成約フロー</td></tr>
+<tr><td>★10</td><td>👤社長クローン</td><td>柳井さん音声／インタビュー／公開発信／判断ログ</td><td>Claude＋メモリシステム</td><td>全Hubの裏側で「社長判断」を提供</td></tr>
+<tr><td>★11</td><td>🌱自己育て直しコーチング</td><td>講座生プロフィール／週次セッション記録</td><td>Claude＋kamishibai＋copy-connotation-auditor</td><td>講座生個別コーチングレポ</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== 抜けがちな塊チェック ===== -->
+<div class="section">
+<h2 class="section-title">🔍 抜けがちな塊（チェックリスト）</h2>
+<p style="font-size:13px; color:#94a3b8;">よく見落とされる塊。今後追加の検討要否はここから判断。</p>
+
+<table class="tbl">
+<thead><tr><th style="width:200px;">候補塊</th><th>検討</th><th>判断</th></tr></thead>
+<tbody>
+<tr><td>📞 電話・SMS</td><td>顧客接点として必要か</td><td>現状不要（LINE＋Zoomで代替）</td></tr>
+<tr><td>🗄 RDB（PostgreSQL等）</td><td>本格DB必要か</td><td>現状不要（Sheets＝事実上のDBで十分）</td></tr>
+<tr><td>☁️ 外部クラウド（AWS/GCP）</td><td>サーバ必要か</td><td>★9販売時に検討（surge.sh / Vercel等で代替可）</td></tr>
+<tr><td>🔔 監視・アラート</td><td>システム障害検知</td><td>v1.1で hook通知＋ChatWork投稿で実装可</td></tr>
+<tr><td>🤝 CRM / SFA</td><td>顧客管理</td><td>UTAGE＋ChatWorkで代替（追加導入はROIで判断）</td></tr>
+<tr><td>📅 カレンダー</td><td>スケジュール管理</td><td>Google Calendar API連動可（必要時）</td></tr>
+<tr><td>🎙 音声配信（Voicy/Spotify）</td><td>新接点</td><td>v1.2以降（YouTube音声で代替中）</td></tr>
+<tr><td>🌐 Webサイト本体</td><td>会社HP</td><td>UTAGEで代替中（追加検討余地）</td></tr>
+</tbody>
+</table>
+
+<div style="margin-top:18px; padding:16px; background:rgba(16,185,129,0.1); border:1px solid #10b981; border-radius:10px;">
+<div style="font-size:13px; color:#34d399; font-weight:700; margin-bottom:6px;">💡 結論</div>
+<div style="font-size:12px; color:#cbd5e1; line-height:1.8;">
+<b>10塊で現時点の必要十分セット。</b>追加候補8塊は「必要になった時点で追加判断」でOK。<br>
+このアーキテクチャ図をベースに、各Hubが「どこから何を取って何をする」かが完全に説明可能。
+</div>
+</div>
+</div>
+
+<div style="text-align:center; padding:24px; color:#64748b; font-size:12px;">
+🏗 柳井塾 自動化アーキテクチャ 10の塊 v1.0 ｜ 2026-05-02 起票 ｜ UI開発プロジェクトv1.3 と統合
+</div>
+
+</div>
+</body>
+</html>

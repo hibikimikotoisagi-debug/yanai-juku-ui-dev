@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>🎯 全PJ UI化候補マスター｜柳井塾 自動化マスタープラン</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; background:#0a0e1a; color:#e2e8f0; padding:24px; }
+.container { max-width:1700px; margin:0 auto; }
+.header { background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%); padding:28px 32px; border-radius:16px; margin-bottom:24px; border:1px solid #334155; }
+h1 { font-size:24px; font-weight:800; background:linear-gradient(90deg,#fbbf24,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.subtitle { color:#94a3b8; margin-top:6px; font-size:13px; }
+
+.section-title { font-size:18px; font-weight:700; margin:30px 0 14px; color:#22d3ee; padding-left:10px; border-left:3px solid #06b6d4; }
+
+/* PJカード */
+.pj-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+.pj-card { background:#1e293b; padding:20px; border-radius:12px; border:1px solid #334155; transition:all 0.2s; cursor:pointer; }
+.pj-card:hover { border-color:#06b6d4; transform:translateY(-2px); }
+.pj-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+.pj-name { font-size:15px; font-weight:700; color:white; }
+.pj-pri { font-size:10px; padding:3px 8px; border-radius:10px; font-weight:600; }
+.pri-1 { background:linear-gradient(90deg,#ef4444,#f97316); color:white; }
+.pri-2 { background:linear-gradient(90deg,#fbbf24,#f59e0b); color:#000; }
+.pri-3 { background:#334155; color:#cbd5e1; }
+.pri-now { background:linear-gradient(90deg,#10b981,#059669); color:white; }
+
+.pj-body { font-size:11px; color:#94a3b8; line-height:1.6; margin-bottom:10px; }
+.pj-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:10px; }
+.pj-stat { padding:6px 8px; background:#0f172a; border-radius:6px; font-size:10px; }
+.pj-stat-label { color:#64748b; }
+.pj-stat-value { font-weight:700; color:white; margin-top:2px; }
+
+.pj-footer { display:flex; gap:6px; margin-top:10px; flex-wrap:wrap; }
+.tag { font-size:9px; padding:2px 7px; border-radius:4px; font-weight:600; }
+.tag-roi-h { background:rgba(16,185,129,0.2); color:#34d399; }
+.tag-roi-m { background:rgba(251,191,36,0.2); color:#fbbf24; }
+.tag-roi-l { background:rgba(100,116,139,0.2); color:#94a3b8; }
+.tag-data { background:rgba(6,182,212,0.2); color:#22d3ee; }
+
+/* メタプロセス */
+.meta-flow { display:grid; grid-template-columns:repeat(6,1fr); gap:6px; margin-top:14px; }
+.meta-step { padding:14px 10px; background:#1e293b; border-radius:8px; border-top:3px solid #fbbf24; text-align:center; position:relative; }
+.meta-step::after { content:'→'; position:absolute; right:-12px; top:50%; transform:translateY(-50%); color:#fbbf24; font-size:18px; font-weight:bold; }
+.meta-step:last-child::after { display:none; }
+.meta-step-num { font-size:11px; color:#64748b; }
+.meta-step-name { font-size:12px; font-weight:700; color:white; margin:6px 0 4px; }
+.meta-step-desc { font-size:10px; color:#94a3b8; line-height:1.4; }
+
+/* 優先度マトリクス */
+.matrix { background:#1e293b; padding:24px; border-radius:12px; border:1px solid #334155; }
+.matrix-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px; }
+.matrix-cell { padding:14px; border-radius:10px; min-height:140px; }
+.matrix-cell h4 { font-size:12px; font-weight:700; margin-bottom:8px; }
+.matrix-cell ul { padding-left:18px; font-size:11px; line-height:1.7; }
+.cell-q1 { background:rgba(16,185,129,0.15); border:1px solid #10b981; }
+.cell-q2 { background:rgba(251,191,36,0.15); border:1px solid #fbbf24; }
+.cell-q3 { background:rgba(100,116,139,0.15); border:1px solid #64748b; }
+.cell-q4 { background:rgba(168,85,247,0.15); border:1px solid #a855f7; }
+
+.note { padding:14px 18px; background:rgba(6,182,212,0.1); border-left:3px solid #06b6d4; border-radius:6px; margin:14px 0; font-size:13px; line-height:1.7; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+<h1>🎯 全PJ UI化候補マスター｜柳井塾 自動化マスタープラン</h1>
+<div class="subtitle">「PJ進めながらUIを育てる」標準プロセスの起点。10PJ俯瞰／優先度マトリクス／メタプロセス v1.0</div>
+</div>
+
+<!-- メタプロセス -->
+<h2 class="section-title">📋 メタプロセス：仕事の自動化の進め方（標準サイクル）</h2>
+<div class="note">
+PJ着手と同時にUIを「副産物」として育てる。1PJ完了時にはダッシュボード1個が生まれる構造。<br>
+<b>原則</b>：UIを目的にせず、PJの判断・記録・共有手段として育てる。
+</div>
+<div class="meta-flow">
+<div class="meta-step">
+<div class="meta-step-num">STEP 1</div>
+<div class="meta-step-name">🎯 PJ目的・ゴール</div>
+<div class="meta-step-desc">OGSM風で文章Before→After＋数値Before→After</div>
+</div>
+<div class="meta-step">
+<div class="meta-step-num">STEP 2</div>
+<div class="meta-step-name">🗺 UI骨格設計</div>
+<div class="meta-step-desc">マインドマップで全体像／不足発見</div>
+</div>
+<div class="meta-step">
+<div class="meta-step-num">STEP 3</div>
+<div class="meta-step-name">📐 v0.1 ワイヤー</div>
+<div class="meta-step-desc">紙orHTMLで主要画面ラフ</div>
+</div>
+<div class="meta-step">
+<div class="meta-step-num">STEP 4</div>
+<div class="meta-step-name">🚀 v1.0 実装</div>
+<div class="meta-step-desc">PJのデータを流し込んで使い始める</div>
+</div>
+<div class="meta-step">
+<div class="meta-step-num">STEP 5</div>
+<div class="meta-step-name">🔁 PJ実行で改善</div>
+<div class="meta-step-desc">摩擦点発見→v1.1→v1.2…</div>
+</div>
+<div class="meta-step">
+<div class="meta-step-num">STEP 6</div>
+<div class="meta-step-name">🌐 マスター統合</div>
+<div class="meta-step-desc">全PJダッシュボードを1Hubで俯瞰</div>
+</div>
+</div>
+
+<!-- 優先度マトリクス -->
+<h2 class="section-title">📊 UI化優先度マトリクス（影響×着手しやすさ）</h2>
+<div class="matrix">
+<div class="matrix-grid">
+<div class="matrix-cell cell-q1">
+<h4 style="color:#34d399;">🥇 即着手（高影響×やりやすい）</h4>
+<ul>
+<li><b>動画LP制作Hub</b>（着手済 v1.0）</li>
+<li><b>数値管理シート自動化Hub</b>（次着手提案）</li>
+<li>スタッフPDCAダッシュボード</li>
+</ul>
+</div>
+<div class="matrix-cell cell-q2">
+<h4 style="color:#fbbf24;">🥈 高影響だが難度高</h4>
+<ul>
+<li>SNS投稿自動化Hub</li>
+<li>広告マネージャー統合Hub</li>
+<li>受講生コーチング進捗</li>
+</ul>
+</div>
+<div class="matrix-cell cell-q3">
+<h4 style="color:#94a3b8;">🥉 後回し（低影響）</h4>
+<ul>
+<li>経理・人事ダッシュボード</li>
+<li>JV案件管理</li>
+</ul>
+</div>
+</div>
+<div class="matrix-grid" style="grid-template-columns:1fr; margin-top:14px;">
+<div class="matrix-cell cell-q4">
+<h4 style="color:#c084fc;">🌐 マスター統合層（全PJを横断）</h4>
+<ul style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">
+<li>柳井塾 全PJ俯瞰ダッシュボード（本HTMLが起点）</li>
+<li>共通デザインシステム（ダーク×シアン×ゴールド）</li>
+<li>共通コンポーネント（KPIカード／ヒートマップ／OGSMカード）</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- 全PJリスト -->
+<h2 class="section-title">📋 UI化候補プロジェクト 10件</h2>
+<div class="pj-grid">
+
+<div class="pj-card">
+<div class="pj-header">
+<div class="pj-name">🎬 動画LP制作Hub</div>
+<div class="pj-pri pri-now">着手中 v1.0</div>
+</div>
+<div class="pj-body">8PJシナリオ統合管理／Gantt+伏線+採点+音源/9セクション。<br>柳井YT×Insta含む。</div>
+<div class="pj-stats">
+<div class="pj-stat"><div class="pj-stat-label">機能数</div><div class="pj-stat-value">79</div></div>
+<div class="pj-stat"><div class="pj-stat-label">完成度</div><div class="pj-stat-value">33%</div></div>
+<div class="pj-stat"><div class="pj-stat-label">3ヶ月ROI</div><div class="pj-stat-value">76%減</div></div>
+</div>
+<div class="pj-footer">
+<span class="tag tag-roi-h">ROI高</span>
+<span class="tag tag-data">Sheets/TTS/ChatWork</span>
+</div>
+</div>
+
+<div class="pj-card" style="border-color:#fbbf24;">
+<div class="pj-header">
+<div class="pj-name">📊 数値管理シート自動化Hub</div>
+<div class="pj-pri pri-1">優先1</div>
+</div>
+<div class="pj-body">全KPIをAPI連携で自動更新／ファネル可視化／異常値アラート／週次PDCA。<br>真実の唯一源（SSoT）化。</div>
+<div class="pj-stats">
+<div class="pj-stat"><div class="pj-stat-label">推定機能数</div><div class="pj-stat-value">~50</div></div>
+<div class="pj-stat"><div class="pj-stat-label">推定3ヶ月</div><div class="pj-stat-value">8h→1h</div></div>
+<div class="pj-stat"><div class="pj-stat-label">対象PJ数</div><div class="pj-stat-value">全PJ</div></div>
+</div>
+<div class="pj-footer">
+<span class="tag tag-roi-h">ROI高</span>
+<span class="tag tag-data">Meta広告/YT/IG/LINE/UTAGE</span>
+</div>
+</div>
+
+<div class="pj-card">
+<div class="pj-header">
+<div class="pj-name">📱 SNS投稿自動化Hub</div>
+<div class="pj-pri pri-2">優先2</div>
+</div>
+<div class="pj-body">投稿企画→Claude原案→画像生成→予約投稿→KPI回収。<br>Threads/Insta/Facebook/X統合。</div>
+<div class="pj-stats">
+<div class="pj-stat"><div class="pj-stat-label">推定機能数</div><div class="pj-stat-value">~40</div></div>
+<div class="pj-stat"><div class="pj-stat-label">推定削減</div><div class="pj-stat-value">投稿時間70%</div></div>
+<div class="pj-stat"><div class="pj-stat-label">対応SNS</div><div class="pj-stat-value">4媒体</div></div>
+</div>
+<div class="pj-footer">
+<span class="tag tag-roi-h">ROI高</span>
+<span class="tag tag-data">Threads/IG/FB/X</span>
+</div>
+</div>
+
+<div class="pj-card">
+<div class="pj-header">
+<div class="pj-name">🎯 集客KPIダッシュボード</div>
+<div class="pj-pri pri-2">優先2</div>
+</div>
+<div class="pj-body">広告→LP→セミナー→成約のファネル一貫表示。<br>各数値はSSoTから引用。</div>
+<div class="pj-stats">
+<div class="pj-stat"><div class="pj-stat-label">推定機能数</div><div class="pj-stat-value">~30</div></div>
+<div class="pj-stat"><div class="pj-stat-label">数値管理連携</div><div class="pj-stat-value">必須</div></div>
+<div class="pj-stat"><div class="pj-stat-label">対象PJ数</div><div class="pj-stat-value">全PJ</div></div>
+</div>
+<div class="pj-footer">
+<span class="tag tag-roi-h">ROI高</span>
+<span class="tag tag-data">数値管理シート連携</span>
+</div>
+</div>
+
+<div class="pj-card">
+<div class="pj-header">
+<div class="pj-name">👥 スタッフPDCAダッシュボード</div>
+<div class="pj-pri pri-1">優先1</div>
+</div>
+<div class="pj-body">スタッフ作業時間／タスク進捗／改善KPI／週次PDCA定例支援。<br>動画LP Hubの工数把握と統合。</div>
+<div class="pj-stats">
+<div class="pj-stat"><div class="pj-stat-label">推定機能数</div><div class="pj-stat-value">~35</div></div>
+<div class="pj-stat"><div class="pj-stat-label">対応スタッフ</div><div class="pj-stat-value">全6チーム</div></div>
+<div class="pj-stat"><div class="pj-stat-label">PDCA頻度</div><div class="pj-stat-value">週次</div></div>
+</div>
+<div class="pj-footer">
+<span class="tag tag-roi-h">ROI高</span>
+<span class="tag tag-data">ChatWork/タイムトラッキング</span>
+</div>
+</div>
+
+<div class="pj-card">
+<div class="pj-header">
+<div class="pj-name">🎓 受講生コーチング進捗Hub</div>
+<div class="pj-pri pri-2">優先2</div>
+</div>
+<div class="pj-body">受講生の動画視聴／ワーク提出／成果KPI。<br>Claude右腕化アカデミー対応。</div>
+<div class="pj-stats">
+<div class="pj-stat"><div class="pj-stat-label">推定機能数</div><div class="pj-stat-value">~30</div></div>
+<div class="pj-stat"><div class="pj-stat-label">受講生数</div><div class="pj-stat-value">数百人</div></div>
+<div class="pj-stat"><div class="pj-stat-label">対象</div><div class="pj-stat-value">右腕化アカ</div></div>
+</div>
+<div class="pj-footer">
+<span class="tag tag-roi-m">ROI中</span>
+<span class="tag tag-data">UTAGE/会員サイト</span>
+</div>
+</div>
+
+<div class="pj-card">
+<div class="pj-header">
+<div class="pj-name">💰 広告マネージャー統合Hub</div>
+<div class="pj-pri pri-2">優先2</div>
+</div>
+<div class="pj-body">Meta/Google広告のCPA・ROAS横断表示／クリエイティブ別比較。<br>数値管理と双方向同期。</div>
+<div class="pj-stats">
+<div class="pj-stat"><div class="pj-stat-label">推定機能数</div><div class="pj-stat-value">~40</div></div>
+<div class="pj-stat"><div class="pj-stat-label">API連携</div><div class="pj-stat-value">3社</div></div>
+<div class="pj-stat"><div class="pj-stat-label">技術難度</div><div class="pj-stat-value">高</div></div>
+</div>
+<div class="pj-footer">
+<span class="tag tag-roi-m">ROI中</span>
+<span class="tag tag-data">Meta広告/Google広告</span>
+</div>
+</div>
+
+<div class="pj-card">
+<div class="pj-header">
+<div class="pj-name">📅 ChatWork議事録→タスク化Hub</div>
+<div class="pj-pri pri-2">優先2</div>
+</div>
+<div class="pj-body">会議録→Claude要約→タスク自動振り分け→進捗追跡。</div>
+<div class="pj-stats">
+<div class="pj-stat"><div class="pj-stat-label">推定機能数</div><div class="pj-stat-value">~25</div></div>
+<div class="pj-stat"><div class="pj-stat-label">削減</div><div class="pj-stat-value">議事録2h→0</div></div>
+<div class="pj-stat"><div class="pj-stat-label">対応会議</div><div class="pj-stat-value">全PJ定例</div></div>
+</div>
+<div class="pj-footer">
+<span class="tag tag-roi-m">ROI中</span>
+<span class="tag tag-data">Zoom/ChatWork API</span>
+</div>
+</div>
+
+<div class="pj-card">
+<div class="pj-header">
+<div class="pj-name">🤝 JV案件管理Hub</div>
+<div class="pj-pri pri-3">優先3</div>
+</div>
+<div class="pj-body">徳武JV／菊池JV／奥村提携／片寄せ等のステータス・収益・契約管理。</div>
+<div class="pj-stats">
+<div class="pj-stat"><div class="pj-stat-label">推定機能数</div><div class="pj-stat-value">~25</div></div>
+<div class="pj-stat"><div class="pj-stat-label">対応JV</div><div class="pj-stat-value">5+</div></div>
+<div class="pj-stat"><div class="pj-stat-label">優先度</div><div class="pj-stat-value">中長期</div></div>
+</div>
+<div class="pj-footer">
+<span class="tag tag-roi-l">ROI低</span>
+<span class="tag tag-data">手動入力中心</span>
+</div>
+</div>
+
+<div class="pj-card">
+<div class="pj-header">
+<div class="pj-name">🧮 経理・人事ダッシュボード</div>
+<div class="pj-pri pri-3">優先3</div>
+</div>
+<div class="pj-body">売上／経費／人件費／PJ別利益。田口さん向けスポーク3。</div>
+<div class="pj-stats">
+<div class="pj-stat"><div class="pj-stat-label">推定機能数</div><div class="pj-stat-value">~30</div></div>
+<div class="pj-stat"><div class="pj-stat-label">既存シート</div><div class="pj-stat-value">あり</div></div>
+<div class="pj-stat"><div class="pj-stat-label">専用担当</div><div class="pj-stat-value">田口さん</div></div>
+</div>
+<div class="pj-footer">
+<span class="tag tag-roi-l">ROI低</span>
+<span class="tag tag-data">既存運用優先</span>
+</div>
+</div>
+
+</div>
+
+<!-- 推奨ロードマップ -->
+<h2 class="section-title">🗓 推奨ロードマップ（3ヶ月）</h2>
+<div class="matrix">
+<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:14px;">
+<div style="padding:14px; background:#0f172a; border-radius:8px; border-top:3px solid #10b981;">
+<div style="font-size:13px; color:#34d399; font-weight:700;">月1：基盤構築</div>
+<ul style="font-size:11px; padding-left:16px; line-height:1.7; margin-top:8px;">
+<li>動画LP Hub v1.1 完成</li>
+<li>数値管理Hub v0.1 着手（OGSM定義+ワイヤー）</li>
+<li>共通デザインシステム文書化</li>
+<li>メタプロセス v1.0 公式化</li>
+</ul>
+</div>
+<div style="padding:14px; background:#0f172a; border-radius:8px; border-top:3px solid #fbbf24;">
+<div style="font-size:13px; color:#fbbf24; font-weight:700;">月2：横展開</div>
+<ul style="font-size:11px; padding-left:16px; line-height:1.7; margin-top:8px;">
+<li>数値管理Hub v1.0 完成</li>
+<li>SNS投稿自動化Hub v0.1</li>
+<li>スタッフPDCA Hub v0.1</li>
+<li>マスター統合Hub v0.1</li>
+</ul>
+</div>
+<div style="padding:14px; background:#0f172a; border-radius:8px; border-top:3px solid #06b6d4;">
+<div style="font-size:13px; color:#22d3ee; font-weight:700;">月3：統合と運用</div>
+<ul style="font-size:11px; padding-left:16px; line-height:1.7; margin-top:8px;">
+<li>SNS/PDCA Hub v1.0 完成</li>
+<li>マスター統合Hub v1.0</li>
+<li>全PJで月次レビュー運用開始</li>
+<li>「自動化PDCA運用標準」確立</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- アドバイス -->
+<h2 class="section-title">💡 進め方アドバイス（5原則）</h2>
+<div class="pj-grid">
+
+<div class="pj-card" style="border-left:4px solid #ef4444;">
+<div class="pj-name">① 「UI先行」ではなく「PJ先行」</div>
+<div class="pj-body" style="margin-top:10px;">UIを作ること自体を目的にしない。PJを進める中で「これがあれば判断が速い」と思った瞬間にだけUIを足す。</div>
+</div>
+
+<div class="pj-card" style="border-left:4px solid #fbbf24;">
+<div class="pj-name">② 共通テンプレで再利用</div>
+<div class="pj-body" style="margin-top:10px;">動画LP Hubで完成したデザインシステム（ダーク×シアン×ゴールド／サイドバー／OGSMカード／KPIカード）を全PJで使い回す。新規UIの着手時間が80%減。</div>
+</div>
+
+<div class="pj-card" style="border-left:4px solid #10b981;">
+<div class="pj-name">③ 1PJ=1OGSM必須</div>
+<div class="pj-body" style="margin-top:10px;">PJ起票時に必ず「目的（文章Before→After）＋ゴール（数値Before→After）」を1ページで決める。これなしでUIに着手しない。</div>
+</div>
+
+<div class="pj-card" style="border-left:4px solid #06b6d4;">
+<div class="pj-name">④ 「真実の唯一源」を1個決める</div>
+<div class="pj-body" style="margin-top:10px;">数値管理シートが全PJの SSoT（Single Source of Truth）。各PJのUIは数値管理シートを参照して表示するだけ。データの2重管理を絶対避ける。</div>
+</div>
+
+<div class="pj-card" style="border-left:4px solid #a855f7;">
+<div class="pj-name">⑤ マスター統合は最後</div>
+<div class="pj-body" style="margin-top:10px;">各PJのUIが3個以上揃ってから、横断する「全PJ俯瞰マスター」を作る。最初からマスターを作ると複雑度が爆発する。</div>
+</div>
+
+<div class="pj-card" style="border-left:4px solid #ec4899;">
+<div class="pj-name">⑥ ボーナス：相談用マインドマップを必ず作る</div>
+<div class="pj-body" style="margin-top:10px;">各PJのUIに「マインドマップ」（今回作った形式）を必ず1枚置く。柳井さん×Claudeが構造を見ながら相談できる「会話の地図」になる。</div>
+</div>
+
+</div>
+
+</div>
+</body>
+</html>

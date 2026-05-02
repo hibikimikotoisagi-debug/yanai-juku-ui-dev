@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>🗺 動画LP制作Hub サイト全体構造マップ</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; background:#0f172a; color:#e2e8f0; padding:20px; }
+.container { max-width:1900px; margin:0 auto; }
+.header { background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%); padding:24px 32px; border-radius:16px; margin-bottom:20px; border:1px solid #334155; }
+h1 { font-size:24px; font-weight:800; background:linear-gradient(90deg,#fbbf24,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.subtitle { color:#94a3b8; margin-top:6px; font-size:14px; }
+.legend { display:flex; gap:14px; margin-top:14px; flex-wrap:wrap; }
+.legend-item { display:flex; align-items:center; gap:6px; font-size:11px; padding:4px 10px; background:#334155; border-radius:6px; }
+.legend-dot { width:10px; height:10px; border-radius:3px; }
+
+.tabs-nav { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.tab-btn { padding:10px 18px; background:#1e293b; border:1px solid #334155; color:#94a3b8; border-radius:8px; cursor:pointer; font-size:13px; transition:all 0.15s; font-weight:600; }
+.tab-btn.active { background:linear-gradient(90deg,#0ea5e9,#06b6d4); color:white; border-color:transparent; }
+.tab-btn:hover { color:white; }
+
+.view { background:#1e293b; padding:24px; border-radius:12px; border:1px solid #334155; min-height:600px; }
+.view.hidden { display:none; }
+
+.mermaid { background:#0f172a; padding:20px; border-radius:8px; }
+
+/* カード型ツリー */
+.tree { display:flex; gap:24px; overflow-x:auto; padding:20px 0; }
+.tree-col { min-width:280px; flex-shrink:0; }
+.tree-col h3 { font-size:13px; color:#fbbf24; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid #334155; }
+.node { background:#0f172a; padding:12px 14px; border-radius:8px; margin-bottom:8px; border-left:3px solid #475569; font-size:13px; cursor:pointer; transition:all 0.15s; }
+.node:hover { background:#1e2a44; transform:translateX(4px); }
+.node-title { font-weight:600; color:white; margin-bottom:4px; }
+.node-desc { font-size:11px; color:#94a3b8; line-height:1.5; }
+.node-tags { display:flex; gap:4px; margin-top:6px; flex-wrap:wrap; }
+.tag { font-size:10px; padding:2px 6px; border-radius:4px; }
+.tag-done { background:rgba(16,185,129,0.2); color:#34d399; }
+.tag-todo { background:rgba(251,191,36,0.2); color:#fbbf24; }
+.tag-future { background:rgba(168,85,247,0.2); color:#c084fc; }
+.tag-data { background:rgba(6,182,212,0.2); color:#22d3ee; }
+
+.node.home { border-left-color:#06b6d4; }
+.node.scenario { border-left-color:#a855f7; }
+.node.competitor { border-left-color:#fbbf24; }
+.node.kpi { border-left-color:#10b981; }
+.node.score { border-left-color:#ef4444; }
+.node.library { border-left-color:#8b5cf6; }
+.node.filming { border-left-color:#06b6d4; }
+.node.settings { border-left-color:#64748b; }
+
+.note { padding:14px 18px; background:rgba(6,182,212,0.1); border-left:3px solid #06b6d4; border-radius:6px; margin:14px 0; font-size:13px; }
+
+.discuss-list { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+.discuss-item { padding:14px; background:#0f172a; border-radius:10px; border-top:3px solid #fbbf24; }
+.discuss-item h4 { font-size:13px; color:#fbbf24; margin-bottom:8px; }
+.discuss-item ul { padding-left:18px; font-size:12px; line-height:1.7; color:#cbd5e1; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+<h1>🗺 動画LP制作Hub サイト全体構造マップ</h1>
+<div class="subtitle">サイトマップ／カード階層／相談用設計図 — 3ビューで構造を俯瞰し、インターフェースを精緻化する</div>
+<div class="legend">
+<div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>実装済 (v1.0)</div>
+<div class="legend-item"><div class="legend-dot" style="background:#fbbf24"></div>v1.1 で実装</div>
+<div class="legend-item"><div class="legend-dot" style="background:#a855f7"></div>v1.2+ 検討</div>
+<div class="legend-item"><div class="legend-dot" style="background:#22d3ee"></div>データソース</div>
+</div>
+</div>
+
+<div class="tabs-nav">
+<div class="tab-btn active" onclick="switchTab('mind')">🌳 マインドマップ全体図</div>
+<div class="tab-btn" onclick="switchTab('flow')">🔀 ユーザーフロー（操作の流れ）</div>
+<div class="tab-btn" onclick="switchTab('cards')">📇 カード階層（詳細）</div>
+<div class="tab-btn" onclick="switchTab('discuss')">💬 相談ポイント</div>
+</div>
+
+<!-- ===== ビュー1: 構造マインドマップ ===== -->
+<div class="view" id="view-mind">
+<h2 style="font-size:18px; margin-bottom:14px;">🌳 構造ツリーマップ — 階層が一目でわかる版</h2>
+<div class="note">中央：Hub ／ 第1層：8主要セクション ／ 第2層：機能カード ／ ステータスタグで実装段階を色分け</div>
+
+<style>
+.tree-map { padding:30px 0; }
+.tree-hub { display:flex; justify-content:center; margin-bottom:40px; }
+.hub-node { background:linear-gradient(135deg,#fbbf24,#f59e0b); padding:24px 36px; border-radius:14px; color:#000; text-align:center; box-shadow:0 8px 24px rgba(251,191,36,0.3); }
+.hub-title { font-size:18px; font-weight:800; }
+.hub-sub { font-size:11px; margin-top:4px; opacity:0.75; }
+
+.tree-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:20px; margin-bottom:30px; }
+.section-block { background:#0f172a; border-radius:12px; overflow:hidden; border:1px solid #334155; }
+.section-header-card { padding:14px 16px; color:white; font-weight:700; display:flex; align-items:center; gap:10px; font-size:14px; }
+.section-icon-big { font-size:22px; }
+.section-body { padding:12px; display:flex; flex-direction:column; gap:8px; }
+.feature-row { display:flex; justify-content:space-between; align-items:center; padding:8px 10px; background:#1e293b; border-radius:6px; font-size:11px; transition:all 0.15s; cursor:pointer; }
+.feature-row:hover { background:#334155; }
+.feature-name { color:#e2e8f0; flex:1; }
+.feature-tag-mini { font-size:9px; padding:2px 6px; border-radius:3px; font-weight:600; flex-shrink:0; margin-left:8px; }
+.feature-done { background:rgba(16,185,129,0.25); color:#34d399; }
+.feature-todo { background:rgba(251,191,36,0.25); color:#fbbf24; }
+.feature-future { background:rgba(168,85,247,0.25); color:#c084fc; }
+.feature-data { background:rgba(6,182,212,0.25); color:#22d3ee; }
+
+.sec-home { border-top:4px solid #06b6d4; }
+.sec-home .section-header-card { background:linear-gradient(90deg,#06b6d4,#0ea5e9); }
+.sec-scenario { border-top:4px solid #a855f7; }
+.sec-scenario .section-header-card { background:linear-gradient(90deg,#a855f7,#7c3aed); }
+.sec-competitor { border-top:4px solid #fbbf24; }
+.sec-competitor .section-header-card { background:linear-gradient(90deg,#fbbf24,#f59e0b); }
+.sec-kpi { border-top:4px solid #10b981; }
+.sec-kpi .section-header-card { background:linear-gradient(90deg,#10b981,#059669); }
+.sec-roi { border-top:4px solid #ec4899; }
+.sec-roi .section-header-card { background:linear-gradient(90deg,#ec4899,#db2777); }
+.sec-score { border-top:4px solid #ef4444; }
+.sec-score .section-header-card { background:linear-gradient(90deg,#ef4444,#dc2626); }
+.sec-library { border-top:4px solid #8b5cf6; }
+.sec-library .section-header-card { background:linear-gradient(90deg,#8b5cf6,#7c3aed); }
+.sec-filming { border-top:4px solid #f97316; }
+.sec-filming .section-header-card { background:linear-gradient(90deg,#f97316,#ea580c); }
+.sec-settings { border-top:4px solid #64748b; }
+.sec-settings .section-header-card { background:linear-gradient(90deg,#64748b,#475569); }
+
+.legend-bar { display:flex; gap:10px; justify-content:center; margin-top:30px; padding:14px; background:#0f172a; border-radius:10px; flex-wrap:wrap; }
+.legend-bar-item { display:flex; align-items:center; gap:6px; font-size:11px; padding:4px 10px; background:#1e293b; border-radius:5px; }
+</style>
+
+<div class="tree-map">
+
+<!-- 中央Hub -->
+<div class="tree-hub">
+<div class="hub-node">
+<div class="hub-title">🎬 動画LP制作Hub</div>
+<div class="hub-sub">9セクション / 全PJ統合管理</div>
+</div>
+</div>
+
+<!-- 第1層：4×2 = 9セクション（実際は4×2列+1） -->
+<div class="tree-grid">
+
+<!-- ホーム -->
+<div class="section-block sec-home">
+<div class="section-header-card"><span class="section-icon-big">🏠</span> ホーム</div>
+<div class="section-body">
+<div class="feature-row"><span class="feature-name">PJサマリカード</span><span class="feature-tag-mini feature-done">済</span></div>
+<div class="feature-row"><span class="feature-name">KPIカード×4</span><span class="feature-tag-mini feature-done">済</span></div>
+<div class="feature-row"><span class="feature-name">採点推移グラフ</span><span class="feature-tag-mini feature-done">済</span></div>
+<div class="feature-row"><span class="feature-name">クイックアクション</span><span class="feature-tag-mini feature-done">済</span></div>
+<div class="feature-row"><span class="feature-name">弱点トップ3</span><span class="feature-tag-mini feature-todo">v1.1</span></div>
+</div>
+</div>
+
+<!-- シナリオ管理 -->
+<div class="section-block sec-scenario">
+<div class="section-header-card"><span class="section-icon-big">📜</span> シナリオ管理</div>
+<div class="section-body">
+<div class="feature-row"><span class="feature-name">PJ選択リスト（8PJ）</span><span class="feature-tag-mini feature-done">済</span></div>
+<div class="feature-row"><span class="feature-name">行別構成テーブル</span><span class="feature-tag-mini feature-done">済</span></div>
+<div class="feature-row"><span class="feature-name">伏線回収マップ</span><span class="feature-tag-mini feature-done">済</span></div>
+<div class="feature-row"><span class="feature-name">Gantt iframe埋込</span><span class="feature-tag-mini feature-todo">v1.2</span></div>
+<div class="feature-row"><span class="feature-name">音源プレイヤー</span><span class="feature-tag-mini feature-todo">v1.2</span></div>
+<div class="feature-row"><span class="feature-name">編集メモ表示</span><span class="feature-tag-mini feature-future">v1.3</span></div>
+<div class="feature-row"><span class="feature-name">修正履歴</span><span class="feature-tag-mini feature-future">v1.3</span></div>
+</div>
+</div>
+
+<!-- 競合比較 -->
+<div class="section-block sec-competitor">
+<div class="section-header-card"><span class="section-icon-big">🏆</span> 競合比較</div>
+<div class="section-body">
+<div class="feature-row"><span class="feature-name">赤間①フレーズ</span><span class="feature-tag-mini feature-done">済</span></div>
+<div class="feature-row"><span class="feature-name">赤間②キャッシュ</span><span class="feature-tag-mini feature-done">済</span></div>
+<div class="feature-row"><span class="feature-name">赤間③セカンダリー</span><span class="feature-tag-mini feature-done">済</span></div>
+<div class="feature-row"><span class="feature-name">赤間④Canva×AI</span><span class="feature-tag-mini feature-done">済</span></div>
+<div class="feature-row"><span class="feature-name">10軸レーダー</span><span class="feature-tag-mini feature-done">済</span></div>
+<div class="feature-row"><span class="feature-name">勝敗テーブル</span><span class="feature-tag-mini feature-todo">v1.1</span></div>
+<div class="feature-row"><span class="feature-name">他社LP取込</span><span class="feature-tag-mini feature-future">v1.3</span></div>
+</div>
+</div>
+
+<!-- KPI推移 -->
+<div class="section-block sec-kpi">
+<div class="section-header-card"><span class="section-icon-big">📈</span> KPI推移</div>
+<div class="section-body">
+<div class="feature-row"><span class="feature-name">視聴維持率カーブ</span><span class="feature-tag-mini feature-future">v1.3</span></div>
+<div class="feature-row"><span class="feature-name">LINE登録率</span><span class="feature-tag-mini feature-future">v1.3</span></div>
+<div class="feature-row"><span class="feature-name">CV率・登録単価</span><span class="feature-tag-mini feature-future">v1.4</span></div>
+<div class="feature-row"><span class="feature-name">YouTube Data API</span><span class="feature-tag-mini feature-data">データ</span></div>
+<div class="feature-row"><span class="feature-name">Instagram Graph API</span><span class="feature-tag-mini feature-data">データ</span></div>
+<div class="feature-row"><span class="feature-name">Gantt×実視聴重畳</span><span class="feature-tag-mini feature-future">v1.4</span></div>
+</div>
+</div>
+
+<!-- ROI/コスト管理 -->
+<div class="section-block sec-roi">
+<div class="section-header-card"><span class="section-icon-big">💰</span> ROI/コスト管理</div>
+<div class="section-body">
+<div class="feature-row"><span class="feature-name">スタッフ工数把握</span><span class="feature-tag-mini feature-todo">v1.1</span></div>
+<div class="feature-row"><span class="feature-name">人件費・制作費</span><span class="feature-tag-mini feature-todo">v1.2</span></div>
+<div class="feature-row"><span class="feature-name">広告費追跡</span><span class="feature-tag-mini feature-future">v1.3</span></div>
+<div class="feature-row"><span class="feature-name">CPA/ROAS自動取込</span><span class="feature-tag-mini feature-future">v1.3</span></div>
+<div class="feature-row"><span class="feature-name">Meta広告API</span><span class="feature-tag-mini feature-data">データ</span></div>
+<div class="feature-row"><span class="feature-name">週次PDCA自動レポ</span><span class="feature-tag-mini feature-future">v1.3</span></div>
+<div class="feature-row"><span class="feature-name">ROIランキング</span><span class="feature-tag-mini feature-future">v1.3</span></div>
+</div>
+</div>
+
+<!-- 採点ヒートマップ -->
+<div class="section-block sec-score">
+<div class="section-header-card"><span class="section-icon-big">🎯</span> 採点ヒートマップ</div>
+<div class="section-body">
+<div class="feature-row"><span class="feature-name">全PJ×10軸マトリクス</span><span class="feature-tag-mini feature-done">済</span></div>
+<div class="feature-row"><span class="feature-name">強み弱み一覧</span><span class="feature-tag-mini feature-done">済</span></div>
+<div class="feature-row"><span class="feature-name">パターン横断分析</span><span class="feature-tag-mini feature-future">v1.3</span></div>
+<div class="feature-row"><span class="feature-name">時系列改善トラッキング</span><span class="feature-tag-mini feature-future">v1.4</span></div>
+</div>
+</div>
+
+<!-- ナレッジライブラリ -->
+<div class="section-block sec-library">
+<div class="section-header-card"><span class="section-icon-big">📚</span> ナレッジライブラリ</div>
+<div class="section-body">
+<div class="feature-row"><span class="feature-name">NG語辞書（17語）</span><span class="feature-tag-mini feature-done">済</span></div>
+<div class="feature-row"><span class="feature-name">OK語辞書（11語）</span><span class="feature-tag-mini feature-done">済</span></div>
+<div class="feature-row"><span class="feature-name">型ライブラリ（5型）</span><span class="feature-tag-mini feature-done">済</span></div>
+<div class="feature-row"><span class="feature-name">スキル一覧（66）</span><span class="feature-tag-mini feature-todo">v1.1</span></div>
+<div class="feature-row"><span class="feature-name">テンプレ集（HTML）</span><span class="feature-tag-mini feature-todo">v1.1</span></div>
+</div>
+</div>
+
+<!-- 撮影準備ゲート -->
+<div class="section-block sec-filming">
+<div class="section-header-card"><span class="section-icon-big">🎬</span> 撮影準備ゲート</div>
+<div class="section-body">
+<div class="feature-row"><span class="feature-name">3点ゲート判定</span><span class="feature-tag-mini feature-done">済</span></div>
+<div class="feature-row"><span class="feature-name">スタッフ送信ボタン</span><span class="feature-tag-mini feature-todo">v1.2</span></div>
+<div class="feature-row"><span class="feature-name">音源最終試聴</span><span class="feature-tag-mini feature-todo">v1.2</span></div>
+<div class="feature-row"><span class="feature-name">ChatWork API連携</span><span class="feature-tag-mini feature-data">データ</span></div>
+<div class="feature-row"><span class="feature-name">編集者メモPDF出力</span><span class="feature-tag-mini feature-future">v1.3</span></div>
+</div>
+</div>
+
+</div>
+
+<!-- 最後の1個（設定）を中央に -->
+<div style="display:flex; justify-content:center;">
+<div class="section-block sec-settings" style="width:24%;">
+<div class="section-header-card"><span class="section-icon-big">⚙️</span> 設定・連携</div>
+<div class="section-body">
+<div class="feature-row"><span class="feature-name">Sheets API</span><span class="feature-tag-mini feature-todo">v1.1</span></div>
+<div class="feature-row"><span class="feature-name">YouTube/IG連携</span><span class="feature-tag-mini feature-future">v1.3</span></div>
+<div class="feature-row"><span class="feature-name">ChatWork連携</span><span class="feature-tag-mini feature-todo">v1.2</span></div>
+<div class="feature-row"><span class="feature-name">Cloud TTS音声選択</span><span class="feature-tag-mini feature-todo">v1.2</span></div>
+<div class="feature-row"><span class="feature-name">テーマ切替</span><span class="feature-tag-mini feature-future">v1.4</span></div>
+</div>
+</div>
+</div>
+
+<div class="legend-bar">
+<div class="legend-bar-item"><span class="feature-tag-mini feature-done">済</span>実装済 (v1.0)</div>
+<div class="legend-bar-item"><span class="feature-tag-mini feature-todo">v1.1</span>v1.1で実装</div>
+<div class="legend-bar-item"><span class="feature-tag-mini feature-future">v1.2+</span>v1.2以降検討</div>
+<div class="legend-bar-item"><span class="feature-tag-mini feature-data">データ</span>外部データソース</div>
+</div>
+
+</div>
+</div>
+
+<!-- ===== ビュー2: フローチャート ===== -->
+<div class="view hidden" id="view-flow">
+<h2 style="font-size:16px; margin-bottom:14px;">🔀 ユーザーフロー — 動画LPを1本完成させるまでの操作経路</h2>
+<div class="note">入口（ホーム）から撮影GO（撮影準備ゲート）までの最短経路と、各ステップで使う画面・機能</div>
+<div class="mermaid">
+flowchart TD
+    Start([👤 ユーザー入室]) --> Home[🏠 ホーム<br>PJ一覧・採点推移を確認]
+    Home -->|新規PJ| NewPJ[➕ 新規PJ起票<br>テーマ・ターゲット入力]
+    Home -->|既存PJ| PJSelect[📁 PJ選択]
+
+    NewPJ --> Library[📚 ライブラリ<br>赤間ベンチマーク選定]
+    Library --> Generate[🤖 Claude原案生成<br>7ステップ自動]
+
+    PJSelect --> Scenario[📜 シナリオ管理<br>行別表示・Gantt確認]
+    Generate --> Scenario
+
+    Scenario -->|修正| Edit[✏️ 担当者ブラッシュ<br>冒頭・本文・CTA]
+    Edit --> Check[🔍 公式チェック<br>3スキル自動診断]
+    Check -->|NG| Edit
+    Check -->|OK| Score[🎯 横並び採点]
+
+    Score --> Compare[🏆 競合比較<br>赤間と並べる]
+    Compare --> Heatmap[📊 採点ヒートマップ<br>全PJで強み弱み確認]
+
+    Heatmap --> Gate[🎬 撮影準備ゲート<br>3点最終チェック]
+    Gate -->|GO| Send[📤 スタッフ送信<br>島崎・山口さんへ]
+    Gate -->|NG| Edit
+
+    Send --> Filming([🎥 撮影開始])
+    Filming --> Publish([📺 配信])
+    Publish --> KPI[📈 KPI推移<br>実数値を取り込み]
+    KPI --> NextPJ[🔄 次PJの企画へ]
+
+    style Home fill:#06b6d4,color:#fff
+    style Edit fill:#a855f7,color:#fff
+    style Generate fill:#10b981,color:#fff
+    style Gate fill:#fbbf24,color:#000
+    style Send fill:#ef4444,color:#fff
+    style KPI fill:#22d3ee,color:#fff
+</div>
+</div>
+
+<!-- ===== ビュー3: カード階層 ===== -->
+<div class="view hidden" id="view-cards">
+<h2 style="font-size:16px; margin-bottom:14px;">📇 カード階層 — 各セクションの機能・データソース・実装ステータス</h2>
+<div class="tree">
+
+<div class="tree-col">
+<h3>🏠 ホーム</h3>
+<div class="node home">
+<div class="node-title">PJサマリカード</div>
+<div class="node-desc">現在進行中PJ・採点・状態</div>
+<div class="node-tags"><span class="tag tag-done">実装済</span><span class="tag tag-data">Sheetsデータ</span></div>
+</div>
+<div class="node home">
+<div class="node-title">KPIカード×4</div>
+<div class="node-desc">採点・ベンチマーク差・尺・行数</div>
+<div class="node-tags"><span class="tag tag-done">実装済</span></div>
+</div>
+<div class="node home">
+<div class="node-title">採点推移グラフ</div>
+<div class="node-desc">過去6PJの自社vs赤間①</div>
+<div class="node-tags"><span class="tag tag-done">実装済</span></div>
+</div>
+<div class="node home">
+<div class="node-title">クイックアクション</div>
+<div class="node-desc">5ボタン（シナリオ・比較・レポート・音源・ゲート）</div>
+<div class="node-tags"><span class="tag tag-done">実装済</span></div>
+</div>
+<div class="node home">
+<div class="node-title">残る弱点トップ3</div>
+<div class="node-desc">10軸採点から自動抽出</div>
+<div class="node-tags"><span class="tag tag-todo">v1.1自動化</span></div>
+</div>
+</div>
+
+<div class="tree-col">
+<h3>📜 シナリオ管理</h3>
+<div class="node scenario">
+<div class="node-title">PJ選択リスト（全動画LP）</div>
+<div class="node-desc">7+PJを左ペインに表示／クリックで詳細</div>
+<div class="node-tags"><span class="tag tag-todo">v1.1で実装中</span></div>
+</div>
+<div class="node scenario">
+<div class="node-title">行別構成テーブル</div>
+<div class="node-desc">19行の項目・テーマ・字数</div>
+<div class="node-tags"><span class="tag tag-done">実装済</span></div>
+</div>
+<div class="node scenario">
+<div class="node-title">Gantt＋伏線回収マップ</div>
+<div class="node-desc">既存統合レポートをiframe埋込</div>
+<div class="node-tags"><span class="tag tag-todo">v1.2 iframe実装</span></div>
+</div>
+<div class="node scenario">
+<div class="node-title">音源試聴プレイヤー</div>
+<div class="node-desc">Charon/Sulafat/速度切替</div>
+<div class="node-tags"><span class="tag tag-todo">v1.2</span></div>
+</div>
+<div class="node scenario">
+<div class="node-title">編集メモ表示</div>
+<div class="node-desc">行別の演出指示・修正理由</div>
+<div class="node-tags"><span class="tag tag-future">v1.3</span></div>
+</div>
+<div class="node scenario">
+<div class="node-title">修正履歴タイムライン</div>
+<div class="node-desc">第N校Doc・差分比較</div>
+<div class="node-tags"><span class="tag tag-future">v1.3</span></div>
+</div>
+</div>
+
+<div class="tree-col">
+<h3>🏆 競合比較</h3>
+<div class="node competitor">
+<div class="node-title">赤間ベンチマーク4型</div>
+<div class="node-desc">①フレーズ ②キャッシュ ③セカンダリー ④Canva×AI</div>
+<div class="node-tags"><span class="tag tag-done">実装済</span></div>
+</div>
+<div class="node competitor">
+<div class="node-title">10軸レーダーチャート</div>
+<div class="node-desc">自社vs赤間 重ね描き</div>
+<div class="node-tags"><span class="tag tag-done">実装済</span></div>
+</div>
+<div class="node competitor">
+<div class="node-title">バーチャート比較</div>
+<div class="node-desc">軸別スコア並列</div>
+<div class="node-tags"><span class="tag tag-done">実装済</span></div>
+</div>
+<div class="node competitor">
+<div class="node-title">勝敗テーブル</div>
+<div class="node-desc">軸ごとに勝/負/同点</div>
+<div class="node-tags"><span class="tag tag-todo">v1.1</span></div>
+</div>
+<div class="node competitor">
+<div class="node-title">他社LP取込機能</div>
+<div class="node-desc">URL貼付→自動分析</div>
+<div class="node-tags"><span class="tag tag-future">v1.3</span></div>
+</div>
+</div>
+
+<div class="tree-col">
+<h3>📈 KPI推移</h3>
+<div class="node kpi">
+<div class="node-title">視聴維持率カーブ</div>
+<div class="node-desc">YouTube Data API連携</div>
+<div class="node-tags"><span class="tag tag-future">v1.3</span><span class="tag tag-data">YouTube API</span></div>
+</div>
+<div class="node kpi">
+<div class="node-title">LINE登録率</div>
+<div class="node-desc">配信後7日・30日推移</div>
+<div class="node-tags"><span class="tag tag-future">v1.3</span></div>
+</div>
+<div class="node kpi">
+<div class="node-title">CV率・登録単価</div>
+<div class="node-desc">広告マネージャー連携</div>
+<div class="node-tags"><span class="tag tag-future">v1.4</span><span class="tag tag-data">Meta広告API</span></div>
+</div>
+<div class="node kpi">
+<div class="node-title">Gantt×実視聴維持率重畳</div>
+<div class="node-desc">離脱箇所自動特定</div>
+<div class="node-tags"><span class="tag tag-future">v1.4</span></div>
+</div>
+</div>
+
+<div class="tree-col">
+<h3>🎯 採点ヒートマップ</h3>
+<div class="node score">
+<div class="node-title">全PJ×10軸マトリクス</div>
+<div class="node-desc">色グラデーションで強み弱み一覧</div>
+<div class="node-tags"><span class="tag tag-done">実装済</span></div>
+</div>
+<div class="node score">
+<div class="node-title">パターン横断分析</div>
+<div class="node-desc">業種別の最適色比率発見</div>
+<div class="node-tags"><span class="tag tag-future">v1.3</span></div>
+</div>
+<div class="node score">
+<div class="node-title">時系列改善トラッキング</div>
+<div class="node-desc">月次・四半期トレンド</div>
+<div class="node-tags"><span class="tag tag-future">v1.4</span></div>
+</div>
+</div>
+
+<div class="tree-col">
+<h3>📚 ナレッジライブラリ</h3>
+<div class="node library">
+<div class="node-title">NG語辞書</div>
+<div class="node-desc">本編/前半戦/正体/暴露 etc</div>
+<div class="node-tags"><span class="tag tag-done">実装済</span></div>
+</div>
+<div class="node library">
+<div class="node-title">OK語辞書</div>
+<div class="node-desc">ここから/答え/中身 etc</div>
+<div class="node-tags"><span class="tag tag-done">実装済</span></div>
+</div>
+<div class="node library">
+<div class="node-title">型ライブラリ</div>
+<div class="node-desc">赤間4型・自社型</div>
+<div class="node-tags"><span class="tag tag-done">実装済</span></div>
+</div>
+<div class="node library">
+<div class="node-title">スキル一覧（66）</div>
+<div class="node-desc">3スキル統合体系</div>
+<div class="node-tags"><span class="tag tag-todo">v1.1</span></div>
+</div>
+<div class="node library">
+<div class="node-title">テンプレ集（gantt/score/unified）</div>
+<div class="node-desc">HTMLテンプレ・スクリプト</div>
+<div class="node-tags"><span class="tag tag-todo">v1.1</span></div>
+</div>
+</div>
+
+<div class="tree-col">
+<h3>🎬 撮影準備ゲート</h3>
+<div class="node filming">
+<div class="node-title">3点ゲート判定</div>
+<div class="node-desc">Gantt/採点/サマリ</div>
+<div class="node-tags"><span class="tag tag-done">実装済</span></div>
+</div>
+<div class="node filming">
+<div class="node-title">スタッフ送信ボタン</div>
+<div class="node-desc">ChatWork API連携</div>
+<div class="node-tags"><span class="tag tag-todo">v1.2</span></div>
+</div>
+<div class="node filming">
+<div class="node-title">音源最終試聴</div>
+<div class="node-desc">音声/速度/全行</div>
+<div class="node-tags"><span class="tag tag-todo">v1.2</span></div>
+</div>
+<div class="node filming">
+<div class="node-title">編集者メモ出力</div>
+<div class="node-desc">PDF/画像エクスポート</div>
+<div class="node-tags"><span class="tag tag-future">v1.3</span></div>
+</div>
+</div>
+
+<div class="tree-col">
+<h3>⚙️ 設定・連携</h3>
+<div class="node settings">
+<div class="node-title">Sheets API キー</div>
+<div class="node-desc">OAuth・認証管理</div>
+<div class="node-tags"><span class="tag tag-todo">v1.1</span></div>
+</div>
+<div class="node settings">
+<div class="node-title">YouTube/Instagram連携</div>
+<div class="node-desc">KPI自動取込</div>
+<div class="node-tags"><span class="tag tag-future">v1.3</span></div>
+</div>
+<div class="node settings">
+<div class="node-title">ChatWork連携</div>
+<div class="node-desc">送信先ルームID管理</div>
+<div class="node-tags"><span class="tag tag-todo">v1.2</span></div>
+</div>
+<div class="node settings">
+<div class="node-title">Cloud TTS音声選択</div>
+<div class="node-desc">Charon/Sulafat/etc・速度</div>
+<div class="node-tags"><span class="tag tag-todo">v1.2</span></div>
+</div>
+<div class="node settings">
+<div class="node-title">テーマ切替</div>
+<div class="node-desc">ダーク/ライト</div>
+<div class="node-tags"><span class="tag tag-future">v1.4</span></div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ===== ビュー4: 相談ポイント ===== -->
+<div class="view hidden" id="view-discuss">
+<h2 style="font-size:16px; margin-bottom:14px;">💬 相談ポイント — 精緻化に向けて検討すべき設計判断</h2>
+<div class="discuss-list">
+
+<div class="discuss-item">
+<h4>🎯 1. PJの一覧化粒度</h4>
+<ul>
+<li>1PJ=1エントリ？それとも v1/v2/v3 別々？</li>
+<li>採用版だけ表示 or 全バージョン履歴で表示？</li>
+<li>業種別 / 担当者別 / 時系列でフィルタ？</li>
+<li>サムネイル表示（動画のキャプチャ画像）はあるべき？</li>
+</ul>
+</div>
+
+<div class="discuss-item">
+<h4>📜 2. シナリオ詳細の見せ方</h4>
+<ul>
+<li>1画面に行19全部 or 章ごとにアコーディオン？</li>
+<li>音源プレイヤーは固定下部 or 行ごとに小再生ボタン？</li>
+<li>編集メモは常時表示 or トグル切替？</li>
+<li>修正履歴は時系列タイムライン or v1/v2比較？</li>
+</ul>
+</div>
+
+<div class="discuss-item">
+<h4>🏆 3. 競合比較の深さ</h4>
+<ul>
+<li>赤間4型固定 or 動的に他競合追加可能？</li>
+<li>業種別ベンチマーク（教育系・コンサル系）も？</li>
+<li>勝敗だけでなく「学べる要素」抽出機能も？</li>
+<li>赤間動画の該当箇所スニペット再生機能？</li>
+</ul>
+</div>
+
+<div class="discuss-item">
+<h4>📈 4. KPI連携の優先順位</h4>
+<ul>
+<li>YouTube Data API（視聴維持率）が最優先？</li>
+<li>Instagram Graph API（リーチ・保存率）併設？</li>
+<li>LINE登録率はLステップAPI連携？</li>
+<li>Looker Studio埋込 or 独自実装？</li>
+</ul>
+</div>
+
+<div class="discuss-item">
+<h4>🎬 5. 撮影/編集者連携の自動度</h4>
+<ul>
+<li>3点ゲート全クリアで自動送信？1クリック承認？</li>
+<li>送信内容のテンプレは固定 or PJ別にカスタム？</li>
+<li>編集者メモを動画ファイル名と関連付け？</li>
+</ul>
+</div>
+
+<div class="discuss-item">
+<h4>📚 6. ライブラリ拡張</h4>
+<ul>
+<li>NG語/OK語は柳井のみ更新？スタッフも追加可能？</li>
+<li>新型を発見した時の登録フロー？</li>
+<li>業種別テンプレの自動ソート？</li>
+</ul>
+</div>
+
+<div class="discuss-item">
+<h4>⚙️ 7. ホスティング・運用</h4>
+<ul>
+<li>柳井のローカル(/tmp)で運用 or サーバー公開？</li>
+<li>Apps Script Web App移植？</li>
+<li>スタッフ・JV相手にも閲覧権限を渡す？</li>
+<li>編集権限は柳井のみ？</li>
+</ul>
+</div>
+
+<div class="discuss-item">
+<h4>🤖 8. 自動化レベル</h4>
+<ul>
+<li>1クリックで「シナリオ→音源→送信」全自動？</li>
+<li>新規PJ起票時にテンプレを業種別に自動セット？</li>
+<li>採点が80未満の場合に Phase 5に強制差戻し？</li>
+<li>定期的なPJ進捗レポートを柳井に自動送信？</li>
+</ul>
+</div>
+
+</div>
+</div>
+
+</div>
+
+<script>
+mermaid.initialize({ startOnLoad: true, theme: 'dark', mindmap: { padding: 20 }, themeVariables: { fontFamily: 'inherit' } });
+
+function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    ['mind','flow','cards','discuss'].forEach(t => {
+        document.getElementById('view-' + t).classList.toggle('hidden', t !== tab);
+    });
+}
+</script>
+</body>
+</html>

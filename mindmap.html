@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>🧠 動画LP制作Hub マインドマップ｜全体構造の可視化</title>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; background:#0a0e1a; color:#e2e8f0; padding:0; overflow:hidden; }
+.app { display:grid; grid-template-rows:auto 1fr; height:100vh; }
+
+.header { background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%); padding:18px 32px; border-bottom:1px solid #334155; display:flex; justify-content:space-between; align-items:center; }
+.title-block h1 { font-size:20px; font-weight:800; background:linear-gradient(90deg,#fbbf24,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.title-block .sub { font-size:12px; color:#94a3b8; margin-top:2px; }
+.controls { display:flex; gap:8px; align-items:center; }
+.ctrl-btn { padding:8px 14px; background:#334155; color:white; border:none; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600; }
+.ctrl-btn:hover { background:#475569; }
+.ctrl-btn.active { background:linear-gradient(90deg,#06b6d4,#0ea5e9); }
+
+.canvas-wrap { position:relative; overflow:hidden; background:radial-gradient(circle at center, #0f172a 0%, #0a0e1a 100%); }
+#mindmap { width:100%; height:100%; }
+
+.legend { position:absolute; bottom:20px; left:20px; background:rgba(15,23,42,0.95); padding:14px 18px; border-radius:10px; border:1px solid #334155; backdrop-filter:blur(8px); font-size:11px; }
+.legend h4 { font-size:11px; color:#fbbf24; margin-bottom:8px; }
+.legend-row { display:flex; align-items:center; gap:8px; margin-bottom:5px; }
+.legend-circle { width:12px; height:12px; border-radius:50%; }
+.legend-line { width:18px; height:2px; }
+
+.info-panel { position:absolute; top:20px; right:20px; width:280px; background:rgba(15,23,42,0.97); border:1px solid #334155; border-radius:10px; padding:16px; font-size:12px; backdrop-filter:blur(8px); }
+.info-panel h4 { font-size:13px; color:#22d3ee; margin-bottom:8px; }
+.info-panel .stat-line { display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #1e293b; }
+.info-panel .stat-line:last-child { border-bottom:none; }
+.gap-card { background:rgba(239,68,68,0.1); border-left:3px solid #ef4444; padding:8px 10px; margin-top:10px; border-radius:4px; font-size:11px; }
+.gap-card b { color:#f87171; }
+
+/* ノード */
+.node circle { stroke-width:2; cursor:pointer; transition:all 0.2s; }
+.node:hover circle { filter:drop-shadow(0 0 8px rgba(251,191,36,0.6)); }
+.node text { font-family:inherit; pointer-events:none; }
+.node-label { font-size:12px; font-weight:600; fill:white; }
+.node-label-small { font-size:10px; fill:#cbd5e1; }
+.node-status { font-size:9px; }
+
+.link { fill:none; stroke-width:1.5; transition:all 0.2s; }
+
+/* ノードカテゴリ別色 */
+.node-root circle { fill:#fbbf24; stroke:#f59e0b; }
+.node-root text { fill:#000; font-weight:800; font-size:13px; }
+
+.node-l1-process circle { fill:#fb923c; stroke:#ea580c; stroke-width:3; }
+.node-l1-process text { fill:#fff; }
+.node-l1-home circle { fill:#06b6d4; stroke:#0891b2; }
+.node-l1-scenario circle { fill:#a855f7; stroke:#7c3aed; }
+.node-l1-competitor circle { fill:#fbbf24; stroke:#d97706; }
+.node-l1-kpi circle { fill:#10b981; stroke:#059669; }
+.node-l1-roi circle { fill:#ec4899; stroke:#db2777; }
+.node-l1-score circle { fill:#ef4444; stroke:#dc2626; }
+.node-l1-library circle { fill:#8b5cf6; stroke:#7c3aed; }
+.node-l1-filming circle { fill:#f97316; stroke:#ea580c; }
+.node-l1-settings circle { fill:#64748b; stroke:#475569; }
+
+/* ステータス別 */
+.status-done circle { stroke-dasharray:none; }
+.status-todo circle { stroke-dasharray:4,3; }
+.status-future circle { stroke-dasharray:2,4; opacity:0.65; }
+.status-missing circle { fill:transparent !important; stroke:#ef4444 !important; stroke-dasharray:5,3; }
+.status-missing text { fill:#f87171 !important; font-style:italic; }
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="header">
+<div class="title-block">
+<h1>🧠 動画LP制作Hub マインドマップ</h1>
+<div class="sub">全体像から「足りないもの」を発見し、UI改善の基盤にする可視化</div>
+</div>
+<div class="controls">
+<button class="ctrl-btn active" onclick="setLayout('radial')">🌟 放射状</button>
+<button class="ctrl-btn" onclick="setLayout('horizontal')">📊 横ツリー</button>
+<button class="ctrl-btn" onclick="zoomReset()">🔍 リセット</button>
+<button class="ctrl-btn" onclick="toggleMissing()">⚠️ 不足のみ</button>
+</div>
+</div>
+
+<div class="canvas-wrap">
+<svg id="mindmap"></svg>
+
+<div class="legend">
+<h4>🎨 凡例</h4>
+<div class="legend-row"><div class="legend-circle" style="background:#fbbf24"></div>中心：目的・ゴール</div>
+<div class="legend-row"><div class="legend-circle" style="background:#06b6d4"></div>第1層：9主要セクション</div>
+<div class="legend-row"><div class="legend-circle" style="background:#94a3b8;width:8px;height:8px;"></div>第2層：機能ノード</div>
+<div style="margin-top:8px;padding-top:8px;border-top:1px solid #334155;">
+<div class="legend-row"><div class="legend-circle" style="background:#34d399"></div>実装済 (実線)</div>
+<div class="legend-row"><div class="legend-circle" style="background:#fbbf24;border:1px dashed #fbbf24"></div>v1.1（破線）</div>
+<div class="legend-row"><div class="legend-circle" style="background:#a855f7;opacity:0.5"></div>v1.2+（薄）</div>
+<div class="legend-row"><div class="legend-circle" style="background:transparent;border:1.5px dashed #ef4444"></div><b style="color:#f87171">不足箇所</b></div>
+</div>
+</div>
+
+<div class="info-panel">
+<h4>📊 全体スナップショット</h4>
+<div class="stat-line"><span>全機能数</span><b>79</b></div>
+<div class="stat-line"><span>✅ 実装済</span><b style="color:#34d399;">26</b></div>
+<div class="stat-line"><span>⏳ v1.1予定</span><b style="color:#fbbf24;">21</b></div>
+<div class="stat-line"><span>🚀 v1.2+予定</span><b style="color:#c084fc;">19</b></div>
+<div class="stat-line"><span>⚠️ 不足箇所</span><b style="color:#f87171;">9</b></div>
+<div class="stat-line"><span style="color:#06b6d4;">完成度</span><b style="color:#06b6d4;">35%</b></div>
+
+<div class="gap-card">
+<b>⚠️ 発見された不足</b>：<br>
+新規PJ起票UI／撤退判断ロジック／追加投資判断／予実比較／業種別ベンチマーク／スタッフ権限管理／チーム共有機能／モバイル対応／オフラインモード
+</div>
+</div>
+</div>
+
+</div>
+
+<script>
+// ===== データ構造 =====
+const data = {
+  name: "動画LP制作Hub",
+  subtitle: "目的：プロセス再現性＋費用対効果可視化／ゴール：制作時間76%減＋ROAS自動算出",
+  status: "root",
+  children: [
+    {
+      name: "🎬 動画LP制作プロセス",
+      cat: "process",
+      isCore: true,
+      children: [
+        {name:"0. 事例ライブラリ選定", status:"todo"},
+        {name:"1. 目的＆ゴール入力", status:"todo"},
+        {name:"2. ターゲット定義", status:"todo"},
+        {name:"3. キラーワード3案", status:"todo"},
+        {name:"4. 冒頭2分（7ステップ）", status:"todo"},
+        {name:"5. Claude原案自動生成", status:"todo"},
+        {name:"6. 担当者ブラッシュ", status:"todo"},
+        {name:"7. 流れ整合性診断", status:"done"},
+        {name:"8. つなぎ言葉診断", status:"done"},
+        {name:"9. 言葉トーン診断", status:"done"},
+        {name:"10. Gantt+伏線生成", status:"done"},
+        {name:"11. 横並び採点", status:"todo"},
+        {name:"12. 採点比較HTML", status:"done"},
+        {name:"13. 音源試聴", status:"todo"},
+        {name:"14. 撮影前3点ゲート", status:"done"},
+        {name:"15. スタッフ自動送信", status:"todo"},
+        {name:"16. 撮影→編集→配信", status:"future"},
+      ]
+    },
+    {
+      name: "🏠 ホーム",
+      cat: "home",
+      children: [
+        {name:"PJサマリ", status:"done"},
+        {name:"KPIカード×4", status:"done"},
+        {name:"採点推移グラフ", status:"done"},
+        {name:"クイックアクション", status:"done"},
+        {name:"弱点トップ3", status:"todo"},
+        {name:"新規PJ起票UI", status:"missing"},
+      ]
+    },
+    {
+      name: "📜 シナリオ管理",
+      cat: "scenario",
+      children: [
+        {name:"PJ選択リスト", status:"done"},
+        {name:"行別構成テーブル", status:"done"},
+        {name:"伏線回収マップ", status:"done"},
+        {name:"Gantt iframe埋込", status:"todo"},
+        {name:"音源プレイヤー", status:"todo"},
+        {name:"編集メモ表示", status:"future"},
+        {name:"修正履歴", status:"future"},
+        {name:"バージョン分岐表示", status:"missing"},
+      ]
+    },
+    {
+      name: "🏆 競合比較",
+      cat: "competitor",
+      children: [
+        {name:"赤間①フレーズ", status:"done"},
+        {name:"赤間②キャッシュ", status:"done"},
+        {name:"赤間③セカンダリー", status:"done"},
+        {name:"赤間④Canva×AI", status:"done"},
+        {name:"10軸レーダー", status:"done"},
+        {name:"勝敗テーブル", status:"todo"},
+        {name:"他社LP取込", status:"future"},
+        {name:"業種別ベンチマーク", status:"missing"},
+      ]
+    },
+    {
+      name: "📈 KPI推移",
+      cat: "kpi",
+      children: [
+        {name:"視聴維持率", status:"future"},
+        {name:"LINE登録率", status:"future"},
+        {name:"CV率・登録単価", status:"future"},
+        {name:"YouTube API", status:"future"},
+        {name:"Instagram API", status:"future"},
+        {name:"Gantt×実視聴重畳", status:"future"},
+        {name:"予実比較", status:"missing"},
+      ]
+    },
+    {
+      name: "💰 費用対効果の可視化",
+      cat: "roi",
+      isCore: true,
+      children: [
+        {name:"スタッフ作業時間（制作）", status:"todo"},
+        {name:"スタッフ作業時間（改善）", status:"todo"},
+        {name:"人件費（時間×時給）", status:"todo"},
+        {name:"動画LP売上の取込", status:"future"},
+        {name:"広告費の取込", status:"future"},
+        {name:"数値管理シート連携", status:"todo"},
+        {name:"ROAS自動算出", status:"future"},
+        {name:"CPA/CTR/CV取込", status:"future"},
+        {name:"Meta広告API", status:"future"},
+        {name:"週次PDCA自動レポ", status:"future"},
+        {name:"PJ別ROIランキング", status:"future"},
+        {name:"撤退判断ロジック", status:"missing"},
+        {name:"追加投資判断", status:"missing"},
+      ]
+    },
+    {
+      name: "🎯 採点ヒートマップ",
+      cat: "score",
+      children: [
+        {name:"全PJ×10軸", status:"done"},
+        {name:"強み弱み一覧", status:"done"},
+        {name:"パターン横断分析", status:"future"},
+        {name:"時系列トラッキング", status:"future"},
+      ]
+    },
+    {
+      name: "📚 ナレッジライブラリ",
+      cat: "library",
+      children: [
+        {name:"NG語辞書(17)", status:"done"},
+        {name:"OK語辞書(11)", status:"done"},
+        {name:"型ライブラリ(5)", status:"done"},
+        {name:"スキル一覧(66)", status:"todo"},
+        {name:"テンプレ集HTML", status:"todo"},
+      ]
+    },
+    {
+      name: "🎬 撮影準備ゲート",
+      cat: "filming",
+      children: [
+        {name:"3点ゲート判定", status:"done"},
+        {name:"スタッフ送信", status:"todo"},
+        {name:"音源最終試聴", status:"todo"},
+        {name:"ChatWork API", status:"todo"},
+        {name:"編集者メモPDF", status:"future"},
+      ]
+    },
+    {
+      name: "⚙️ 設定・連携",
+      cat: "settings",
+      children: [
+        {name:"Sheets API", status:"todo"},
+        {name:"YouTube/IG連携", status:"future"},
+        {name:"ChatWork連携", status:"todo"},
+        {name:"Cloud TTS選択", status:"todo"},
+        {name:"テーマ切替", status:"future"},
+        {name:"スタッフ権限管理", status:"missing"},
+        {name:"チーム共有機能", status:"missing"},
+        {name:"モバイル対応", status:"missing"},
+        {name:"オフラインモード", status:"missing"},
+      ]
+    },
+  ]
+};
+
+// ===== レンダリング =====
+const svg = d3.select("#mindmap");
+let width = window.innerWidth;
+let height = window.innerHeight - 80;
+svg.attr("width", width).attr("height", height);
+
+const g = svg.append("g");
+let currentLayout = 'radial';
+let showOnlyMissing = false;
+
+const zoom = d3.zoom().scaleExtent([0.3, 3]).on("zoom", e => g.attr("transform", e.transform));
+svg.call(zoom);
+
+function render() {
+    g.selectAll("*").remove();
+
+    let rootData = JSON.parse(JSON.stringify(data));
+    if (showOnlyMissing) {
+        rootData.children = rootData.children.map(c => ({
+            ...c,
+            children: c.children.filter(f => f.status === 'missing')
+        })).filter(c => c.children.length > 0);
+    }
+
+    const root = d3.hierarchy(rootData);
+
+    let layout;
+    if (currentLayout === 'radial') {
+        layout = d3.tree().size([2*Math.PI, Math.min(width,height)/2 - 100]).separation((a,b)=>(a.parent==b.parent?1:2)/a.depth);
+    } else {
+        layout = d3.tree().size([height-100, width-300]);
+    }
+    layout(root);
+
+    if (currentLayout === 'radial') {
+        g.attr("transform", `translate(${width/2},${height/2})`);
+
+        // リンク
+        g.append("g").selectAll("path").data(root.links()).join("path")
+            .attr("class", d => "link link-" + (d.target.data.cat || (d.target.parent.data.cat || 'root')))
+            .attr("d", d3.linkRadial().angle(d=>d.x).radius(d=>d.y))
+            .attr("stroke", d => {
+                const colors = {process:"#fb923c",home:"#06b6d4",scenario:"#a855f7",competitor:"#fbbf24",kpi:"#10b981",roi:"#ec4899",score:"#ef4444",library:"#8b5cf6",filming:"#f97316",settings:"#64748b"};
+                const cat = d.target.data.cat || d.target.parent.data.cat;
+                return colors[cat] || "#475569";
+            })
+            .attr("opacity", d => d.target.data.status === 'missing' ? 0.4 : 0.6)
+            .attr("stroke-dasharray", d => d.target.data.status === 'missing' ? "4,4" : "none");
+
+        // ノード
+        const node = g.append("g").selectAll("g").data(root.descendants()).join("g")
+            .attr("class", d => {
+                let cls = "node ";
+                if (!d.parent) cls += "node-root ";
+                else if (!d.children) cls += "node-l2 ";
+                else cls += "node-l1 node-l1-" + d.data.cat + " ";
+                if (d.data.status) cls += "status-" + d.data.status;
+                return cls;
+            })
+            .attr("transform", d => `rotate(${d.x*180/Math.PI-90}) translate(${d.y},0)`);
+
+        node.append("circle")
+            .attr("r", d => !d.parent ? 65 : !d.children ? 6 : 22);
+
+        // ルートノードのテキスト
+        // ルート：タイトル1行、サブを下に2行に分けて横書き
+        const rootNode = node.filter(d => !d.parent);
+        rootNode.append("text")
+            .attr("text-anchor", "middle")
+            .attr("dy", -2)
+            .style("font-size", "13px")
+            .style("font-weight", "800")
+            .style("fill", "#000")
+            .text(d => d.data.name);
+        rootNode.append("text")
+            .attr("text-anchor", "middle")
+            .attr("dy", 14)
+            .style("font-size", "7.5px")
+            .style("fill", "#000")
+            .style("font-weight", "600")
+            .text(d => d.data.subtitle.split("／")[0]);
+        rootNode.append("text")
+            .attr("text-anchor", "middle")
+            .attr("dy", 25)
+            .style("font-size", "7.5px")
+            .style("fill", "#000")
+            .style("font-weight", "600")
+            .text(d => d.data.subtitle.split("／")[1] || "");
+
+        // L1ノード（カテゴリ）テキスト
+        node.filter(d => d.parent && d.children).append("text")
+            .attr("class", "node-label")
+            .attr("text-anchor", "middle")
+            .attr("dy", 4)
+            .style("font-size", "10px")
+            .text(d => {
+                const m = d.data.name.match(/^(\S+)\s*(.+)/);
+                return m ? m[1] : d.data.name;
+            });
+
+        // L1の名前を回転外側に
+        node.filter(d => d.parent && d.children).each(function(d) {
+            const m = d.data.name.match(/^(\S+)\s*(.+)/);
+            if (m) {
+                const ang = d.x*180/Math.PI-90;
+                d3.select(this).append("text")
+                    .attr("class", "node-label")
+                    .attr("dy", 4)
+                    .attr("x", ang < 90 || ang > 270 ? 30 : -30)
+                    .attr("text-anchor", ang < 90 || ang > 270 ? "start" : "end")
+                    .attr("transform", ang < 90 || ang > 270 ? null : `rotate(180)`)
+                    .style("font-size", "11px")
+                    .style("font-weight", "700")
+                    .text(m[2]);
+            }
+        });
+
+        // L2ノード（機能）テキスト
+        node.filter(d => !d.children && d.parent).append("text")
+            .attr("dy", 3)
+            .attr("x", d => {
+                const ang = d.x*180/Math.PI-90;
+                return ang < 90 || ang > 270 ? 12 : -12;
+            })
+            .attr("text-anchor", d => {
+                const ang = d.x*180/Math.PI-90;
+                return ang < 90 || ang > 270 ? "start" : "end";
+            })
+            .attr("transform", d => {
+                const ang = d.x*180/Math.PI-90;
+                return ang < 90 || ang > 270 ? null : `rotate(180)`;
+            })
+            .style("font-size", "10px")
+            .style("fill", d => {
+                if (d.data.status === 'missing') return '#f87171';
+                if (d.data.status === 'done') return '#34d399';
+                if (d.data.status === 'todo') return '#fbbf24';
+                return '#cbd5e1';
+            })
+            .text(d => d.data.name);
+    } else {
+        // 横ツリー
+        g.attr("transform", `translate(160,50)`);
+
+        g.append("g").selectAll("path").data(root.links()).join("path")
+            .attr("class", "link")
+            .attr("fill", "none")
+            .attr("stroke", d => {
+                const colors = {process:"#fb923c",home:"#06b6d4",scenario:"#a855f7",competitor:"#fbbf24",kpi:"#10b981",roi:"#ec4899",score:"#ef4444",library:"#8b5cf6",filming:"#f97316",settings:"#64748b"};
+                const cat = d.target.data.cat || d.target.parent.data.cat;
+                return colors[cat] || "#475569";
+            })
+            .attr("stroke-width", 1.5)
+            .attr("opacity", 0.6)
+            .attr("d", d3.linkHorizontal().x(d=>d.y).y(d=>d.x));
+
+        const node = g.append("g").selectAll("g").data(root.descendants()).join("g")
+            .attr("transform", d => `translate(${d.y},${d.x})`)
+            .attr("class", d => {
+                let cls = "node ";
+                if (!d.parent) cls += "node-root ";
+                else if (!d.children) cls += "";
+                else cls += "node-l1 node-l1-" + d.data.cat + " ";
+                if (d.data.status) cls += "status-" + d.data.status;
+                return cls;
+            });
+
+        node.append("circle").attr("r", d => !d.parent ? 28 : !d.children ? 5 : 18);
+
+        node.append("text")
+            .attr("dx", d => !d.parent ? 0 : !d.children ? 9 : (d.children ? 23 : 9))
+            .attr("dy", 4)
+            .attr("text-anchor", d => !d.parent ? "middle" : "start")
+            .style("font-size", d => !d.parent ? "11px" : !d.children ? "10px" : "11px")
+            .style("font-weight", d => !d.parent ? "800" : d.children ? "700" : "500")
+            .style("fill", d => {
+                if (!d.parent) return '#000';
+                if (d.data.status === 'missing') return '#f87171';
+                if (d.data.status === 'done') return '#34d399';
+                if (d.data.status === 'todo') return '#fbbf24';
+                return '#cbd5e1';
+            })
+            .text(d => !d.parent ? '🎯 Hub' : d.data.name);
+    }
+}
+
+function setLayout(layout) {
+    currentLayout = layout;
+    document.querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    render();
+}
+function zoomReset() {
+    svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+}
+function toggleMissing() {
+    showOnlyMissing = !showOnlyMissing;
+    event.target.classList.toggle('active');
+    render();
+}
+
+window.addEventListener('resize', () => {
+    width = window.innerWidth;
+    height = window.innerHeight - 80;
+    svg.attr("width", width).attr("height", height);
+    render();
+});
+
+render();
+</script>
+</body>
+</html>

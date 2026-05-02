@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>📜 シナリオGantt + 伏線回収マップ｜YouTube×インスタ【掛け算＆時短】集客法</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; background:#f5f7fa; color:#222; padding:20px; }
+.container { max-width:1600px; margin:0 auto; background:white; border-radius:16px; padding:30px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
+h1 { font-size:24px; margin-bottom:8px; color:#1a1a2e; }
+.subtitle { color:#666; margin-bottom:24px; font-size:14px; }
+.legend { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; padding:16px; background:#f8f9fb; border-radius:12px; }
+.legend-item { display:flex; align-items:center; gap:6px; font-size:13px; padding:4px 12px; background:white; border-radius:6px; }
+.legend-color { width:14px; height:14px; border-radius:3px; }
+
+.gantt-wrapper { overflow-x:auto; padding-bottom:20px; }
+.gantt { position:relative; min-width:1500px; padding:20px; background:linear-gradient(180deg, #fafbfd 0%, #ffffff 100%); border-radius:8px; }
+
+/* タイムライン軸 */
+.time-axis { position:relative; height:30px; border-bottom:2px solid #2a2a3e; margin-bottom:10px; }
+.time-mark { position:absolute; top:0; height:100%; border-left:1px dashed #ccc; padding-left:4px; font-size:10px; color:#666; }
+.time-mark.major { border-left:1px solid #2a2a3e; font-weight:600; color:#1a1a2e; }
+
+/* 行バー */
+.row { display:flex; align-items:center; height:36px; margin-bottom:4px; position:relative; }
+.row-label { width:180px; flex-shrink:0; font-size:11px; padding-right:10px; text-align:right; color:#444; }
+.row-track { flex:1; position:relative; height:30px; background:#f0f2f5; border-radius:4px; }
+.bar { position:absolute; top:2px; height:26px; border-radius:4px; padding:0 8px; display:flex; align-items:center; font-size:11px; color:white; font-weight:600; cursor:pointer; transition:transform 0.15s; box-shadow:0 1px 3px rgba(0,0,0,0.15); }
+.bar:hover { transform:scale(1.02); z-index:50; }
+.bar-tooltip { display:none; position:absolute; bottom:38px; left:0; min-width:300px; padding:10px; background:#1a1a2e; color:white; border-radius:6px; font-size:11px; line-height:1.4; box-shadow:0 4px 12px rgba(0,0,0,0.3); z-index:100; }
+.bar:hover .bar-tooltip { display:block; }
+
+/* 伏線アロー */
+.foreshadow-layer { position:absolute; top:60px; left:200px; right:20px; bottom:20px; pointer-events:none; }
+.foreshadow-arrow { position:absolute; pointer-events:none; }
+.foreshadow-label { position:absolute; padding:2px 6px; background:white; border:1px solid; border-radius:3px; font-size:10px; font-weight:600; }
+
+/* セクション分け */
+.section { font-size:11px; padding:4px 12px; background:#e9ecef; color:#495057; border-radius:4px; display:inline-block; margin-bottom:6px; font-weight:600; }
+
+.stats { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:24px; }
+.stat-card { padding:16px; background:#f8f9fb; border-radius:10px; border-left:4px solid #2a9d8f; }
+.stat-label { font-size:11px; color:#666; margin-bottom:4px; }
+.stat-value { font-size:22px; font-weight:700; color:#1a1a2e; }
+
+.foreshadow-list { margin-top:24px; padding:20px; background:#fafbfd; border-radius:12px; }
+.foreshadow-list h2 { font-size:16px; margin-bottom:12px; color:#1a1a2e; }
+.fs-item { display:flex; align-items:center; gap:12px; padding:8px; background:white; border-radius:6px; margin-bottom:6px; font-size:13px; }
+.fs-color { width:20px; height:20px; border-radius:4px; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>📜 シナリオGanttチャート＋伏線回収マップ</h1>
+<div class="subtitle">YouTube×インスタ【掛け算＆時短】集客法 動画LP I列｜想定尺 約10:00（1.1倍速・実測ベース）｜2026-05-01</div>
+
+<div class="legend">
+<div class="legend-item"><div class="legend-color" style="background:#E63946"></div>🎯 フック・常識破壊</div>
+<div class="legend-item"><div class="legend-color" style="background:#F77F00"></div>🔒 視聴強制</div>
+<div class="legend-item"><div class="legend-color" style="background:#FCBF49"></div>😰 問題提起・共感</div>
+<div class="legend-item"><div class="legend-color" style="background:#06AED5"></div>💡 朗報・アルゴリズム大変化</div>
+<div class="legend-item"><div class="legend-color" style="background:#9B5DE5"></div>🎁 コアコンセプト</div>
+<div class="legend-item"><div class="legend-color" style="background:#003566"></div>👑 自己紹介・権威</div>
+<div class="legend-item"><div class="legend-color" style="background:#2A9D8F"></div>🛠 解決策・3ステップ</div>
+<div class="legend-item"><div class="legend-color" style="background:#FFB703"></div>🏆 実績・事例</div>
+<div class="legend-item"><div class="legend-color" style="background:#8338EC"></div>🌅 不可逆性・未来</div>
+<div class="legend-item"><div class="legend-color" style="background:#D62828"></div>🎬 クロージング・CTA</div>
+</div>
+
+<div class="gantt-wrapper">
+<div class="gantt" id="gantt"></div>
+</div>
+
+<div class="foreshadow-list">
+<h2>🎯 伏線張り→回収マップ</h2>
+<div id="foreshadow-list"></div>
+</div>
+
+<div class="stats">
+<div class="stat-card">
+<div class="stat-label">総尺（1.1倍速）</div>
+<div class="stat-value">10:00</div>
+</div>
+<div class="stat-card">
+<div class="stat-label">総文字数（読み上げ用）</div>
+<div class="stat-value">4,148字</div>
+</div>
+<div class="stat-card">
+<div class="stat-label">行数</div>
+<div class="stat-value">17行</div>
+</div>
+<div class="stat-card">
+<div class="stat-label">伏線張り→回収</div>
+<div class="stat-value">5本</div>
+</div>
+</div>
+</div>
+
+<script>
+const data = {"scenario": [{"row": 2, "item": "①冒頭1行目（結論先出し）", "chars": 33, "start": 0, "end": 4.774535809018567, "duration": 4.774535809018567, "preview": "「得意なSNS一つに集中しろ」というやり方は、完全に時代遅れです。", "theme": ["hook", "🎯 フック・常識破壊", "#E63946"]}, {"row": 4, "item": "③キラーワード登場", "chars": 103, "start": 4.774535809018567, "end": 19.67687484928864, "duration": 14.902339040270073, "preview": "「週２回、２時間だけで、SNSの2大巨頭を掛け算で回せば、集客は一桁変わります。 その正体が『YouTube✖️インスタ", "theme": ["hook", "🎯 フック・常識破壊", "#E63946"]}, {"row": 5, "item": "④視聴強制", "chars": 286, "start": 19.67687484928864, "end": 61.056185194116225, "duration": 41.37931034482759, "preview": "「ただし、最後まで見ていただかないと、肝心な『掛け算公式』の正体がわからないまま終わってしまいます。 今日お伝えするのは", "theme": ["retention", "🔒 視聴強制", "#F77F00"]}, {"row": 6, "item": "①努力の描写", "chars": 210, "start": 61.056185194116225, "end": 91.43959488787074, "duration": 30.38340969375452, "preview": "「『得意なSNSを1つに絞れ』『毎日投稿しろ』『1万人フォロワーを目指せ』。 あなたもこう言われて、必死に頑張ってきまし", "theme": ["problem", "😰 問題提起・共感", "#FCBF49"]}, {"row": 7, "item": "②データで常識破壊", "chars": 658, "start": 91.43959488787074, "end": 186.6409452616349, "duration": 95.20135037376416, "preview": "「でもここで朗報です。 今、YouTubeとインスタで過去最大級のアルゴリズム大変化が起きていて、動画を見ているあなたに", "theme": ["revelation", "💡 朗報・アルゴ大変化", "#06AED5"]}, {"row": 8, "item": "③量→深さへの転換", "chars": 140, "start": 186.6409452616349, "end": 206.8965517241379, "duration": 20.255606462503014, "preview": "「だから、必要だったのは、頑張ることでも予算でもスキルでもなかったんです。 インスタ ＝ 拡散の役（広く知ってもらう） ", "theme": ["concept", "🎁 コアコンセプト", "#9B5DE5"]}, {"row": 9, "item": "①名乗り＋実績", "chars": 235, "start": 206.8965517241379, "end": 240.89703400048225, "duration": 34.00048227634434, "preview": "「申し遅れました、柳井弘幸と申します。 私はAI集客の専門家であり、元スターバックスのマーケティング部長です。 P&G・", "theme": ["authority", "👑 自己紹介・権威", "#003566"]}, {"row": 11, "item": "①例え話（山奥ラーメン屋）", "chars": 709, "start": 240.89703400048225, "end": 343.47721244272964, "duration": 102.5801784422474, "preview": "「実は、SNS集客の世界では今、AppleがガラケーをiPhoneで一気に飲み込んだ時とまったく同じ波が起きています。 ", "theme": ["concept", "🎁 コアコンセプト", "#9B5DE5"]}, {"row": 12, "item": "②自業種への橋渡し", "chars": 102, "start": 343.47721244272964, "end": 358.2348685796961, "duration": 14.757656136966482, "preview": "「これ、あなたのビジネスでもまったく同じです。 SNSで参入する『時間・お金・技術』のハードルは、AIで全部消えました。", "theme": ["concept", "🎁 コアコンセプト", "#9B5DE5"]}, {"row": 13, "item": "③三角形理論の定義", "chars": 248, "start": 358.2348685796961, "end": 394.11622859898716, "duration": 35.88136001929105, "preview": "「では、その正体を一つにまとめます。 『YouTube✖️インスタ【掛け算】集客法』とは、 インスタで拡散させてLINE", "theme": ["concept", "🎁 コアコンセプト", "#9B5DE5"]}, {"row": 14, "item": "④口ずさまれる一文", "chars": 69, "start": 394.11622859898716, "end": 404.0993489269351, "duration": 9.983120327947914, "preview": "「 足し算じゃない。 掛け算だ。 1つ集中はもう古い。 これからはYouTube×インスタの掛け算だけが、 AI時代のS", "theme": ["concept", "🎁 コアコンセプト", "#9B5DE5"]}, {"row": 15, "item": "①3ステップ", "chars": 319, "start": 404.0993489269351, "end": 450.2531950807812, "duration": 46.15384615384615, "preview": "「具体的な3ステップ＋集客が3倍になる特典量産の方法をお伝えします。 ステップ1：AIでサムネ・タイトル・動画シナリオを", "theme": ["solution", "🛠 解決策・3ステップ", "#2A9D8F"]}, {"row": 16, "item": "②受講生10倍事例", "chars": 262, "start": 450.2531950807812, "end": 488.16011574632256, "duration": 37.90692066554135, "preview": "「実際に、この集客法を導入した受講生さんから、続々と成果が上がっています。 YouTubeを週2本、インスタを月20回、", "theme": ["proof", "🏆 実績・事例", "#FFB703"]}, {"row": 17, "item": "①不可逆性", "chars": 65, "start": 488.16011574632256, "end": 497.5645044610561, "duration": 9.404388714733543, "preview": "「この集客法を使い始めると、もう毎日投稿にも、編集者依存にも、戻れません。 AI委任の自由を、一度味わったら、もう手放せ", "theme": ["future", "🌅 不可逆性・未来", "#8338EC"]}, {"row": 18, "item": "②時間の取り戻し", "chars": 137, "start": 497.5645044610561, "end": 517.3860622136483, "duration": 19.821557752592234, "preview": "「あなたは、本業に集中する時間を取り戻します。 週２−３回・2時間でSNSが回るので、これまで奪われていた時間が、商品の", "theme": ["future", "🌅 不可逆性・未来", "#8338EC"]}, {"row": 19, "item": "①正体明かし", "chars": 193, "start": 517.3860622136483, "end": 545.3098625512417, "duration": 27.92380033759344, "preview": "「最後に、『YouTube✖️インスタ【掛け算＆時短】集客法』の正体をお伝えします。 正体は、両SNSアルゴリズム大変化", "theme": ["closing", "🎬 クロージング・CTA", "#D62828"]}, {"row": 20, "item": "②LINE診断CTA", "chars": 379, "start": 545.3098625512417, "end": 600.1446829033034, "duration": 54.834820352061726, "preview": "「この『YouTube✖️インスタ【掛け算＆時短】集客法』を具体的に作る手順、AIへの委任プロンプト、自動化の設定は、本", "theme": ["closing", "🎬 クロージング・CTA", "#D62828"]}], "foreshadow": [{"from": 5, "to": [7, 8, 15], "label": "3つの真実", "color": "#E63946"}, {"from": 14, "to": [19], "label": "足し算じゃない掛け算だ", "color": "#9B5DE5"}, {"from": 15, "to": [20], "label": "9大特典", "color": "#2A9D8F"}, {"from": 2, "to": [11, 19], "label": "時代遅れ", "color": "#003566"}, {"from": 7, "to": [19], "label": "アルゴ大変化", "color": "#06AED5"}]};
+const TOTAL = 600;  // 秒
+const TICK = 30;    // 30秒刻み
+
+const gantt = document.getElementById('gantt');
+
+// タイムライン軸
+const timeAxis = document.createElement('div');
+timeAxis.className = 'time-axis';
+timeAxis.style.marginLeft = '180px';
+for (let t = 0; t <= TOTAL; t += TICK) {
+    const mark = document.createElement('div');
+    const pct = (t / TOTAL) * 100;
+    mark.className = 'time-mark' + (t % 60 === 0 ? ' major' : '');
+    mark.style.left = pct + '%';
+    const m = Math.floor(t/60), s = t%60;
+    mark.textContent = m + ':' + (s<10?'0':'') + s;
+    timeAxis.appendChild(mark);
+}
+gantt.appendChild(timeAxis);
+
+// 各行バー
+const barRefs = {};
+data.scenario.forEach((s, idx) => {
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.id = 'row-' + s.row;
+
+    const label = document.createElement('div');
+    label.className = 'row-label';
+    label.innerHTML = '<b>行' + s.row + '</b><br><span style="color:#777;font-size:10px">' + s.item.substring(0,12) + '</span>';
+    row.appendChild(label);
+
+    const track = document.createElement('div');
+    track.className = 'row-track';
+
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    const startPct = (s.start / TOTAL) * 100;
+    const widthPct = (s.duration / TOTAL) * 100;
+    bar.style.left = startPct + '%';
+    bar.style.width = widthPct + '%';
+    bar.style.background = s.theme[2];
+    bar.textContent = '行' + s.row + ' (' + s.chars + '字)';
+
+    const tooltip = document.createElement('div');
+    tooltip.className = 'bar-tooltip';
+    const startMin = Math.floor(s.start/60), startSec = Math.floor(s.start%60);
+    const endMin = Math.floor(s.end/60), endSec = Math.floor(s.end%60);
+    tooltip.innerHTML = '<b>行' + s.row + ' ' + s.item + '</b><br>' +
+        '時間: ' + startMin + ':' + (startSec<10?'0':'') + startSec + ' - ' + endMin + ':' + (endSec<10?'0':'') + endSec + '<br>' +
+        '文字数: ' + s.chars + '字 (' + s.duration.toFixed(1) + '秒)<br>' +
+        'テーマ: ' + s.theme[1] + '<br><br>' +
+        '<i>' + s.preview + '...</i>';
+    bar.appendChild(tooltip);
+
+    track.appendChild(bar);
+    row.appendChild(track);
+    gantt.appendChild(row);
+
+    barRefs[s.row] = {x: startPct + widthPct/2, y: idx};
+});
+
+// 伏線リスト
+const fsList = document.getElementById('foreshadow-list');
+data.foreshadow.forEach(f => {
+    const item = document.createElement('div');
+    item.className = 'fs-item';
+    item.innerHTML = '<div class="fs-color" style="background:' + f.color + '"></div>' +
+        '<b>「' + f.label + '」</b>： 行' + f.from + ' で張り → 行' + f.to.join(',') + ' で回収';
+    fsList.appendChild(item);
+});
+
+// 伏線アロー描画（SVGで）
+const ganttRect = gantt.getBoundingClientRect();
+const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+svg.setAttribute('style', 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;');
+svg.setAttribute('preserveAspectRatio', 'none');
+
+// 各行の中心Y座標を取得
+const rowHeights = {};
+data.scenario.forEach(s => {
+    const el = document.getElementById('row-' + s.row);
+    rowHeights[s.row] = el.offsetTop + 18;
+});
+
+// 伏線アロー
+data.foreshadow.forEach(f => {
+    const fromRow = data.scenario.find(x => x.row === f.from);
+    if (!fromRow) return;
+    const fromXPct = ((fromRow.start + fromRow.duration) / TOTAL) * 100;
+
+    f.to.forEach(toRowNum => {
+        const toRow = data.scenario.find(x => x.row === toRowNum);
+        if (!toRow) return;
+        const toXPct = (toRow.start / TOTAL) * 100;
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        const trackLeft = 180;
+        const x1 = (gantt.offsetWidth - trackLeft) * (fromXPct/100) + trackLeft;
+        const x2 = (gantt.offsetWidth - trackLeft) * (toXPct/100) + trackLeft;
+        const y1 = rowHeights[f.from] + 50;
+        const y2 = rowHeights[toRowNum] + 50;
+        const cy = Math.max(y1, y2) + 30;
+
+        path.setAttribute('d', `M ${x1} ${y1} Q ${(x1+x2)/2} ${cy} ${x2} ${y2}`);
+        path.setAttribute('stroke', f.color);
+        path.setAttribute('stroke-width', '1.5');
+        path.setAttribute('stroke-dasharray', '4,4');
+        path.setAttribute('fill', 'none');
+        path.setAttribute('opacity', '0.6');
+        svg.appendChild(path);
+    });
+});
+
+setTimeout(() => {
+    gantt.style.position = 'relative';
+    gantt.appendChild(svg);
+}, 100);
+</script>
+</body>
+</html>

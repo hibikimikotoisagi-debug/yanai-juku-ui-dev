@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>🎯 UI開発プロジェクト マスターOGSM v1.0｜柳井塾</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; background:#0a0e1a; color:#e2e8f0; padding:24px; line-height:1.6; }
+.container { max-width:1500px; margin:0 auto; }
+
+.hero { background:linear-gradient(135deg,#0c4a6e 0%,#1e293b 100%); padding:36px 40px; border-radius:18px; margin-bottom:28px; border:1px solid #06b6d4; }
+.hero h1 { font-size:30px; font-weight:800; background:linear-gradient(90deg,#fbbf24,#06b6d4,#a855f7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px; }
+.hero .v { font-size:13px; color:#94a3b8; margin-bottom:14px; }
+.hero .lead { font-size:16px; color:#cbd5e1; line-height:1.7; }
+
+.section { background:#1e293b; padding:28px 32px; border-radius:14px; margin-bottom:22px; border:1px solid #334155; }
+.section-title { font-size:22px; font-weight:800; margin-bottom:18px; padding-left:12px; border-left:4px solid; }
+.title-o { color:#fbbf24; border-left-color:#fbbf24; }
+.title-g { color:#06b6d4; border-left-color:#06b6d4; }
+.title-s { color:#a855f7; border-left-color:#a855f7; }
+.title-m { color:#10b981; border-left-color:#10b981; }
+
+.ba-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:14px; }
+.ba-card { padding:20px; border-radius:12px; }
+.ba-before { background:rgba(239,68,68,0.08); border:1px solid #ef4444; }
+.ba-after { background:rgba(16,185,129,0.08); border:1px solid #10b981; }
+.ba-card h3 { font-size:14px; font-weight:700; margin-bottom:12px; }
+.ba-before h3 { color:#f87171; }
+.ba-after h3 { color:#34d399; }
+.ba-card ul { padding-left:20px; }
+.ba-card li { font-size:13px; line-height:1.9; color:#cbd5e1; margin-bottom:4px; }
+
+.goal-table { width:100%; border-collapse:collapse; margin-top:12px; font-size:13px; }
+.goal-table th { background:#0f172a; padding:12px 14px; text-align:left; color:#94a3b8; font-weight:600; border-bottom:1px solid #334155; }
+.goal-table td { padding:12px 14px; border-bottom:1px solid #1e293b; }
+.goal-table tr:hover td { background:#0f172a; }
+.before { color:#f87171; }
+.after { color:#34d399; font-weight:700; }
+
+.strategy-card { background:#0f172a; padding:18px 20px; border-radius:10px; margin-bottom:14px; border-left:3px solid #a855f7; }
+.strategy-card h3 { font-size:15px; font-weight:700; color:#c084fc; margin-bottom:8px; }
+.strategy-card p { font-size:13px; color:#cbd5e1; line-height:1.7; }
+
+.hub-table { width:100%; border-collapse:collapse; margin-top:14px; font-size:13px; }
+.hub-table th { background:#0f172a; padding:10px 12px; text-align:left; color:#94a3b8; font-weight:600; }
+.hub-table td { padding:12px; border-bottom:1px solid #1e293b; }
+.priority { font-weight:800; font-size:14px; }
+.priority-1 { color:#fbbf24; }
+.priority-2 { color:#06b6d4; }
+.priority-3 { color:#a855f7; }
+
+.status-badge { display:inline-block; padding:3px 10px; border-radius:10px; font-size:11px; font-weight:600; }
+.s-active { background:rgba(16,185,129,0.2); color:#34d399; }
+.s-defined { background:rgba(251,191,36,0.2); color:#fbbf24; }
+.s-pending { background:rgba(239,68,68,0.2); color:#f87171; }
+.s-prototype { background:rgba(168,85,247,0.2); color:#c084fc; }
+
+.measure-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:14px; }
+.measure-card { background:#0f172a; padding:18px; border-radius:10px; border-top:3px solid #10b981; }
+.measure-card h3 { font-size:14px; color:#34d399; margin-bottom:10px; font-weight:700; }
+.measure-card ul { padding-left:18px; }
+.measure-card li { font-size:12px; color:#cbd5e1; margin-bottom:6px; line-height:1.6; }
+
+.meta-flow { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:14px; }
+.meta-step { padding:14px 12px; background:#0f172a; border-radius:8px; border-top:3px solid #fbbf24; text-align:center; position:relative; }
+.meta-step::after { content:'→'; position:absolute; right:-12px; top:50%; transform:translateY(-50%); color:#fbbf24; font-size:18px; font-weight:bold; z-index:10; }
+.meta-step:last-child::after { display:none; }
+.meta-step-num { font-size:11px; color:#fbbf24; font-weight:700; }
+.meta-step-name { font-size:13px; font-weight:700; color:white; margin:6px 0 4px; }
+.meta-step-desc { font-size:11px; color:#94a3b8; line-height:1.5; }
+
+.kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+.kpi-mini { background:#1e293b; padding:18px; border-radius:10px; border:1px solid #334155; }
+.kpi-mini-label { font-size:11px; color:#94a3b8; margin-bottom:6px; }
+.kpi-mini-value { font-size:24px; font-weight:800; }
+.kpi-mini-value.cyan { background:linear-gradient(90deg,#06b6d4,#0ea5e9); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi-mini-value.gold { background:linear-gradient(90deg,#fbbf24,#f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi-mini-value.purple { background:linear-gradient(90deg,#a855f7,#7c3aed); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi-mini-value.green { background:linear-gradient(90deg,#10b981,#059669); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+
+.cta-bar { display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; }
+.cta-btn { padding:10px 18px; border-radius:8px; background:#334155; color:white; text-decoration:none; font-size:13px; font-weight:600; transition:all 0.15s; }
+.cta-btn:hover { background:#475569; transform:translateY(-1px); }
+.cta-btn.primary { background:linear-gradient(90deg,#06b6d4,#0ea5e9); }
+.cta-btn.primary:hover { box-shadow:0 4px 12px rgba(6,182,212,0.4); }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="hero">
+<h1>🎯 UI開発プロジェクト マスターOGSM v1.0</h1>
+<div class="v">柳井塾 業務全体UI化マスタープラン｜2026-05-02 起票</div>
+<div class="lead">
+「PJ進めながらUIを育てる」を全業務領域に展開し、状況把握・判断・改善のスピードを<b style="color:#fbbf24;">10倍</b>にするマスタープロジェクト。<br>
+3ヶ月で<b style="color:#34d399;">8つのHub</b>を統一デザインで構築し、<b style="color:#06b6d4;">業務全体をダッシュボード化</b>する。
+</div>
+<div class="cta-bar">
+<a class="cta-btn primary" href="index.html">📊 動画LP制作Hub（実装中）</a>
+<a class="cta-btn" href="master_pj_dashboard.html">🎯 全PJ俯瞰</a>
+<a class="cta-btn" href="mindmap.html">🧠 マインドマップ</a>
+<a class="cta-btn" href="sitemap.html">🗺 サイト構造</a>
+<a class="cta-btn" href="ui_design_method.html">🎨 UI設計メソッド</a>
+</div>
+</div>
+
+<div class="kpi-row">
+<div class="kpi-mini"><div class="kpi-mini-label">Hub数 目標</div><div class="kpi-mini-value cyan">1 → 11</div></div>
+<div class="kpi-mini"><div class="kpi-mini-label">キャッチアップ</div><div class="kpi-mini-value gold">2h → 10分</div></div>
+<div class="kpi-mini"><div class="kpi-mini-label">1Hub構築時間</div><div class="kpi-mini-value purple">8h → 2h</div></div>
+<div class="kpi-mini"><div class="kpi-mini-label">デザイン統一率</div><div class="kpi-mini-value green">30% → 100%</div></div>
+</div>
+
+<!-- ===== O ===== -->
+<div class="section">
+<h2 class="section-title title-o">🎯 O｜目的（Objective・文章Before→After）</h2>
+<div class="ba-grid">
+<div class="ba-card ba-before">
+<h3>❌ Before（現状の課題）</h3>
+<ul>
+<li>各業務がスプレッドシートとChatWorkに散在し、状況把握に時間がかかる</li>
+<li>担当者ごとに見る数値・判断基準・操作手順が異なる（属人化）</li>
+<li>ダッシュボードを作っても単発で終わり、再利用・統一されていない</li>
+<li>UIが業務の「副産物」として育っていない（PJ完了＝知見の埋没）</li>
+<li>全PJ横断の優先順位・ROI比較ができない</li>
+<li>新規スタッフのキャッチアップが2時間以上かかる</li>
+</ul>
+</div>
+<div class="ba-card ba-after">
+<h3>✅ After（目指す姿）</h3>
+<ul>
+<li>全業務領域に統一デザインのHubが揃い、状況が1画面で見える</li>
+<li>担当者・経営者・お客様が「同じ数字・同じ操作画面」を見る（SSoT）</li>
+<li>1PJ完了ごとにダッシュボードが1つ追加される標準サイクル稼働</li>
+<li>UI開発がPJ進行の副産物として自動的に育つ運用</li>
+<li>全PJ横断で優先順位・ROI・採点・進捗が比較できる</li>
+<li>新規スタッフが10分で全PJの状況把握＋作業着手できる</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- ===== G ===== -->
+<div class="section">
+<h2 class="section-title title-g">🔢 G｜ゴール（Goal・数値Before→After／3ヶ月＝2026-08-02）</h2>
+<table class="goal-table">
+<thead><tr><th style="width:40px;">#</th><th>指標</th><th style="width:200px;">Before</th><th style="width:280px;">After（目標）</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>業務領域別Hub数</td><td class="before">1個（動画LPのみ）</td><td class="after">11個（社内★1-8＋販売★9・★11＋横串★10）</td></tr>
+<tr><td>2</td><td>担当者キャッチアップ時間</td><td class="before">2時間</td><td class="after">10分以内</td></tr>
+<tr><td>3</td><td>状況把握クリック数</td><td class="before">平均15回</td><td class="after">3回以内</td></tr>
+<tr><td>4</td><td>1Hub平均構築時間</td><td class="before">8時間</td><td class="after">2時間（テンプレ再利用で76%減）</td></tr>
+<tr><td>5</td><td>デザイン統一率</td><td class="before">体感30%</td><td class="after">100%（共通デザインシステム）</td></tr>
+<tr><td>6</td><td>OGSM定義済PJ数</td><td class="before">1件</td><td class="after">全Hub＝8件</td></tr>
+<tr><td>7</td><td>数値SSoT到達率</td><td class="before">0%</td><td class="after">100%</td></tr>
+<tr><td>8</td><td>自動化レポート配信本数</td><td class="before">0本/週</td><td class="after">8本/週（Hubごと月曜10:00）</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== S ===== -->
+<div class="section">
+<h2 class="section-title title-s">📊 S｜戦略（Strategy）</h2>
+
+<div class="strategy-card">
+<h3>戦略1：共通デザインシステム化</h3>
+<p>
+<code>design-system.css</code> に分離（カラー・コンポーネント・KPIカード・テーブル・モーダル）。<br>
+全Hubで再利用可能なテンプレを標準化。<b style="color:#fbbf24;">標準カラー</b>：背景 #0f172a / アクセント シアン #06b6d4 / ゴールド #fbbf24 / パープル #a855f7
+</p>
+</div>
+
+<div class="strategy-card">
+<h3>戦略2：11のHub統一構築（優先順位順）— ⭐ ダッシュボード化対象PJ（v1.3更新）</h3>
+
+<div style="padding:14px; background:rgba(236,72,153,0.1); border:1px solid #ec4899; border-radius:8px; margin-bottom:14px; font-size:12px; color:#cbd5e1;">
+🆕 <b style="color:#ec4899;">v1.3 更新内容</b>：★9 ファネル自動構築Hub・★10 社長クローンHub・★11 自己育て直しコーチングHubを新規追加。社内最適化Hub（★1〜★8）＋外部販売Hub（★9・★11）＋横串Hub（★10）の3層構造に進化。
+</div>
+
+<table class="hub-table">
+<thead><tr><th style="width:60px;">優先</th><th>Hub名</th><th>スコープ</th><th style="width:130px;">状態</th><th style="width:140px;">担当／販売対象</th></tr></thead>
+<tbody>
+
+<tr style="background:rgba(6,182,212,0.05);"><td colspan="5" style="font-size:11px; color:#22d3ee; font-weight:700;">━━━ 第1層：社内業務最適化Hub（★1〜★8） ━━━</td></tr>
+
+<tr>
+<td><span class="priority priority-1">★1</span></td>
+<td><b style="color:white;">動画LP制作Hub</b></td>
+<td>動画LP・YouTube台本・撮影〜配信PDCA</td>
+<td><span class="status-badge s-active">🟢 実装中v1.0</span></td>
+<td>柳井</td>
+</tr>
+<tr>
+<td><span class="priority priority-1">★2</span></td>
+<td><b style="color:white;">数値管理シート自動化Hub</b></td>
+<td>全PJのKPI・ファネル・SSoT統合（Meta/YT/IG/LINE/UTAGE/数値管理）</td>
+<td><span class="status-badge s-defined">🟡 OGSM定義済</span></td>
+<td>柳井＋池田</td>
+</tr>
+<tr>
+<td><span class="priority priority-1">★3</span></td>
+<td><b style="color:white;">経理・人事 自動化Hub</b></td>
+<td>売上予測・PJ別会計（23本）・経費・人件費・スポーク3</td>
+<td><span class="status-badge s-pending">🔴 未着手</span></td>
+<td>田口さん</td>
+</tr>
+<tr>
+<td><span class="priority priority-2">★4</span></td>
+<td><b style="color:white;">PDCA定例運用Hub</b></td>
+<td>会議短縮・AIレポート自動生成・既読管理（v1.1稼働中）</td>
+<td><span class="status-badge s-pending">🔴 UI化待ち</span></td>
+<td>柳井</td>
+</tr>
+<tr>
+<td><span class="priority priority-2">★5</span></td>
+<td><b style="color:white;">スポークマスター統合Hub</b></td>
+<td>講座生コーチ業務・スポーク1〜3統合・棚卸し108業務</td>
+<td><span class="status-badge s-pending">🔴 未着手</span></td>
+<td>池田</td>
+</tr>
+<tr>
+<td><span class="priority priority-2">★6</span></td>
+<td><b style="color:white;">SNS自動投稿管理Hub</b></td>
+<td>Threads/IG/Facebook/X一元管理＋投稿予約＋FAQ自動化</td>
+<td><span class="status-badge s-defined">🟡 PJ着手済</span></td>
+<td>奥村さん</td>
+</tr>
+<tr>
+<td><span class="priority priority-3">★7</span></td>
+<td><b style="color:white;">プロデュースPJ統合Hub</b></td>
+<td>奥村/菊池/徳武JV/片寄せClient等のマルチクライアント管理</td>
+<td><span class="status-badge s-pending">🔴 未着手</span></td>
+<td>柳井</td>
+</tr>
+<tr>
+<td><span class="priority priority-3">★8</span></td>
+<td><b style="color:white;">全PJ俯瞰マスターHub</b></td>
+<td>全Hub横断ROI比較・優先順位マトリクス・撤退/投資判断</td>
+<td><span class="status-badge s-prototype">🟣 原型あり</span></td>
+<td>柳井</td>
+</tr>
+
+<tr style="background:rgba(236,72,153,0.05);"><td colspan="5" style="font-size:11px; color:#ec4899; font-weight:700;">━━━ 第2層：外部販売Hub（商品化候補・★9・★11） ━━━</td></tr>
+
+<tr style="background:rgba(236,72,153,0.05);">
+<td><span class="priority priority-1" style="color:#ec4899;">★9</span></td>
+<td><b style="color:white;">🚀 ファネル自動構築Hub</b></td>
+<td>SNS広告→LP→LINE→セミナー→成約 全パネルAI自動構築（自社実証→他社販売）</td>
+<td><span class="status-badge s-defined">🟡 OGSM v0.1</span></td>
+<td>柳井／<b style="color:#ec4899;">中小企業＋個人</b></td>
+</tr>
+<tr style="background:rgba(236,72,153,0.05);">
+<td><span class="priority priority-1" style="color:#ec4899;">★11</span></td>
+<td><b style="color:white;">🌱 自己育て直しコーチングHub <span style="font-size:9px; background:#ec4899; padding:2px 6px; border-radius:4px; color:white;">NEW</span></b></td>
+<td>講座生・顧客向け継続装置（週1ライブ／夕食理解／妻週1MTG型／痛みは資産マインド／6歳ゴールデンエイジ理論）</td>
+<td><span class="status-badge s-defined">🟡 理論完成</span></td>
+<td>柳井／<b style="color:#ec4899;">毒親育ち起業家</b></td>
+</tr>
+
+<tr style="background:rgba(168,85,247,0.05);"><td colspan="5" style="font-size:11px; color:#c084fc; font-weight:700;">━━━ 第3層：横串Hub（全Hubの裏側で動く・★10） ━━━</td></tr>
+
+<tr style="background:rgba(168,85,247,0.08);">
+<td><span class="priority priority-1" style="color:#c084fc;">★10</span></td>
+<td><b style="color:white;">👤 社長クローンHub <span style="font-size:9px; background:#c084fc; padding:2px 6px; border-radius:4px; color:white;">構築中</span></b></td>
+<td>柳井さん思想・戦略・価値観・判断基準のClaudeメモリ化（7階層×100問インタビュー進行中）／全Hubから「社長ならどう判断する？」が引ける</td>
+<td><span class="status-badge s-active">🟢 構築中</span></td>
+<td>柳井／<b style="color:#c084fc;">将来商品化</b></td>
+</tr>
+
+</tbody>
+</table>
+
+<div style="margin-top:14px; padding:14px; background:rgba(251,191,36,0.08); border:1px solid #fbbf24; border-radius:8px;">
+<div style="font-size:13px; color:#fbbf24; font-weight:700; margin-bottom:6px;">💡 3層構造の戦略意義</div>
+<div style="font-size:12px; color:#cbd5e1; line-height:1.8;">
+<b>第1層（★1〜★8）</b>：社内業務最適化＝右腕化メソッドの「手足」<br>
+<b>第2層（★9・★11）</b>：外部販売Hub＝右腕化メソッドの「商品」<br>
+<b>第3層（★10）</b>：横串Hub＝右腕化メソッドの「頭脳」（社長の判断補助）<br>
+3層が揃って初めて「AI右腕化」が完成し、自社実証→商品化→販売の循環が回る。
+</div>
+</div>
+</div>
+
+<div class="strategy-card">
+<h3>戦略3：メタプロセス標準化 — 「PJ進めながらUIを育てる」</h3>
+<div class="meta-flow">
+<div class="meta-step">
+<div class="meta-step-num">STEP 1</div>
+<div class="meta-step-name">PJ着手</div>
+<div class="meta-step-desc">OGSM 1ページ作成<br><b style="color:#fbbf24;">必須化</b></div>
+</div>
+<div class="meta-step">
+<div class="meta-step-num">STEP 2</div>
+<div class="meta-step-name">PJ進行中</div>
+<div class="meta-step-desc">Hub育成を<br>副産物として並走</div>
+</div>
+<div class="meta-step">
+<div class="meta-step-num">STEP 3</div>
+<div class="meta-step-name">PJ完了</div>
+<div class="meta-step-desc">Hub完成 →<br>翌PJのテンプレ化</div>
+</div>
+<div class="meta-step">
+<div class="meta-step-num">STEP 4</div>
+<div class="meta-step-name">水平展開</div>
+<div class="meta-step-desc">テンプレ再利用で<br>次Hub構築76%減</div>
+</div>
+</div>
+</div>
+
+<div class="strategy-card">
+<h3>戦略4：データ連携の標準化</h3>
+<p>
+全Hubに共通「設定・連携」セクションテンプレを配置。<br>
+<b style="color:#fbbf24;">対応API</b>: Google Sheets / YouTube Data v3 / Meta広告 / Instagram Graph / ChatWork / LINE Messaging / UTAGE
+</p>
+</div>
+
+<div class="strategy-card" style="border-left-color:#ec4899; background:linear-gradient(135deg,#0f172a 0%,#3b0764 100%);">
+<h3 style="color:#f472b6;">戦略5：ポジショニング戦略 — 「AI右腕化サービス」という新カテゴリーを取りに行く</h3>
+<p>
+自社実証完了後、<b>中小企業＆個人事業主向けに販売</b>する商品ポジションを先に定義。<br>
+SaaS（汎用すぎる）／ノーコード（単機能止まり）／受託開発（重く遅い）／AI単体（点で終わる）<br>
+これら全てと<b>違う右上の象限</b>「<b style="color:#fbbf24;">フルカスタム × 短期間 × 低コスト</b>」を独占する。<br>
+<b style="color:#34d399;">→ 詳細は <a href="positioning.html" style="color:#22d3ee;">商品化ポジショニング v1.1</a> 参照</b>
+</p>
+
+<div style="margin-top:14px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+<div style="padding:12px; background:rgba(0,0,0,0.3); border-radius:8px; border-left:3px solid #06b6d4;">
+<div style="font-size:11px; color:#22d3ee; font-weight:700;">S｜Segmentation</div>
+<div style="font-size:11px; color:#cbd5e1; margin-top:4px;">月人件費300〜1000万のオーナー企業／年商500〜2000万の一人事業主</div>
+</div>
+<div style="padding:12px; background:rgba(0,0,0,0.3); border-radius:8px; border-left:3px solid #fbbf24;">
+<div style="font-size:11px; color:#fbbf24; font-weight:700;">T｜Targeting</div>
+<div style="font-size:11px; color:#cbd5e1; margin-top:4px;">柳井塾既存講座生／AI本気層／属人化に危機感あるオーナー</div>
+</div>
+<div style="padding:12px; background:rgba(0,0,0,0.3); border-radius:8px; border-left:3px solid #a855f7;">
+<div style="font-size:11px; color:#c084fc; font-weight:700;">P｜Positioning</div>
+<div style="font-size:11px; color:#cbd5e1; margin-top:4px;">「オーナーがClaude Codeで業務全体をUI化し、人件費を3ヶ月で1/3にする実証済みメソッド」</div>
+</div>
+</div>
+</div>
+
+<div class="strategy-card" style="border-left-color:#ef4444; background:linear-gradient(135deg,#0f172a 0%,#7f1d1d 100%);">
+<h3 style="color:#f87171;">戦略6：競合・ライバル視点で逆算 — どこで負けないかを先に決める</h3>
+<p style="margin-bottom:14px;">
+競合カテゴリーごとに「敵がどう攻めてきたら負けるか」を先に想定し、<b>こちらの守りと攻めの軸</b>を明確化。<br>
+これを念頭に置いて全Hubを設計すれば、商品化時のメッセージがぶれない。
+</p>
+<table class="goal-table" style="margin-top:8px;">
+<thead>
+<tr>
+<th style="width:140px;">競合カテゴリー</th>
+<th style="width:200px;">代表プレイヤー</th>
+<th>敵の強み（負ける論点）</th>
+<th>こちらの差別化軸</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><b style="color:#3b82f6;">汎用SaaS</b></td>
+<td>kintone / Salesforce / HubSpot</td>
+<td>サポート手厚い／導入実績／ベンダー安心感</td>
+<td><b style="color:#34d399;">業務に100%フィット／月額安い／オーナー主導権</b></td>
+</tr>
+<tr>
+<td><b style="color:#10b981;">ノーコード</b></td>
+<td>Notion / Monday.com / Asana</td>
+<td>導入早い／月額安い／UIキレイ</td>
+<td><b style="color:#34d399;">単機能じゃない業務全体カバー／AI連動／OGSM起点</b></td>
+</tr>
+<tr>
+<td><b style="color:#ef4444;">受託開発</b></td>
+<td>SIer / フリーエンジニア</td>
+<td>完全カスタム／手厚い実装支援</td>
+<td><b style="color:#34d399;">10倍速い・100倍安い／知見が自社に蓄積</b></td>
+</tr>
+<tr>
+<td><b style="color:#ec4899;">AI単体</b></td>
+<td>ChatGPT Team / Copilot / Claude単体</td>
+<td>導入即日／月額安い／すぐ使える</td>
+<td><b style="color:#34d399;">業務に根を張るHub化／OGSM＋メタプロセス／属人化解消</b></td>
+</tr>
+<tr>
+<td><b style="color:#a855f7;">コンサル</b></td>
+<td>大手・中小コンサル各社</td>
+<td>戦略策定の信頼／業界知見</td>
+<td><b style="color:#34d399;">助言で終わらず実装まで届く／自社実証データ</b></td>
+</tr>
+<tr style="background:rgba(251,191,36,0.08);">
+<td><b style="color:#fbbf24;">大手AI企業の参入リスク</b></td>
+<td>OpenAI / Google / Microsoft</td>
+<td>資金力・技術力・流通力で圧倒</td>
+<td><b style="color:#34d399;">業種特化型コミュニティ・コンサル統合・OGSMという「方法論」が壁</b></td>
+</tr>
+</tbody>
+</table>
+
+<div style="margin-top:16px; padding:14px; background:rgba(239,68,68,0.1); border-radius:8px; border:1px solid #ef4444;">
+<div style="font-size:13px; color:#f87171; font-weight:700; margin-bottom:6px;">⚠️ 最大のリスク：「OpenAI/Anthropic自身が同等メソッドを出す」</div>
+<div style="font-size:12px; color:#cbd5e1; line-height:1.8;">
+対策：<b>「メソッド」は技術ではなく方法論＋実証データ＋業種特化テンプレ</b>で守る。<br>
+技術勝負（AI性能）でなく、業種別×OGSM×事例ライブラリの<b>運用ノウハウで勝つ</b>。<br>
+柳井塾自身の300→100万実証は再現困難なエビデンス＝最大の参入障壁。
+</div>
+</div>
+</div>
+
+</div>
+
+<!-- ===== M ===== -->
+<div class="section">
+<h2 class="section-title title-m">📐 M｜指標（Measure）</h2>
+<div class="measure-grid">
+<div class="measure-card">
+<h3>📅 週次測定</h3>
+<ul>
+<li>各Hubの構築進捗（ワイヤー/α/β/GA）</li>
+<li>自動化レポート配信件数（目標8本/週）</li>
+<li>新規追加コンポーネント数</li>
+</ul>
+</div>
+<div class="measure-card">
+<h3>📆 月次測定</h3>
+<ul>
+<li>業務領域別Hub数の累積（目標：月+2個）</li>
+<li>担当者キャッチアップ時間（インタビュー）</li>
+<li>デザイン統一率（共通CSS適用率）</li>
+<li>OGSM新規定義PJ数</li>
+</ul>
+</div>
+<div class="measure-card">
+<h3>📊 四半期測定</h3>
+<ul>
+<li>全Hub合算の作業時間削減率</li>
+<li>OGSM定義済PJ数 / 全進行中PJ数</li>
+<li>新規スタッフ10分立ち上がり率</li>
+<li>SSoT到達PJ数 / 全PJ数</li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- ===== アクションプラン（13週ロードマップ） ===== -->
+<div class="section">
+<h2 class="section-title" style="color:#22d3ee; border-left-color:#22d3ee;">🗺 アクションプラン｜13週ロードマップ（2026-05-02〜2026-08-02）</h2>
+<p style="font-size:13px; color:#94a3b8;">8つのHubを13週で完走。各週ごとに着手Hub・成果物・関与スタッフを明記。</p>
+
+<table class="goal-table" style="margin-top:16px;">
+<thead>
+<tr>
+<th style="width:60px;">週</th>
+<th style="width:140px;">期間</th>
+<th>着手Hub</th>
+<th style="width:280px;">成果物</th>
+<th style="width:120px;">関与スタッフ</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>W1</td><td>5/2〜5/8</td><td>★1 動画LP制作Hub</td><td>残ROI/設定ページ完成・社内運用開始</td><td>柳井／池田</td></tr>
+<tr><td>W2-3</td><td>5/9〜5/22</td><td>★2 数値管理シート自動化Hub</td><td>OGSM定義／Sheets連携／ファネル可視化</td><td>柳井／池田</td></tr>
+<tr><td>W4-5</td><td>5/23〜6/5</td><td>★9 ファネル自動構築Hub</td><td>5パネル統合UI／自社実証開始</td><td>柳井／奥村</td></tr>
+<tr><td>W6</td><td>6/6〜6/12</td><td>共通デザインシステム抽出</td><td>design-system.css分離／Hub再利用テンプレ化</td><td>柳井</td></tr>
+<tr><td>W7-8</td><td>6/13〜6/26</td><td>★3 経理・人事 自動化Hub</td><td>売上予測・PJ別会計・経費表示</td><td>田口さん／柳井</td></tr>
+<tr><td>W9</td><td>6/27〜7/3</td><td>★4 PDCA定例運用Hub</td><td>会議短縮・AIレポート自動生成</td><td>柳井／全PJ責任者</td></tr>
+<tr><td>W10</td><td>7/4〜7/10</td><td>★5 スポーク統合Hub</td><td>講座生コーチ業務統合</td><td>池田泉さん／柳井</td></tr>
+<tr><td>W11</td><td>7/11〜7/17</td><td>★6 SNS自動投稿管理Hub</td><td>Threads/IG/X一元管理＋投稿予約</td><td>奥村さん／柳井</td></tr>
+<tr><td>W12</td><td>7/18〜7/24</td><td>★7 プロデュースPJ統合Hub</td><td>マルチクライアント管理</td><td>柳井</td></tr>
+<tr style="background:rgba(251,191,36,0.1);"><td>W13</td><td>7/25〜8/2</td><td>★8 全PJ俯瞰マスターHub</td><td>全Hub横断ROI比較・撤退/投資判断<br><b style="color:#fbbf24;">→3ヶ月ゴール達成評価</b></td><td>柳井</td></tr>
+</tbody>
+</table>
+
+<div style="margin-top:18px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px;">
+<div style="padding:16px; background:#0f172a; border-radius:10px; border-left:3px solid #06b6d4;">
+<div style="font-size:13px; font-weight:700; color:#22d3ee; margin-bottom:6px;">📅 進捗チェック頻度</div>
+<div style="font-size:12px; color:#cbd5e1; line-height:1.7;">
+週次：毎週月曜10:00 進捗レビュー<br>
+月次：1日 マイルストーン評価<br>
+四半期：8/2 最終ゴール達成評価
+</div>
+</div>
+<div style="padding:16px; background:#0f172a; border-radius:10px; border-left:3px solid #fbbf24;">
+<div style="font-size:13px; font-weight:700; color:#fbbf24; margin-bottom:6px;">⚠️ クリティカルパス</div>
+<div style="font-size:12px; color:#cbd5e1; line-height:1.7;">
+W6 共通デザインシステム抽出が遅れると<br>
+W7以降の全Hub構築工数が増える<br>
+→ <b>必ずW6内で完了</b>
+</div>
+</div>
+<div style="padding:16px; background:#0f172a; border-radius:10px; border-left:3px solid #10b981;">
+<div style="font-size:13px; font-weight:700; color:#34d399; margin-bottom:6px;">🎯 並行運用</div>
+<div style="font-size:12px; color:#cbd5e1; line-height:1.7;">
+完成済みHubは即運用開始<br>
+W2以降は「構築＋運用」並行<br>
+PDCAレポートが累積していく
+</div>
+</div>
+</div>
+</div>
+
+<!-- ===== 専門用語集 ===== -->
+<div class="section" style="border:2px solid #ec4899;">
+<h2 class="section-title" style="color:#ec4899; border-left-color:#ec4899;">📚 専門用語集（スタッフ教育用 v1.0）</h2>
+<p style="font-size:13px; color:#cbd5e1;">鍵スタッフが本プロジェクトに参加する前に必ず理解すべき40語。<b style="color:#fbbf24;">「同じ言葉で同じ意味を共有する」</b>がスピードの源。</p>
+
+<!-- カテゴリー1: 構造 -->
+<h3 style="color:#fbbf24; margin-top:24px; margin-bottom:10px; font-size:16px;">🏗 1. 構造に関する用語</h3>
+<table class="goal-table">
+<thead><tr><th style="width:160px;">用語</th><th style="width:380px;">定義</th><th>使用例</th></tr></thead>
+<tbody>
+<tr><td><b style="color:#fbbf24;">Hub</b></td><td>1業務領域の状況把握・判断・操作・改善を1画面で完結させるダッシュボードUI。OGSM/KPI/操作/データ連携/PDCAの5要素必須。</td><td>「動画LP制作Hub」「経理Hub」</td></tr>
+<tr><td>メタHub</td><td>複数Hubを横断的に俯瞰する上位Hub。経営判断・優先順位・撤退判断に使う。</td><td>「全PJ俯瞰マスターHub（★8）」</td></tr>
+<tr><td>ハブ＆スポーク構造</td><td>中央のHub（中心）と複数のスポーク（個別業務）が放射状に繋がる構造。</td><td>「講座生コーチ業務はスポーク3配下」</td></tr>
+<tr><td>スポーク</td><td>Hubに連なる個別業務領域の集約単位。Hub<スポーク<個別業務 の階層。</td><td>「経理スポーク」「人事スポーク」</td></tr>
+<tr><td>マスターシート</td><td>業務に関するすべてのデータが格納されるGoogle Sheets。Hubの裏側にある「データの源泉」。</td><td>「VSL開発PJマスターシート」</td></tr>
+<tr><td>パネル</td><td>1つの成果物の単位。Hub内のセクション、ファネルの1段階等を指す。</td><td>「LPパネル」「LINEパネル」</td></tr>
+<tr><td>セクション</td><td>Hub画面内の機能ブロック。例：ホーム/KPI/ROI/設定。</td><td>「KPIセクション」「設定セクション」</td></tr>
+</tbody>
+</table>
+
+<!-- カテゴリー2: OGSM -->
+<h3 style="color:#06b6d4; margin-top:24px; margin-bottom:10px; font-size:16px;">🎯 2. OGSM・目標管理用語</h3>
+<table class="goal-table">
+<thead><tr><th style="width:160px;">用語</th><th style="width:380px;">定義</th><th>使用例</th></tr></thead>
+<tbody>
+<tr><td><b style="color:#06b6d4;">OGSM</b></td><td>Objective(目的)/Goal(ゴール)/Strategy(戦略)/Measure(指標)の4要素。1PJ起票時に必ず1ページで定義。</td><td>「OGSMを書いてからPJ起票」</td></tr>
+<tr><td>O｜目的（Objective）</td><td>文章でBefore→Afterを描く。「現状こうだが、こう変わる」を言語化。</td><td>「自己流→公式プロセス」</td></tr>
+<tr><td>G｜ゴール（Goal）</td><td>数値でBefore→Afterを描く。期限と測定方法を必ず明記。</td><td>「制作時間8.5h→2h（76%減）」</td></tr>
+<tr><td>S｜戦略（Strategy）</td><td>Goalに到達する打ち手。3〜5本に絞る。担当・順序・依存関係を明記。</td><td>「戦略1: デザインシステム化」</td></tr>
+<tr><td>M｜指標（Measure）</td><td>進捗を測る指標。週次/月次/四半期の3階層で測る。</td><td>「週次：構築進捗」</td></tr>
+<tr><td>北極星（廃止語）</td><td>❌ 廃止。「目的」または「ゴール」で言い換える。</td><td>使用禁止</td></tr>
+<tr><td>SSoT（Single Source of Truth）</td><td>真実の唯一源。同じ数値を全員が同じ場所で見る。データ二重管理の禁止。</td><td>「数値管理シートをSSoT化」</td></tr>
+<tr><td>KGI / KPI</td><td>KGI=最終目標数値（売上・人件費等）。KPI=KGI到達の中間指標（CV率・登録数等）。</td><td>「KPIはCV率・LINE登録率」</td></tr>
+</tbody>
+</table>
+
+<!-- カテゴリー3: メタプロセス -->
+<h3 style="color:#a855f7; margin-top:24px; margin-bottom:10px; font-size:16px;">🔄 3. メタプロセス・運用用語</h3>
+<table class="goal-table">
+<thead><tr><th style="width:160px;">用語</th><th style="width:380px;">定義</th><th>使用例</th></tr></thead>
+<tbody>
+<tr><td><b style="color:#a855f7;">メタプロセス</b></td><td>「PJ進めながらUIを育てる」標準サイクル。PJ着手=OGSM作成、PJ進行中=Hub育成、PJ完了=Hub完成、水平展開=テンプレ再利用。</td><td>「メタプロセスv1.0準拠」</td></tr>
+<tr><td>PDCAサイクル</td><td>Plan/Do/Check/Action。週次で回す。Hubが自動レポート生成して支援。</td><td>「週次PDCA定例」</td></tr>
+<tr><td>右腕化</td><td>柳井塾の中核思想。AIを「右腕」として業務を任せる。スタッフはAIを使う側に回る。</td><td>「Claude Code右腕化」</td></tr>
+<tr><td>水平展開</td><td>1PJで完成したテンプレ・スキル・Hubを他PJに転用すること。</td><td>「動画LP制作の型をSNSに水平展開」</td></tr>
+<tr><td>ベンチマーク</td><td>比較基準となる成功事例。赤間①〜④等。新シナリオはこれと並べて採点。</td><td>「赤間①ベンチに対し+1.4」</td></tr>
+<tr><td>採点（局所/大局）</td><td>局所コヒーレンス=隣接行間の自然度。大局コヒーレンス=全体の筋通り度。両軸で評価。</td><td>「局所8.5/大局88」</td></tr>
+<tr><td>3点ゲート</td><td>撮影前の必須チェック。①Gantt②採点③サマリ。全クリアで撮影GO。</td><td>「3点ゲート通過で撮影開始」</td></tr>
+<tr><td>仮クロージング</td><td>かみしばい構造で、最後のクロージング前に試しに3回クロージングを入れる手法。</td><td>「仮クロ3回」</td></tr>
+</tbody>
+</table>
+
+<!-- カテゴリー4: UI/技術 -->
+<h3 style="color:#10b981; margin-top:24px; margin-bottom:10px; font-size:16px;">🎨 4. UI・技術用語</h3>
+<table class="goal-table">
+<thead><tr><th style="width:160px;">用語</th><th style="width:380px;">定義</th><th>使用例</th></tr></thead>
+<tbody>
+<tr><td><b style="color:#10b981;">デザインシステム</b></td><td>全Hubで共通のカラー・コンポーネント・タイポグラフィ。design-system.cssに分離。</td><td>「シアン#06b6d4が共通」</td></tr>
+<tr><td>コンポーネント</td><td>再利用可能なUI部品。KPIカード・テーブル・モーダル・サイドバー等。</td><td>「KPIカードコンポーネント」</td></tr>
+<tr><td>ワイヤー / プロトタイプ / 本番</td><td>UI開発の3段階。ワイヤー=線画／プロトタイプ=動く試作／本番=実運用版。</td><td>「数値管理Hub v0.1ワイヤー」</td></tr>
+<tr><td>α/β/GA</td><td>リリース段階。α=社内検証／β=限定顧客検証／GA=一般公開。</td><td>「★9はβ段階」</td></tr>
+<tr><td>localStorage</td><td>ブラウザ内データ保存。Hub単体で動作する場合の暫定保存先。</td><td>「工数入力はlocalStorage保存」</td></tr>
+<tr><td>API連携</td><td>外部サービス（Sheets/Meta/YT等）と自動データやり取り。</td><td>「Meta広告APIで日次取込」</td></tr>
+<tr><td>Chart.js / D3.js</td><td>ダッシュボード可視化ライブラリ。Chart=標準/D3=複雑可視化。</td><td>「採点はレーダーチャート」</td></tr>
+<tr><td>レスポンシブ</td><td>PC/スマホ/タブレット どの画面サイズでも崩れないUI。</td><td>「Hub全てレスポンシブ対応」</td></tr>
+</tbody>
+</table>
+
+<!-- カテゴリー5: 数値・マーケ -->
+<h3 style="color:#ec4899; margin-top:24px; margin-bottom:10px; font-size:16px;">📊 5. 数値・マーケ用語</h3>
+<table class="goal-table">
+<thead><tr><th style="width:160px;">用語</th><th style="width:380px;">定義</th><th>使用例</th></tr></thead>
+<tbody>
+<tr><td>CPM</td><td>Cost Per Mille。1000インプレッションあたりの広告コスト。</td><td>「CPM ¥800」</td></tr>
+<tr><td>CTR</td><td>Click Through Rate。広告表示→クリック率。</td><td>「CTR 1.2%」</td></tr>
+<tr><td>CV / CVR</td><td>CV=コンバージョン件数／CVR=コンバージョン率。</td><td>「CVR 5.9%」</td></tr>
+<tr><td>CPA / CAC</td><td>CPA=1CV獲得コスト／CAC=1顧客獲得総コスト（CPA+運用費含む）。</td><td>「CPA ¥847」</td></tr>
+<tr><td>ROAS</td><td>Return On Ad Spend。広告費に対する売上倍率。3倍以上が理想。</td><td>「ROAS 3.6x」</td></tr>
+<tr><td>LTV</td><td>Life Time Value。顧客1人が生涯に支払う累計売上。</td><td>「LTV ¥80万」</td></tr>
+<tr><td>LTV:CAC比</td><td>LTV÷CAC。3倍以上が健全な指標とされる。</td><td>「LTV:CAC=4.2」</td></tr>
+<tr><td>ファネル</td><td>顧客が「広告→LP→LINE→セミナー→成約」と進む漏斗状の流れ。</td><td>「ファネル各段の離脱率」</td></tr>
+<tr><td>視聴維持率</td><td>動画視聴者が何%地点まで観続けるか。50%地点での維持率が重要指標。</td><td>「50%地点42.3%」</td></tr>
+<tr><td>A/Bテスト</td><td>2パターン同時走行→数値が良い方を採用する手法。</td><td>「LPで5パターンABテスト」</td></tr>
+</tbody>
+</table>
+
+<!-- カテゴリー6: ポジショニング・商品化戦略 -->
+<h3 style="color:#f472b6; margin-top:24px; margin-bottom:10px; font-size:16px;">📍 6. ポジショニング・商品化戦略用語</h3>
+<table class="goal-table">
+<thead><tr><th style="width:160px;">用語</th><th style="width:380px;">定義</th><th>使用例</th></tr></thead>
+<tbody>
+<tr><td><b style="color:#f472b6;">STP</b></td><td>Segmentation（市場切り分け）／Targeting（狙う相手）／Positioning（市場の立ち位置）の3点セット。商品化前に必ず定義。</td><td>「STP定義から商品化スタート」</td></tr>
+<tr><td>S｜Segmentation</td><td>市場を属性×課題で切り分け。業種／規模／IT成熟度／感情／過去経験。</td><td>「月人件費300〜500万のオーナー型」</td></tr>
+<tr><td>T｜Targeting</td><td>切り分けた中で「最初の100社/人」を絞り込む。除外条件も明記。</td><td>「柳井塾既存講座生＋AI本気層」</td></tr>
+<tr><td>P｜Positioning</td><td>市場での独自の立ち位置。1行で言える表現が必要。</td><td>「AI右腕化サービス」</td></tr>
+<tr><td><b style="color:#f472b6;">PS（ポジショニングステートメント）</b></td><td>「【誰に】とって／【商品】は／【ライバル】と違い／【独自価値】を提供する／なぜなら【根拠】」の5項目フォーマット。</td><td>社外1枚PS／SNS用1行PS</td></tr>
+<tr><td>ポジショニングマップ</td><td>2軸で市場プレイヤーを配置した図。空白象限＝チャンス。</td><td>「カスタマイズ性×スピード」</td></tr>
+<tr><td>USP（Unique Selling Proposition）</td><td>独自の売り。1行で「これだけは負けない」が言える要素。</td><td>「オーナー自身がClaude Codeで育てる」</td></tr>
+<tr><td>差別化軸</td><td>ライバルと比較して「明確に違う」と言える軸。最低3本必要。</td><td>「AI協働度×業務全体カバー×OGSM」</td></tr>
+<tr><td>カテゴリー戦略</td><td>既存カテゴリーで戦わず新カテゴリーを作る戦略。「AI右腕化」が新カテ名。</td><td>「新カテゴリーの一番手」</td></tr>
+<tr><td>TAM / SAM / SOM</td><td>TAM=全市場規模／SAM=対応可能市場／SOM=実際獲得可能市場。</td><td>「TAM 350万人」</td></tr>
+<tr><td>ARR / LTV</td><td>ARR=年間定額収益／LTV=顧客生涯価値。商品プラン設計の基礎指標。</td><td>「初年度ARR ¥1.74億」</td></tr>
+<tr><td>アップセル / クロスセル</td><td>アップセル=上位プラン移行／クロスセル=別商品追加販売。</td><td>「個人版→法人版アップセル」</td></tr>
+<tr><td>参入障壁</td><td>競合が真似できない強み。実証データ・コミュニティ・業種特化等。</td><td>「自社実証＝最大の参入障壁」</td></tr>
+<tr><td>SaaS</td><td>Software as a Service。月額課金型ソフト。kintone/Salesforce等。</td><td>「SaaSは汎用すぎる」</td></tr>
+<tr><td>ノーコード</td><td>コード書かずにアプリ作成可能ツール。Notion/AppSheet等。</td><td>「ノーコードは単機能止まり」</td></tr>
+<tr><td>受託開発</td><td>SIerやフリーランスに業務システム開発委託。1年・1500万円帯。</td><td>「受託は重く遅い」</td></tr>
+<tr><td>JV型ビジネス</td><td>ジョイントベンチャー。完全成果報酬・収益シェア型の事業構造。</td><td>「徳武JV／菊池JV」</td></tr>
+</tbody>
+</table>
+
+<!-- カテゴリー7: 優先度・状態 -->
+<h3 style="color:#22d3ee; margin-top:24px; margin-bottom:10px; font-size:16px;">⭐ 7. 優先度・状態の記号</h3>
+<table class="goal-table">
+<thead><tr><th style="width:160px;">記号</th><th style="width:380px;">意味</th><th>使用例</th></tr></thead>
+<tbody>
+<tr><td>★1〜★9</td><td>Hub優先順位。数字が小さいほど優先。</td><td>「★1=動画LP制作」</td></tr>
+<tr><td>🟢 / 🟡 / 🔴 / 🟣</td><td>状態色。🟢=本番運用中／🟡=定義済or進行中／🔴=未着手／🟣=原型あり。</td><td>「★2は🟡定義済」</td></tr>
+<tr><td>P1 / P2 / P3</td><td>優先度。P1=最優先／P2=次／P3=後回し可。</td><td>「P1案件先行」</td></tr>
+<tr><td>v0.1 / v1.0 / v1.1</td><td>バージョン。v0.x=ワイヤー／v1.0=本番1次／v1.x=改善版。</td><td>「動画LPHub v1.0」</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== スタッフ教育パス ===== -->
+<div class="section" style="border:2px solid #fbbf24;">
+<h2 class="section-title title-o">🎓 鍵スタッフ向け 教育パス（90分で立ち上がる）</h2>
+<p style="font-size:13px; color:#94a3b8;">新規参加スタッフが本プロジェクトに合流する際の標準学習順序。3ヶ月後のゴール「キャッチアップ10分」の前段階。</p>
+
+<div style="display:grid; grid-template-columns:repeat(6,1fr); gap:6px; margin-top:18px;">
+<div style="padding:18px 14px; background:#0f172a; border-radius:8px; border-top:3px solid #fbbf24; text-align:center;">
+<div style="font-size:11px; color:#fbbf24; font-weight:700;">STEP 1（15分）</div>
+<div style="font-size:13px; font-weight:700; color:white; margin:8px 0;">📚 用語集を読む</div>
+<div style="font-size:11px; color:#94a3b8; line-height:1.6;">7カテゴリ・60語を通読／知らない語をマーク</div>
+</div>
+<div style="padding:18px 14px; background:#0f172a; border-radius:8px; border-top:3px solid #06b6d4; text-align:center;">
+<div style="font-size:11px; color:#22d3ee; font-weight:700;">STEP 2（15分）</div>
+<div style="font-size:13px; font-weight:700; color:white; margin:8px 0;">🎯 OGSMを理解</div>
+<div style="font-size:11px; color:#94a3b8; line-height:1.6;">本ページのO/G/S/Mを精読／質問はチャット</div>
+</div>
+<div style="padding:18px 14px; background:#0f172a; border-radius:8px; border-top:3px solid #f472b6; text-align:center;">
+<div style="font-size:11px; color:#f472b6; font-weight:700;">STEP 3（15分）</div>
+<div style="font-size:13px; font-weight:700; color:white; margin:8px 0;">📍 ポジ＆競合理解</div>
+<div style="font-size:11px; color:#94a3b8; line-height:1.6;">positioning.html＋戦略5・6精読／競合6カテゴリ把握</div>
+</div>
+<div style="padding:18px 14px; background:#0f172a; border-radius:8px; border-top:3px solid #10b981; text-align:center;">
+<div style="font-size:11px; color:#34d399; font-weight:700;">STEP 4（20分）</div>
+<div style="font-size:13px; font-weight:700; color:white; margin:8px 0;">🛠 実物を触る</div>
+<div style="font-size:11px; color:#94a3b8; line-height:1.6;">動画LP制作Hubを開いて全ページ操作</div>
+</div>
+<div style="padding:18px 14px; background:#0f172a; border-radius:8px; border-top:3px solid #a855f7; text-align:center;">
+<div style="font-size:11px; color:#c084fc; font-weight:700;">STEP 5（20分）</div>
+<div style="font-size:13px; font-weight:700; color:white; margin:8px 0;">🔄 メタプロセス習得</div>
+<div style="font-size:11px; color:#94a3b8; line-height:1.6;">既存PJ1件のOGSM→Hub完成を辿る</div>
+</div>
+<div style="padding:18px 14px; background:#0f172a; border-radius:8px; border-top:3px solid #ec4899; text-align:center;">
+<div style="font-size:11px; color:#f472b6; font-weight:700;">STEP 6（15分）</div>
+<div style="font-size:13px; font-weight:700; color:white; margin:8px 0;">🎬 担当Hubに着手</div>
+<div style="font-size:11px; color:#94a3b8; line-height:1.6;">担当Hubのワイヤー作成→OGSM起票</div>
+</div>
+</div>
+
+<div style="margin-top:18px; padding:16px; background:rgba(251,191,36,0.1); border-radius:10px; border:1px solid #fbbf24;">
+<div style="font-size:13px; font-weight:700; color:#fbbf24; margin-bottom:6px;">🎯 教育パス完了の判定（合計100分）</div>
+<div style="font-size:13px; color:#cbd5e1; line-height:1.9;">
+1. 用語集60語を口頭で説明できる（特にHub/OGSM/SSoT/メタプロセス/STP/PSは必須）<br>
+2. 担当HubのOGSM（O/G/S/M全て）を1ページで書ける<br>
+3. 既存スキル名を3つ以上挙げられる（promo-content-creator等）<br>
+4. メタプロセス4ステップを言える<br>
+5. 「Hub」「ダッシュボード」「管理画面」の違いを言える<br>
+6. <b>STPと差別化軸を3つ以上言える（vs SaaS/受託/AI単体）</b><br>
+7. <b>「AI右腕化」というカテゴリー戦略の意図を説明できる</b>
+</div>
+</div>
+</div>
+
+<div style="text-align:center; padding:24px; color:#64748b; font-size:12px;">
+🎯 UI開発プロジェクト マスターOGSM v1.3（11Hub・3層構造化／社長クローンHub・ファネル自動構築Hub・自己育て直しコーチングHub追加） ｜ 柳井塾 ｜ 2026-05-02 改訂
+</div>
+
+</div>
+</body>
+</html>

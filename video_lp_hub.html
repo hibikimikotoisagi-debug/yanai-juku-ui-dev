@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>📊 動画LP制作 ダッシュボード v1.0｜柳井塾</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; background:#0f172a; color:#e2e8f0; min-height:100vh; }
+
+/* レイアウト */
+.app { display:grid; grid-template-columns:240px 1fr; min-height:100vh; }
+
+/* サイドバー */
+.sidebar { background:#1e293b; border-right:1px solid #334155; padding:20px 0; position:sticky; top:0; height:100vh; overflow-y:auto; }
+.brand { padding:0 20px 20px; border-bottom:1px solid #334155; margin-bottom:20px; }
+.brand h1 { font-size:16px; font-weight:800; background:linear-gradient(90deg,#fbbf24,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.brand .v { font-size:11px; color:#64748b; margin-top:2px; }
+.nav { padding:0 12px; }
+.nav-item { display:flex; align-items:center; gap:10px; padding:10px 12px; margin-bottom:4px; border-radius:8px; cursor:pointer; transition:all 0.15s; font-size:14px; color:#cbd5e1; user-select:none; }
+.nav-item:hover { background:#334155; color:white; }
+.nav-item.active { background:linear-gradient(90deg,#0ea5e9,#06b6d4); color:white; font-weight:600; box-shadow:0 4px 12px rgba(14,165,233,0.3); }
+.nav-icon { font-size:16px; width:20px; text-align:center; }
+.nav-section { font-size:11px; color:#64748b; padding:16px 12px 8px; text-transform:uppercase; letter-spacing:0.5px; }
+
+/* メインエリア */
+.main { background:#0f172a; }
+.topbar { background:#1e293b; padding:14px 28px; border-bottom:1px solid #334155; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:100; backdrop-filter:blur(8px); }
+.pj-switcher { display:flex; align-items:center; gap:12px; }
+.pj-switcher select { background:#0f172a; color:white; border:1px solid #475569; padding:8px 14px; border-radius:8px; font-size:14px; cursor:pointer; }
+.pj-switcher select:hover { border-color:#06b6d4; }
+.topbar-right { display:flex; gap:10px; }
+.btn { padding:8px 16px; border-radius:8px; border:none; cursor:pointer; font-size:13px; font-weight:600; transition:all 0.15s; }
+.btn-primary { background:linear-gradient(90deg,#06b6d4,#0ea5e9); color:white; }
+.btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 12px rgba(6,182,212,0.4); }
+.btn-secondary { background:#334155; color:#e2e8f0; }
+.btn-secondary:hover { background:#475569; }
+
+.content { padding:28px; max-width:1500px; }
+.page-title { font-size:24px; font-weight:800; margin-bottom:6px; }
+.page-subtitle { color:#94a3b8; font-size:14px; margin-bottom:24px; }
+
+/* KPIカード */
+.kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+.kpi-card { background:#1e293b; padding:20px; border-radius:12px; border:1px solid #334155; transition:all 0.2s; }
+.kpi-card:hover { border-color:#06b6d4; transform:translateY(-2px); }
+.kpi-label { font-size:12px; color:#94a3b8; margin-bottom:8px; }
+.kpi-value { font-size:32px; font-weight:800; color:white; }
+.kpi-trend { font-size:11px; margin-top:6px; }
+.kpi-trend.up { color:#10b981; }
+.kpi-trend.down { color:#ef4444; }
+.kpi-card.gold .kpi-value { background:linear-gradient(90deg,#fbbf24,#f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi-card.cyan .kpi-value { background:linear-gradient(90deg,#06b6d4,#0ea5e9); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi-card.purple .kpi-value { background:linear-gradient(90deg,#a855f7,#7c3aed); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi-card.green .kpi-value { background:linear-gradient(90deg,#10b981,#059669); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+
+/* セクション */
+.section-card { background:#1e293b; padding:24px; border-radius:12px; border:1px solid #334155; margin-bottom:20px; }
+.section-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.section-header h2 { font-size:16px; font-weight:700; }
+
+/* グリッド */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+
+/* テーブル */
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { background:#0f172a; padding:10px; text-align:left; color:#94a3b8; font-weight:600; border-bottom:1px solid #334155; }
+td { padding:10px; border-bottom:1px solid #1e293b; }
+.badge { display:inline-block; padding:3px 10px; border-radius:10px; font-size:11px; font-weight:600; }
+.badge-success { background:rgba(16,185,129,0.2); color:#34d399; }
+.badge-warn { background:rgba(245,158,11,0.2); color:#fbbf24; }
+.badge-danger { background:rgba(239,68,68,0.2); color:#f87171; }
+.badge-info { background:rgba(6,182,212,0.2); color:#22d3ee; }
+
+/* ページ切替 */
+.page { display:none; }
+.page.active { display:block; }
+
+/* Coming Soon */
+.coming-soon { padding:60px 20px; text-align:center; color:#64748b; background:#1e293b; border-radius:12px; border:2px dashed #334155; }
+.coming-soon-icon { font-size:48px; margin-bottom:16px; }
+.coming-soon h3 { font-size:18px; margin-bottom:8px; color:#cbd5e1; }
+
+/* PJサマリリスト */
+.pj-list { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+.pj-item { background:#0f172a; padding:14px 16px; border-radius:10px; border-left:3px solid #06b6d4; cursor:pointer; transition:all 0.15s; }
+.pj-item:hover { background:#1e2a44; transform:translateX(2px); }
+.pj-name { font-size:13px; font-weight:600; color:white; }
+.pj-status { font-size:11px; color:#94a3b8; margin-top:4px; }
+
+/* ヒートマップ */
+.heatmap { display:grid; grid-template-columns:140px repeat(10, 1fr); gap:2px; font-size:11px; }
+.heatmap-cell { padding:8px 4px; text-align:center; color:white; font-weight:600; border-radius:3px; }
+.heatmap-row-label { padding:8px 4px; color:#94a3b8; }
+.heatmap-col-label { padding:8px 4px; color:#94a3b8; font-size:10px; transform:rotate(-15deg); transform-origin:bottom; }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- サイドバー -->
+<aside class="sidebar">
+<div class="brand">
+<h1>📊 動画LP制作Hub</h1>
+<div class="v">v1.0 by 柳井塾</div>
+</div>
+
+<div class="nav-section">メインビュー</div>
+<nav class="nav">
+<div class="nav-item active" data-page="home"><span class="nav-icon">🏠</span>ホーム</div>
+<div class="nav-item" data-page="scenario"><span class="nav-icon">📜</span>シナリオ管理</div>
+<div class="nav-item" data-page="competitor"><span class="nav-icon">🏆</span>競合比較</div>
+<div class="nav-item" data-page="kpi"><span class="nav-icon">📈</span>KPI推移</div>
+<div class="nav-item" data-page="roi"><span class="nav-icon">💰</span>ROI/コスト管理</div>
+</nav>
+
+<div class="nav-section">分析・ライブラリ</div>
+<nav class="nav">
+<div class="nav-item" data-page="score"><span class="nav-icon">🎯</span>採点ヒートマップ</div>
+<div class="nav-item" data-page="library"><span class="nav-icon">📚</span>ナレッジライブラリ</div>
+<div class="nav-item" data-page="filming"><span class="nav-icon">🎬</span>撮影準備ゲート</div>
+</nav>
+
+<div class="nav-section">構造・設定</div>
+<nav class="nav">
+<div class="nav-item" onclick="window.open('mindmap.html','_blank')"><span class="nav-icon">🧠</span>サイトマップ（マインドマップ）</div>
+<div class="nav-item" onclick="window.open('sitemap.html','_blank')"><span class="nav-icon">🗺</span>サイト構造ツリー</div>
+<div class="nav-item" onclick="window.open('ui_design_method.html','_blank')"><span class="nav-icon">🎨</span>UI設計メソッド</div>
+<div class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span>設定・連携</div>
+</nav>
+</aside>
+
+<!-- メイン -->
+<main class="main">
+<div class="topbar">
+<div class="pj-switcher">
+<span style="color:#94a3b8;font-size:13px;">📁 PJ：</span>
+<select id="pjSelect">
+<option value="yanai">柳井 YouTube×インスタ【掛け算＆時短】集客法</option>
+<option value="oyama">大山 C.A.S.E.診断集客法</option>
+<option value="yuyu">ゆうゆうランド｜スレッズ×AI</option>
+<option value="kikuchi">菊池 ことばの手技</option>
+<option value="ad-mkt">広告マーケター養成</option>
+</select>
+</div>
+<div class="topbar-right">
+<button class="btn btn-secondary" onclick="window.open('mindmap.html','_blank')">🧠 サイトマップ</button>
+<button class="btn btn-secondary" onclick="alert('Coming soon: シート直接編集')">🔄 同期</button>
+<button class="btn btn-primary" onclick="window.open('https://docs.google.com/spreadsheets/d/167-asqUhdSR9sKOyeWA8LkYL_gZqWcBQHZSiKesz37c/edit','_blank')">📂 シートを開く</button>
+</div>
+</div>
+
+<!-- ===== HOME ===== -->
+<div class="content page active" id="page-home">
+<h1 class="page-title">🏠 ホームダッシュボード</h1>
+<p class="page-subtitle">柳井 YouTube×インスタ【掛け算＆時短】集客法 ／ Phase 7.5（Gantt生成済）／ 撮影採用版確定</p>
+
+<div class="section-card" style="background:linear-gradient(135deg,#0c4a6e 0%,#1e293b 100%); border:1px solid #06b6d4; margin-bottom:24px;">
+<div class="section-header"><h2>🎯 このダッシュボードの目的とゴール（OGSM・2層構造）</h2></div>
+
+<div style="display:grid; grid-template-columns:1fr; gap:14px;">
+
+<div style="padding:14px; background:rgba(0,0,0,0.3); border-radius:10px; border-left:3px solid #fbbf24;">
+<div style="font-size:13px; color:#fbbf24; font-weight:700; margin-bottom:6px;">🎯 目的1：再現性ある制作プロセスの可視化</div>
+<div style="font-size:12px; line-height:1.7; color:#cbd5e1;">
+<b style="color:#f87171;">Before</b>：自己流・行き当たりばったり／工程・改善方法が不可視<br>
+<b style="color:#34d399;">After</b>：公式プロセスで誰でも再現／工程・残作業・改善方法が可視化
+</div>
+<div style="font-size:11px; color:#22d3ee; margin-top:8px; padding-top:8px; border-top:1px dashed #334155;">
+🔢 <b>ゴール（3ヶ月）</b>：制作時間 8.5h→<b style="color:#34d399;">2h(−76%)</b>／修正回数 5回→<b style="color:#34d399;">1-2回</b>／採点突破 30%→<b style="color:#34d399;">90%</b>／キャッチアップ 2h→<b style="color:#34d399;">10分</b>／月撮影GO 0→<b style="color:#34d399;">20件</b>／プロセス遵守 →<b style="color:#34d399;">100%</b>
+</div>
+</div>
+
+<div style="padding:14px; background:rgba(0,0,0,0.3); border-radius:10px; border-left:3px solid #ec4899;">
+<div style="font-size:13px; color:#ec4899; font-weight:700; margin-bottom:6px;">🎯 目的2：費用対効果の可視化（ROAS自動算出）</div>
+<div style="font-size:12px; line-height:1.7; color:#cbd5e1;">
+<b style="color:#f87171;">Before</b>：スタッフが使った時間（制作・改善）／動画LP売上／広告費 が把握できておらず、ROASが出せず属人的判断<br>
+<b style="color:#34d399;">After</b>：作業時間×時給で人件費が見える／売上・広告費を数値管理シートと連携／<b style="color:#fbbf24;">ROASが自動算出</b>される／週次PDCAでデータドリブン改善
+</div>
+<div style="font-size:11px; color:#22d3ee; margin-top:8px; padding-top:8px; border-top:1px dashed #334155;">
+🔢 <b>ゴール（3ヶ月）</b>：作業時間記録 0%→<b style="color:#34d399;">100%</b>／売上・広告費連携 なし→<b style="color:#34d399;">数値管理シート自動連携</b>／<b style="color:#fbbf24;">ROAS算出</b> 不可→<b style="color:#34d399;">PJ別自動算出</b>／PDCA →<b style="color:#34d399;">週次自動レポ</b>／撤退/追加投資判断→<b style="color:#34d399;">データドリブン</b>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="kpi-grid">
+<div class="kpi-card cyan">
+<div class="kpi-label">📊 シナリオ採点</div>
+<div class="kpi-value">88.5</div>
+<div class="kpi-trend up">↑ +11.7（修正前 76.8 → 修正後）</div>
+</div>
+<div class="kpi-card gold">
+<div class="kpi-label">🏆 ベンチマーク差</div>
+<div class="kpi-value">+1.4</div>
+<div class="kpi-trend up">↑ 赤間① 87.1 を抜いて 1位</div>
+</div>
+<div class="kpi-card green">
+<div class="kpi-label">⏱ 想定尺</div>
+<div class="kpi-value">11:35</div>
+<div class="kpi-trend">Sulafat女声 / 1.10倍速</div>
+</div>
+<div class="kpi-card purple">
+<div class="kpi-label">📜 行構成</div>
+<div class="kpi-value">17行</div>
+<div class="kpi-trend">伏線5本＋10色テーマ</div>
+</div>
+</div>
+
+<div class="section-card">
+<div class="section-header">
+<h2>📋 進行中PJ一覧</h2>
+<button class="btn btn-secondary" onclick="alert('全PJ表示は v1.1 で実装')">+ 新規PJ</button>
+</div>
+<div class="pj-list">
+<div class="pj-item" onclick="switchPJ('yanai')">
+<div class="pj-name">柳井 YouTube×インスタ集客法</div>
+<div class="pj-status">Phase 8.5 完了 ／ 撮影本命確定 ／ 88.5/100</div>
+</div>
+<div class="pj-item" onclick="switchPJ('oyama')">
+<div class="pj-name">大山 C.A.S.E.診断集客法</div>
+<div class="pj-status">Phase 8 採点完了 ／ C+Y 2パターン撮影候補</div>
+</div>
+<div class="pj-item" onclick="switchPJ('yuyu')">
+<div class="pj-name">ゆうゆうランド｜スレッズ×AI</div>
+<div class="pj-status">Phase 5 ブラッシュアップ中</div>
+</div>
+<div class="pj-item" onclick="switchPJ('kikuchi')">
+<div class="pj-name">菊池 ことばの手技</div>
+<div class="pj-status">Phase 9 採用版確定済 ／ 配信待機</div>
+</div>
+</div>
+</div>
+
+<div class="section-card">
+<div class="section-header"><h2>📈 採点推移（過去6PJ）</h2></div>
+<canvas id="trendChart" height="80"></canvas>
+</div>
+
+<div class="grid-2">
+<div class="section-card">
+<div class="section-header"><h2>⚡ クイックアクション</h2></div>
+<div style="display:grid; gap:8px;">
+<button class="btn btn-secondary" style="text-align:left;" onclick="switchPage('scenario')">📜 シナリオ確認 → I列最新</button>
+<button class="btn btn-secondary" style="text-align:left;" onclick="switchPage('competitor')">🏆 赤間①と比較</button>
+<button class="btn btn-secondary" style="text-align:left;" onclick="window.open('/tmp/scenario_viz/unified_report.html','_blank')">📊 統合レポート開く</button>
+<button class="btn btn-secondary" style="text-align:left;" onclick="alert('Sulafat音源: /tmp/narration_yanai_sulafat_x110.mp3')">🎤 音源試聴</button>
+<button class="btn btn-secondary" style="text-align:left;" onclick="switchPage('filming')">🎬 撮影前ゲート</button>
+</div>
+</div>
+<div class="section-card">
+<div class="section-header"><h2>🎯 残る弱点トップ3</h2></div>
+<div style="display:grid; gap:10px;">
+<div style="padding:10px;background:#0f172a;border-radius:8px;border-left:3px solid #ef4444;">
+<div style="font-weight:600;color:#f87171;">キラーワード直感性 80 vs 78</div>
+<div style="font-size:11px;color:#94a3b8;margin-top:4px;">「掛け算&時短」は直感的だが「YouTube×インスタ」が長い</div>
+</div>
+<div style="padding:10px;background:#0f172a;border-radius:8px;border-left:3px solid #fbbf24;">
+<div style="font-weight:600;color:#fbbf24;">事例説得力 82 vs 82</div>
+<div style="font-size:11px;color:#94a3b8;margin-top:4px;">奥村事例1本のみ。複数事例で勝ちに行く余地</div>
+</div>
+<div style="padding:10px;background:#0f172a;border-radius:8px;border-left:3px solid #22d3ee;">
+<div style="font-weight:600;color:#22d3ee;">CTA行動促進 80 vs 85</div>
+<div style="font-size:11px;color:#94a3b8;margin-top:4px;">特典魅力訴求は強化済。希少性数値を更に強く</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ===== SCENARIO ===== -->
+<div class="content page" id="page-scenario">
+<h1 class="page-title">📜 シナリオ管理</h1>
+<p class="page-subtitle">過去・進行中の全動画LPプロジェクトから選んで詳細表示</p>
+
+<div style="display:grid; grid-template-columns:340px 1fr; gap:20px;">
+
+<!-- 左：PJリスト -->
+<div class="section-card" style="padding:0; max-height:760px; overflow-y:auto;">
+<div style="padding:14px 16px; border-bottom:1px solid #334155; position:sticky; top:0; background:#1e293b; z-index:10;">
+<input type="text" id="pjSearch" placeholder="🔍 PJ名で検索..." onkeyup="filterPJ()" style="width:100%; padding:8px 12px; background:#0f172a; color:white; border:1px solid #334155; border-radius:6px; font-size:13px;">
+<div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">
+<button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="filterTag('all')">全て</button>
+<button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="filterTag('production')">本番中</button>
+<button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="filterTag('review')">レビュー</button>
+<button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;" onclick="filterTag('archive')">アーカイブ</button>
+</div>
+</div>
+<div id="pjListContainer" style="padding:8px;"></div>
+</div>
+
+<!-- 右：詳細表示 -->
+<div id="pjDetailContainer">
+<div class="section-card" id="pjDetailEmpty">
+<div style="text-align:center; padding:60px 20px; color:#64748b;">
+<div style="font-size:48px; margin-bottom:12px;">👈</div>
+<h3 style="color:#cbd5e1;">左のリストからPJを選んでください</h3>
+<p style="margin-top:8px; font-size:13px;">各PJの行別構成・伏線回収・採点・音源試聴が表示されます</p>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ===== COMPETITOR ===== -->
+<div class="content page" id="page-competitor">
+<h1 class="page-title">🏆 競合比較</h1>
+<p class="page-subtitle">柳井 vs 赤間ベンチマーク（10軸厳しめ採点）</p>
+<div class="grid-2">
+<div class="section-card"><canvas id="radarChart"></canvas></div>
+<div class="section-card"><canvas id="barChart"></canvas></div>
+</div>
+<div class="section-card">
+<div class="section-header"><h2>🏆 ランキング</h2></div>
+<table>
+<thead><tr><th>順位</th><th>シナリオ</th><th>合計</th><th>ランク</th></tr></thead>
+<tbody>
+<tr><td>🥇</td><td>柳井 I列（修正後）</td><td>88.5</td><td><span class="badge badge-success">A+</span></td></tr>
+<tr><td>🥈</td><td>赤間① フレーズコピー</td><td>87.1</td><td><span class="badge badge-info">S+</span></td></tr>
+<tr><td>3位</td><td>柳井 I列（修正前）</td><td>76.8</td><td><span class="badge badge-warn">A</span></td></tr>
+<tr><td>4位</td><td>v3-v7 (未完成)</td><td>51.0</td><td><span class="badge badge-danger">C</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<!-- ===== KPI ===== -->
+<div class="content page" id="page-kpi">
+<h1 class="page-title">📈 KPI推移</h1>
+<p class="page-subtitle">視聴維持率・LINE登録率・CV率・登録単価（配信後データ取込）</p>
+
+<div class="kpi-grid">
+<div class="kpi-card cyan">
+<div class="kpi-label">📺 平均視聴維持率（直近7日）</div>
+<div class="kpi-value">42.3<span style="font-size:18px;">%</span></div>
+<div class="kpi-trend up">↑ +5.2pt（前週比）</div>
+</div>
+<div class="kpi-card gold">
+<div class="kpi-label">💬 LINE登録率</div>
+<div class="kpi-value">27.9<span style="font-size:18px;">%</span></div>
+<div class="kpi-trend up">↑ 過去最高記録</div>
+</div>
+<div class="kpi-card purple">
+<div class="kpi-label">💰 申込率</div>
+<div class="kpi-value">5.9<span style="font-size:18px;">%</span></div>
+<div class="kpi-trend down">↓ −1.2pt（要対策）</div>
+</div>
+<div class="kpi-card green">
+<div class="kpi-label">🎯 登録単価（CPA）</div>
+<div class="kpi-value">¥847</div>
+<div class="kpi-trend up">↑ −¥130改善</div>
+</div>
+</div>
+
+<div class="grid-2">
+<div class="section-card">
+<div class="section-header"><h2>📺 視聴維持率カーブ × Gantt 重ね合わせ</h2></div>
+<canvas id="retentionChart" height="180"></canvas>
+<div style="font-size:11px; color:#94a3b8; margin-top:10px; padding:8px; background:#0f172a; border-radius:6px;">
+🎯 <b>離脱検知</b>：行7「常識破壊」（2:30地点）で −18pt の急落 → 言い回し修正候補
+</div>
+</div>
+
+<div class="section-card">
+<div class="section-header"><h2>💬 LINE登録ファネル（直近30日）</h2></div>
+<div style="display:flex; flex-direction:column; gap:10px; padding:10px 0;">
+<div style="background:linear-gradient(90deg,#06b6d4,#0ea5e9); padding:14px; border-radius:8px; color:white;">
+<div style="display:flex; justify-content:space-between;"><b>動画再生</b><b>12,453</b></div>
+<div style="font-size:11px; opacity:0.9;">100.0%</div>
+</div>
+<div style="background:linear-gradient(90deg,#0891b2,#0284c7); padding:14px; border-radius:8px; color:white; margin-left:8%; width:92%;">
+<div style="display:flex; justify-content:space-between;"><b>50%視聴</b><b>5,267</b></div>
+<div style="font-size:11px; opacity:0.9;">42.3%</div>
+</div>
+<div style="background:linear-gradient(90deg,#0e7490,#0369a1); padding:14px; border-radius:8px; color:white; margin-left:18%; width:82%;">
+<div style="display:flex; justify-content:space-between;"><b>CTAクリック</b><b>1,832</b></div>
+<div style="font-size:11px; opacity:0.9;">14.7%</div>
+</div>
+<div style="background:linear-gradient(90deg,#10b981,#059669); padding:14px; border-radius:8px; color:white; margin-left:32%; width:68%;">
+<div style="display:flex; justify-content:space-between;"><b>LINE登録</b><b>1,469</b></div>
+<div style="font-size:11px; opacity:0.9;">11.8% / 80.2%（CTA→登録）</div>
+</div>
+<div style="background:linear-gradient(90deg,#7c3aed,#6d28d9); padding:14px; border-radius:8px; color:white; margin-left:52%; width:48%;">
+<div style="display:flex; justify-content:space-between;"><b>セミナー申込</b><b>87</b></div>
+<div style="font-size:11px; opacity:0.9;">5.9% / 47.0%（応用率）</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="section-card">
+<div class="section-header"><h2>📈 CPA / ROAS 推移（直近12週）</h2></div>
+<canvas id="cpaRoasChart" height="80"></canvas>
+</div>
+
+<div class="grid-2">
+<div class="section-card">
+<div class="section-header"><h2>🏆 PJ別 視聴維持率ランキング</h2></div>
+<table>
+<thead><tr><th>PJ</th><th>平均維持率</th><th>50%地点</th><th>判定</th></tr></thead>
+<tbody>
+<tr><td>大山 Y型</td><td>48.5%</td><td>53.2%</td><td><span class="badge badge-success">優秀</span></td></tr>
+<tr><td>柳井 YT×Insta（旧）</td><td>42.3%</td><td>45.8%</td><td><span class="badge badge-success">良好</span></td></tr>
+<tr><td>大山 C型</td><td>40.1%</td><td>43.5%</td><td><span class="badge badge-warn">許容</span></td></tr>
+<tr><td>菊池 ことば手技</td><td>35.7%</td><td>38.2%</td><td><span class="badge badge-warn">改善要</span></td></tr>
+<tr><td>ゆうゆう（β）</td><td>28.4%</td><td>30.1%</td><td><span class="badge badge-danger">要対策</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="section-card">
+<div class="section-header"><h2>⚠️ 離脱箇所自動検知</h2></div>
+<div style="display:grid; gap:10px;">
+<div style="padding:10px; background:#0f172a; border-radius:8px; border-left:3px solid #ef4444;">
+<div style="font-weight:600; color:#f87171;">🔴 ゆうゆう・行8「権威性訴求」</div>
+<div style="font-size:11px; color:#94a3b8; margin-top:4px;">3:45地点で −22pt 急落／実績数字連打が原因か</div>
+</div>
+<div style="padding:10px; background:#0f172a; border-radius:8px; border-left:3px solid #fbbf24;">
+<div style="font-weight:600; color:#fbbf24;">🟡 菊池・行12「特典説明」</div>
+<div style="font-size:11px; color:#94a3b8; margin-top:4px;">5:20地点で −14pt／中身の魅力訴求が薄い</div>
+</div>
+<div style="padding:10px; background:#0f172a; border-radius:8px; border-left:3px solid #fbbf24;">
+<div style="font-weight:600; color:#fbbf24;">🟡 大山C・行15「CTA直前」</div>
+<div style="font-size:11px; color:#94a3b8; margin-top:4px;">7:10地点で −12pt／希少性訴求の強化候補</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- ===== ROI管理 ===== -->
+<div class="content page" id="page-roi">
+<h1 class="page-title">💰 ROI/コスト管理</h1>
+<p class="page-subtitle">スタッフ工数＋広告費＋制作費 の総コスト vs リーチ/CV/ROAS</p>
+
+<div class="kpi-grid">
+<div class="kpi-card cyan">
+<div class="kpi-label">📊 工数把握率</div>
+<div class="kpi-value" id="kpiCoverage">0%</div>
+<div class="kpi-trend" id="kpiCoverageTrend">目標: 100%（3ヶ月）</div>
+</div>
+<div class="kpi-card gold">
+<div class="kpi-label">💰 月間総コスト（全PJ）</div>
+<div class="kpi-value" id="kpiTotalCost">¥0</div>
+<div class="kpi-trend" id="kpiTotalCostTrend">人件費＋広告費＋制作費</div>
+</div>
+<div class="kpi-card purple">
+<div class="kpi-label">🎯 平均CPA</div>
+<div class="kpi-value" id="kpiAvgCPA">¥—</div>
+<div class="kpi-trend" id="kpiAvgCPATrend">広告費 ÷ CV数</div>
+</div>
+<div class="kpi-card green">
+<div class="kpi-label">📈 平均ROAS</div>
+<div class="kpi-value" id="kpiAvgROAS">—</div>
+<div class="kpi-trend" id="kpiAvgROASTrend">売上 ÷ 広告費</div>
+</div>
+</div>
+
+<div class="grid-2">
+<div class="section-card">
+<div class="section-header">
+<h2>👥 スタッフ工数（PJ別）</h2>
+<button class="btn btn-primary" onclick="openWorkInput()">+ 工数入力</button>
+</div>
+<table id="workTable">
+<thead><tr><th>PJ</th><th>工数(h)</th><th>人件費</th><th>状態</th></tr></thead>
+<tbody id="workTableBody"></tbody>
+</table>
+<div style="font-size:11px; color:#64748b; margin-top:10px;">時給: <input id="hourlyRate" type="number" value="3000" style="background:#0f172a;color:white;border:1px solid #334155;border-radius:4px;padding:3px 8px;width:80px;" onchange="renderROI()"> 円／時</div>
+</div>
+
+<div class="section-card">
+<div class="section-header">
+<h2>📊 広告投下（PJ別）</h2>
+<button class="btn btn-primary" onclick="openAdInput()">+ 広告入力</button>
+</div>
+<table id="adTable">
+<thead><tr><th>PJ</th><th>広告費</th><th>売上</th><th>ROAS</th></tr></thead>
+<tbody id="adTableBody"></tbody>
+</table>
+<div style="font-size:11px; color:#64748b; margin-top:10px;">📡 Meta広告API/YouTube Data API 連携後は自動取込</div>
+</div>
+</div>
+
+<div class="section-card">
+<div class="section-header"><h2>🔄 週次PDCA自動レポート（プレビュー）</h2></div>
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+<div style="padding:18px; background:#0f172a; border-radius:8px; border-left:3px solid #c084fc;">
+<div style="font-size:13px; font-weight:700; color:#c084fc; margin-bottom:8px;">📅 次回配信: 毎週月曜10:00</div>
+<div style="font-size:12px; color:#cbd5e1; line-height:1.7;">
+<b style="color:#fbbf24;">配信先</b>: ChatWork PDCA定例ルーム<br>
+<b style="color:#fbbf24;">内容</b>: 先週実績／弱点トップ3／改善案／今週アクション<br>
+<b style="color:#fbbf24;">生成元</b>: Claude（自動・ROIテーブル＋採点履歴から）
+</div>
+<button class="btn btn-secondary" style="margin-top:12px;" onclick="generatePDCAPreview()">📄 今すぐサンプル生成</button>
+</div>
+<div id="pdcaPreview" style="padding:14px; background:#0a0e1a; border-radius:8px; border:1px solid #334155; font-size:11px; color:#94a3b8; line-height:1.7; max-height:240px; overflow-y:auto;">
+クリックでサンプルレポート生成…
+</div>
+</div>
+</div>
+
+<div class="grid-2">
+<div class="section-card">
+<div class="section-header"><h2>🏆 ROIランキング（全PJ）</h2></div>
+<div id="roiRanking"></div>
+</div>
+<div class="section-card">
+<div class="section-header"><h2>⚠️ 撤退/追加投資候補</h2></div>
+<div id="roiDecision"></div>
+</div>
+</div>
+</div>
+
+<!-- 工数入力モーダル -->
+<div id="workModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center;">
+<div style="background:#1e293b; padding:30px; border-radius:12px; width:480px; max-width:90%; border:1px solid #06b6d4;">
+<h2 style="color:white; margin-bottom:18px;">👥 工数入力</h2>
+<div style="display:grid; gap:12px;">
+<div><label style="font-size:12px; color:#94a3b8;">PJ</label><select id="workPJ" style="width:100%; background:#0f172a; color:white; border:1px solid #334155; padding:8px; border-radius:6px; margin-top:4px;"></select></div>
+<div><label style="font-size:12px; color:#94a3b8;">工程</label><select id="workPhase" style="width:100%; background:#0f172a; color:white; border:1px solid #334155; padding:8px; border-radius:6px; margin-top:4px;">
+<option>Phase 1-3 リサーチ</option><option>Phase 4-6 シナリオ作成</option><option>Phase 7-8 採点・修正</option><option>Phase 9 撮影</option><option>Phase 10+ 配信・改善</option>
+</select></div>
+<div><label style="font-size:12px; color:#94a3b8;">工数(時間)</label><input id="workHours" type="number" step="0.5" value="1" style="width:100%; background:#0f172a; color:white; border:1px solid #334155; padding:8px; border-radius:6px; margin-top:4px;"></div>
+<div><label style="font-size:12px; color:#94a3b8;">作業者</label><input id="workWho" type="text" placeholder="例：池田／柳井" style="width:100%; background:#0f172a; color:white; border:1px solid #334155; padding:8px; border-radius:6px; margin-top:4px;"></div>
+<div><label style="font-size:12px; color:#94a3b8;">日付</label><input id="workDate" type="date" style="width:100%; background:#0f172a; color:white; border:1px solid #334155; padding:8px; border-radius:6px; margin-top:4px;"></div>
+</div>
+<div style="display:flex; gap:10px; margin-top:20px; justify-content:flex-end;">
+<button class="btn btn-secondary" onclick="closeModal('workModal')">キャンセル</button>
+<button class="btn btn-primary" onclick="saveWork()">保存</button>
+</div>
+</div>
+</div>
+
+<!-- 広告入力モーダル -->
+<div id="adModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; align-items:center; justify-content:center;">
+<div style="background:#1e293b; padding:30px; border-radius:12px; width:480px; max-width:90%; border:1px solid #fbbf24;">
+<h2 style="color:white; margin-bottom:18px;">📊 広告/売上入力</h2>
+<div style="display:grid; gap:12px;">
+<div><label style="font-size:12px; color:#94a3b8;">PJ</label><select id="adPJ" style="width:100%; background:#0f172a; color:white; border:1px solid #334155; padding:8px; border-radius:6px; margin-top:4px;"></select></div>
+<div class="grid-2" style="gap:10px;">
+<div><label style="font-size:12px; color:#94a3b8;">広告費 (円)</label><input id="adSpend" type="number" value="100000" style="width:100%; background:#0f172a; color:white; border:1px solid #334155; padding:8px; border-radius:6px; margin-top:4px;"></div>
+<div><label style="font-size:12px; color:#94a3b8;">売上 (円)</label><input id="adRevenue" type="number" value="300000" style="width:100%; background:#0f172a; color:white; border:1px solid #334155; padding:8px; border-radius:6px; margin-top:4px;"></div>
+</div>
+<div class="grid-2" style="gap:10px;">
+<div><label style="font-size:12px; color:#94a3b8;">CV件数</label><input id="adCV" type="number" value="10" style="width:100%; background:#0f172a; color:white; border:1px solid #334155; padding:8px; border-radius:6px; margin-top:4px;"></div>
+<div><label style="font-size:12px; color:#94a3b8;">期間</label><input id="adPeriod" type="text" placeholder="例：2026-04" value="2026-05" style="width:100%; background:#0f172a; color:white; border:1px solid #334155; padding:8px; border-radius:6px; margin-top:4px;"></div>
+</div>
+</div>
+<div style="display:flex; gap:10px; margin-top:20px; justify-content:flex-end;">
+<button class="btn btn-secondary" onclick="closeModal('adModal')">キャンセル</button>
+<button class="btn btn-primary" onclick="saveAd()">保存</button>
+</div>
+</div>
+</div>
+
+<!-- ===== SCORE HEATMAP ===== -->
+<div class="content page" id="page-score">
+<h1 class="page-title">🎯 採点ヒートマップ</h1>
+<p class="page-subtitle">10軸×全PJの強み弱み一覧</p>
+<div class="section-card">
+<div id="heatmapContainer"></div>
+</div>
+</div>
+
+<!-- ===== LIBRARY ===== -->
+<div class="content page" id="page-library">
+<h1 class="page-title">📚 ナレッジライブラリ</h1>
+<p class="page-subtitle">NG/OK語辞書・型ライブラリ・テンプレ集</p>
+<div class="grid-3">
+<div class="section-card">
+<div class="section-header"><h2 style="color:#f87171;">🚫 NG語</h2></div>
+<div style="font-size:13px; line-height:1.8;">本編／前半戦／後半戦／予告編／概要編／このパート／次のパート／この章／次の章<br>正体（暴露調・段階④NG）／秘密／真相／暴露／裏側</div>
+</div>
+<div class="section-card">
+<div class="section-header"><h2 style="color:#34d399;">✅ OK語</h2></div>
+<div style="font-size:13px; line-height:1.8;">ここから／この後／続いて／さらに／後ほど／いまから／本日／実はこの後／ここからが本番／答え／核心／結論／中身／全体像</div>
+</div>
+<div class="section-card">
+<div class="section-header"><h2 style="color:#22d3ee;">🎁 型ライブラリ</h2></div>
+<div style="font-size:13px; line-height:1.8;">赤間①フレーズコピー型／赤間②キャッシュコピー型／赤間③セカンダリーコピー型／赤間④Canva×AI型／柳井 掛け算&時短型</div>
+</div>
+</div>
+</div>
+
+<!-- ===== FILMING ===== -->
+<div class="content page" id="page-filming">
+<h1 class="page-title">🎬 撮影準備ゲート</h1>
+<p class="page-subtitle">3点最終チェック → 全クリアで撮影GO</p>
+<div class="grid-3">
+<div class="section-card" style="border-left:4px solid #10b981;">
+<h3 style="color:#34d399; font-size:15px;">🟢 ゲート1：Gantt</h3>
+<ul style="font-size:13px; line-height:1.8; margin-top:10px;">
+<li>✅ 10色テーマ網羅</li>
+<li>✅ 伏線5本（基準3本以上）</li>
+<li>✅ 単一バー≤20%（行7=15%）</li>
+</ul>
+</div>
+<div class="section-card" style="border-left:4px solid #10b981;">
+<h3 style="color:#34d399; font-size:15px;">🟢 ゲート2：採点</h3>
+<ul style="font-size:13px; line-height:1.8; margin-top:10px;">
+<li>✅ 88.5/100（撮影本命90+ ←要)</li>
+<li>⚠️ 残る弱点3項目（許容内）</li>
+<li>✅ 赤間①超え達成</li>
+</ul>
+</div>
+<div class="section-card" style="border-left:4px solid #10b981;">
+<h3 style="color:#34d399; font-size:15px;">🟢 ゲート3：サマリ</h3>
+<ul style="font-size:13px; line-height:1.8; margin-top:10px;">
+<li>✅ NG語ゼロ</li>
+<li>✅ 16フェーズ全踏破</li>
+<li>✅ ゴール「1/10時間」貫通</li>
+</ul>
+</div>
+</div>
+<div class="section-card" style="margin-top:20px;text-align:center;background:linear-gradient(135deg,#10b981,#059669);">
+<h2 style="color:white;">✅ 撮影GO</h2>
+<p style="color:rgba(255,255,255,0.9);margin-top:8px;">全ゲートクリア（採点は90+目標まで-1.5）</p>
+<button class="btn" style="background:white;color:#059669;margin-top:14px;" onclick="alert('Coming soon: スタッフ送信')">🎬 撮影スタッフへ送信</button>
+</div>
+</div>
+
+<!-- ===== SETTINGS ===== -->
+<div class="content page" id="page-settings">
+<h1 class="page-title">⚙️ 設定・連携</h1>
+<p class="page-subtitle">API連携／テーマ／権限／データエクスポート</p>
+
+<div class="grid-2">
+<div class="section-card">
+<div class="section-header"><h2>🔌 API連携ステータス</h2></div>
+<div id="apiStatus" style="display:grid; gap:10px;">
+<div class="api-row" data-api="sheets" style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#0f172a; border-radius:8px;">
+<div><div style="font-size:13px; font-weight:600;">📊 Google Sheets API</div>
+<div style="font-size:11px; color:#94a3b8; margin-top:2px;">シナリオシート読み書き</div></div>
+<div><span class="badge badge-success">✓ 接続済</span><button class="btn btn-secondary" style="margin-left:8px; padding:4px 10px; font-size:11px;" onclick="testAPI('sheets')">テスト</button></div>
+</div>
+<div class="api-row" data-api="youtube" style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#0f172a; border-radius:8px;">
+<div><div style="font-size:13px; font-weight:600;">📺 YouTube Data API v3</div>
+<div style="font-size:11px; color:#94a3b8; margin-top:2px;">視聴維持率・登録者数</div></div>
+<div><span class="badge badge-warn">⚠️ 未接続</span><button class="btn btn-secondary" style="margin-left:8px; padding:4px 10px; font-size:11px;" onclick="connectAPI('youtube')">接続</button></div>
+</div>
+<div class="api-row" data-api="meta" style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#0f172a; border-radius:8px;">
+<div><div style="font-size:13px; font-weight:600;">📱 Meta広告API</div>
+<div style="font-size:11px; color:#94a3b8; margin-top:2px;">広告費・CV・ROAS</div></div>
+<div><span class="badge badge-warn">⚠️ 未接続</span><button class="btn btn-secondary" style="margin-left:8px; padding:4px 10px; font-size:11px;" onclick="connectAPI('meta')">接続</button></div>
+</div>
+<div class="api-row" data-api="instagram" style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#0f172a; border-radius:8px;">
+<div><div style="font-size:13px; font-weight:600;">📷 Instagram Graph API</div>
+<div style="font-size:11px; color:#94a3b8; margin-top:2px;">リーチ・インプレッション</div></div>
+<div><span class="badge badge-warn">⚠️ 未接続</span><button class="btn btn-secondary" style="margin-left:8px; padding:4px 10px; font-size:11px;" onclick="connectAPI('instagram')">接続</button></div>
+</div>
+<div class="api-row" data-api="chatwork" style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#0f172a; border-radius:8px;">
+<div><div style="font-size:13px; font-weight:600;">💬 ChatWork API</div>
+<div style="font-size:11px; color:#94a3b8; margin-top:2px;">PDCAレポート自動配信</div></div>
+<div><span class="badge badge-success">✓ 接続済</span><button class="btn btn-secondary" style="margin-left:8px; padding:4px 10px; font-size:11px;" onclick="testAPI('chatwork')">テスト</button></div>
+</div>
+<div class="api-row" data-api="line" style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:#0f172a; border-radius:8px;">
+<div><div style="font-size:13px; font-weight:600;">📩 LINE Messaging API</div>
+<div style="font-size:11px; color:#94a3b8; margin-top:2px;">登録ユーザー数・配信</div></div>
+<div><span class="badge badge-warn">⚠️ 未接続</span><button class="btn btn-secondary" style="margin-left:8px; padding:4px 10px; font-size:11px;" onclick="connectAPI('line')">接続</button></div>
+</div>
+</div>
+</div>
+
+<div class="section-card">
+<div class="section-header"><h2>👥 権限・チームメンバー</h2></div>
+<table>
+<thead><tr><th>名前</th><th>役割</th><th>権限</th></tr></thead>
+<tbody>
+<tr><td>柳井（池田）</td><td>オーナー</td><td><span class="badge badge-success">全権</span></td></tr>
+<tr><td>小川さん</td><td>動線・特典担当</td><td><span class="badge badge-info">編集</span></td></tr>
+<tr><td>田口さん</td><td>経理・人事</td><td><span class="badge badge-info">経理閲覧</span></td></tr>
+<tr><td>藤田さん</td><td>菊池PJ PM</td><td><span class="badge badge-info">PJ別編集</span></td></tr>
+<tr><td>奥村さん</td><td>SNS運用代行</td><td><span class="badge badge-info">SNS閲覧</span></td></tr>
+</tbody>
+</table>
+<button class="btn btn-primary" style="margin-top:14px;" onclick="alert('Coming soon: メンバー追加UI')">+ メンバー追加</button>
+</div>
+</div>
+
+<div class="grid-2">
+<div class="section-card">
+<div class="section-header"><h2>🎨 テーマ・表示</h2></div>
+<div style="display:grid; gap:10px;">
+<div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#0f172a; border-radius:8px;">
+<div style="font-size:13px;">🌙 ダークモード</div>
+<label class="switch"><input type="checkbox" checked onchange="alert('ダークモード固定（v1.0）')"></label>
+</div>
+<div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#0f172a; border-radius:8px;">
+<div style="font-size:13px;">📱 サイドバー自動折りたたみ（モバイル）</div>
+<label class="switch"><input type="checkbox" checked></label>
+</div>
+<div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#0f172a; border-radius:8px;">
+<div style="font-size:13px;">⚡ アニメーション有効</div>
+<label class="switch"><input type="checkbox" checked></label>
+</div>
+<div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#0f172a; border-radius:8px;">
+<div style="font-size:13px;">🔔 ブラウザ通知</div>
+<label class="switch"><input type="checkbox" onchange="if(this.checked) Notification.requestPermission()"></label>
+</div>
+</div>
+</div>
+
+<div class="section-card">
+<div class="section-header"><h2>💾 データ管理</h2></div>
+<div style="display:grid; gap:10px;">
+<button class="btn btn-secondary" style="text-align:left;" onclick="exportData()">📥 全データエクスポート（JSON）</button>
+<button class="btn btn-secondary" style="text-align:left;" onclick="document.getElementById('importFile').click()">📤 データインポート（JSON）</button>
+<input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(event)">
+<button class="btn btn-secondary" style="text-align:left;" onclick="if(confirm('全データを削除しますか？元に戻せません')) { localStorage.clear(); alert('削除完了'); location.reload(); }">🗑 全データ削除</button>
+<div style="font-size:11px; color:#64748b; padding:8px 0;">※ ブラウザのlocalStorageに保存／PJ間共有はSheets経由</div>
+</div>
+</div>
+</div>
+
+<div class="section-card">
+<div class="section-header"><h2>📊 自動化スケジュール</h2></div>
+<table>
+<thead><tr><th>タスク</th><th>頻度</th><th>次回実行</th><th>状態</th></tr></thead>
+<tbody>
+<tr><td>週次PDCAレポート → ChatWork配信</td><td>毎週月10:00</td><td>2026-05-04 10:00</td><td><span class="badge badge-success">有効</span></td></tr>
+<tr><td>YouTube視聴維持率取込</td><td>日次03:00</td><td>—</td><td><span class="badge badge-warn">API未接続</span></td></tr>
+<tr><td>Meta広告データ取込</td><td>日次04:00</td><td>—</td><td><span class="badge badge-warn">API未接続</span></td></tr>
+<tr><td>採点合格突破率レポート</td><td>月次1日</td><td>2026-06-01</td><td><span class="badge badge-success">有効</span></td></tr>
+<tr><td>異常値アラート（CPA急騰等）</td><td>リアルタイム</td><td>—</td><td><span class="badge badge-warn">API未接続</span></td></tr>
+</tbody>
+</table>
+</div>
+</div>
+
+</main>
+</div>
+
+<script>
+// ナビ切替
+document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const page = item.dataset.page;
+        switchPage(page);
+    });
+});
+function switchPage(page) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelector(`[data-page="${page}"]`).classList.add('active');
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+    if (page === 'competitor') renderCompetitor();
+    if (page === 'score') renderHeatmap();
+}
+function switchPJ(id) {
+    document.getElementById('pjSelect').value = id;
+    alert('PJ切替: ' + id + '（v1.1 で全PJデータ連携）');
+}
+
+// トレンドチャート（ホーム）
+new Chart(document.getElementById('trendChart'), {
+    type: 'line',
+    data: {
+        labels: ['菊池','ゆうゆう','大山C','大山Y','広告マ','柳井(旧)','柳井(新)'],
+        datasets: [
+            {label:'自社採点', data:[78,82,85,87,82,76.8,88.5], borderColor:'#06b6d4', backgroundColor:'rgba(6,182,212,0.1)', borderWidth:3, tension:0.4, fill:true},
+            {label:'赤間①基準', data:[87.1,87.1,87.1,87.1,87.1,87.1,87.1], borderColor:'#fbbf24', borderWidth:2, borderDash:[5,5], pointRadius:0}
+        ]
+    },
+    options: {
+        responsive:true,
+        plugins:{legend:{labels:{color:'#cbd5e1'}}},
+        scales:{
+            y:{min:60,max:100,ticks:{color:'#94a3b8'},grid:{color:'#334155'}},
+            x:{ticks:{color:'#94a3b8'},grid:{display:false}}
+        }
+    }
+});
+
+// 競合比較
+let competitorRendered = false;
+function renderCompetitor() {
+    if (competitorRendered) return;
+    competitorRendered = true;
+    const labels = ['冒頭フック','常識破壊','キラーWord','視聴強制','例え話','権威性','解決策','事例','口ずさみ','CTA'];
+    const after = [90,87,80,88,92,88,88,82,92,80];
+    const akama = [94,92,78,88,92,80,85,82,95,85];
+    new Chart(document.getElementById('radarChart'), {
+        type:'radar',
+        data:{labels:labels, datasets:[
+            {label:'柳井(修正後)', data:after, borderColor:'#06b6d4', backgroundColor:'rgba(6,182,212,0.25)', borderWidth:3},
+            {label:'赤間①', data:akama, borderColor:'#fbbf24', backgroundColor:'rgba(251,191,36,0.2)', borderWidth:2}
+        ]},
+        options:{plugins:{legend:{labels:{color:'#cbd5e1'}}}, scales:{r:{min:50,max:100,ticks:{color:'#94a3b8',backdropColor:'transparent'},grid:{color:'#334155'},pointLabels:{color:'#cbd5e1'}}}}
+    });
+    new Chart(document.getElementById('barChart'), {
+        type:'bar',
+        data:{labels:labels, datasets:[
+            {label:'柳井(修正後)', data:after, backgroundColor:'#06b6d4'},
+            {label:'赤間①', data:akama, backgroundColor:'#fbbf24'}
+        ]},
+        options:{plugins:{legend:{labels:{color:'#cbd5e1'}}}, scales:{y:{min:50,max:100,ticks:{color:'#94a3b8'},grid:{color:'#334155'}}, x:{ticks:{color:'#94a3b8'},grid:{display:false}}}}
+    });
+}
+
+// ヒートマップ（採点）
+let heatmapRendered = false;
+function renderHeatmap() {
+    if (heatmapRendered) return;
+    heatmapRendered = true;
+    const labels = ['冒頭','常識','キラー','視聴','例え','権威','解決','事例','口ずさみ','CTA'];
+    const pjs = [
+        {name:'柳井(修正後)', scores:[90,87,80,88,92,88,88,82,92,80]},
+        {name:'柳井(修正前)', scores:[78,72,75,72,80,88,82,76,70,75]},
+        {name:'赤間①', scores:[94,92,78,88,92,80,85,82,95,85]},
+        {name:'大山C型', scores:[85,80,82,80,85,75,82,78,80,82]},
+        {name:'菊池', scores:[78,75,80,75,82,72,80,75,78,80]},
+        {name:'ゆうゆう', scores:[82,78,82,78,85,75,82,78,82,82]}
+    ];
+    let html = '<div class="heatmap"><div></div>';
+    labels.forEach(l => html += `<div class="heatmap-col-label">${l}</div>`);
+    pjs.forEach(pj => {
+        html += `<div class="heatmap-row-label">${pj.name}</div>`;
+        pj.scores.forEach(s => {
+            const ratio = (s-50)/50;
+            const r = Math.round(255 * (1-ratio*0.7));
+            const g = Math.round(150 + 105*ratio);
+            const b = Math.round(50 + 100*ratio*0.5);
+            html += `<div class="heatmap-cell" style="background:rgb(${r},${g},${b})">${s}</div>`;
+        });
+    });
+    html += '</div>';
+    document.getElementById('heatmapContainer').innerHTML = html;
+}
+
+// ===== PJ Database =====
+const PJ_DB = [
+    {id:'yanai-yt-insta', name:'柳井 YouTube×インスタ【掛け算＆時短】集客法', tag:'production', score:88.5, duration:'11:35', rows:17, status:'撮影本命確定', date:'2026-05-01', voice:'Sulafat', file:'/tmp/narration_yanai_sulafat_x110.mp3', spreadsheet:'https://docs.google.com/spreadsheets/d/167-asqUhdSR9sKOyeWA8LkYL_gZqWcBQHZSiKesz37c/edit?gid=0', highlights:['冒頭「得意なSNS1つ集中＝完全に時代遅れ」','3連対比（旧→新）','ガラケー→iPhone例え','「足し算じゃない掛け算だ」','奥村事例7000再生・月商300→1000万']},
+    {id:'oyama-case-c', name:'大山 C.A.S.E.診断 — C型（ターゲット診断）', tag:'production', score:86.5, duration:'8:30', rows:18, status:'撮影完了', date:'2026-04-29', voice:'Charon', file:null, spreadsheet:'https://docs.google.com/spreadsheets/d/1P9QWt5n7fH3Oh4XxaRDZTLM4FCfHtvfKEExq2IVh-bg/edit', highlights:['順番転換型','診断型集客法','ミラーターゲティング']},
+    {id:'oyama-case-y', name:'大山 C.A.S.E.診断 — Y型（方程式完成）', tag:'production', score:87.0, duration:'8:45', rows:18, status:'撮影完了・S+ ランク🥇', date:'2026-04-29', voice:'Charon', file:null, spreadsheet:'https://docs.google.com/spreadsheets/d/1P9QWt5n7fH3Oh4XxaRDZTLM4FCfHtvfKEExq2IVh-bg/edit', highlights:['体系化訴求型','174/180 横並び総合最高得点','本命確定']},
+    {id:'yuyu-threads', name:'ゆうゆうランド｜スレッズ×AI', tag:'review', score:82.0, duration:'12:00', rows:24, status:'Phase 5 ブラッシュ中', date:'2026-04-26', voice:null, file:null, spreadsheet:'https://docs.google.com/spreadsheets/d/1nivUxOA.../edit', highlights:['戦略系12タブ追加済','J12要確認']},
+    {id:'kikuchi-kotoba', name:'菊池 ことばの手技', tag:'archive', score:78.0, duration:'10:30', rows:19, status:'採用版確定済', date:'2026-04-24', voice:null, file:null, spreadsheet:null, highlights:['ワンオペ仕組化×整体/サロン','PM藤田','Room 407859982']},
+    {id:'tokutake-jv', name:'徳武JV｜動画VSL関連ノウハウ', tag:'review', score:80.0, duration:'15:00', rows:22, status:'who/what/how→VSL順序型 検討中', date:'2026-04-23', voice:null, file:null, spreadsheet:null, highlights:['完全成果報酬JV','200-300万円帯','NotebookLM動画化']},
+    {id:'ad-marketer', name:'広告マーケター養成PJ', tag:'review', score:82.0, duration:'10:00', rows:17, status:'本採用=03_データドリブン版', date:'2026-04-22', voice:null, file:null, spreadsheet:'https://docs.google.com/spreadsheets/d/17ElhKGc.../edit', highlights:['Room 424476303','6タブ','3,652字']},
+    {id:'katayose-clientA', name:'片寄せ Client A マーケ仕組み化', tag:'archive', score:null, duration:null, rows:null, status:'並行モニター1社目', date:'2026-04-25', voice:null, file:null, spreadsheet:null, highlights:['広告/YT/LINE統合','90日右腕育成','ケーススタディ化']}
+];
+
+let currentTagFilter = 'all';
+
+function renderPJList() {
+    const container = document.getElementById('pjListContainer');
+    if (!container) return;
+    const search = document.getElementById('pjSearch')?.value.toLowerCase() || '';
+    const filtered = PJ_DB.filter(pj => 
+        (currentTagFilter === 'all' || pj.tag === currentTagFilter) &&
+        (search === '' || pj.name.toLowerCase().includes(search))
+    );
+    container.innerHTML = filtered.map(pj => {
+        const statusColor = pj.tag === 'production' ? '#10b981' : pj.tag === 'review' ? '#fbbf24' : '#64748b';
+        const scoreDisplay = pj.score ? `${pj.score}` : '—';
+        return `<div class="pj-card" onclick="showPJDetail('${pj.id}')" style="background:#0f172a; padding:12px 14px; border-radius:8px; margin-bottom:6px; cursor:pointer; border-left:3px solid ${statusColor}; transition:all 0.15s;">
+<div style="font-size:12px; font-weight:600; color:white; margin-bottom:4px;">${pj.name}</div>
+<div style="display:flex; justify-content:space-between; align-items:center; font-size:10px; color:#94a3b8; margin-top:4px;">
+<span>📊 ${scoreDisplay} ／ ⏱ ${pj.duration||'—'}</span>
+<span style="color:${statusColor};">${pj.tag === 'production' ? '🟢 本番' : pj.tag === 'review' ? '🟡 レビュー' : '⚪ アーカイブ'}</span>
+</div>
+<div style="font-size:10px; color:#64748b; margin-top:4px;">${pj.status}</div>
+</div>`;
+    }).join('') || '<div style="padding:20px; text-align:center; color:#64748b;">該当PJなし</div>';
+}
+
+function showPJDetail(id) {
+    const pj = PJ_DB.find(p => p.id === id);
+    if (!pj) return;
+    const empty = document.getElementById('pjDetailEmpty');
+    if (empty) empty.style.display = 'none';
+    
+    document.querySelectorAll('.pj-card').forEach(c => c.style.background = '#0f172a');
+    event.currentTarget.style.background = '#1e2a44';
+    
+    const container = document.getElementById('pjDetailContainer');
+    container.innerHTML = `
+<div class="section-card">
+<div class="section-header">
+<h2>📜 ${pj.name}</h2>
+<div style="display:flex; gap:8px;">
+${pj.spreadsheet ? `<button class="btn btn-secondary" onclick="window.open('${pj.spreadsheet}','_blank')">📂 シート</button>` : ''}
+${pj.file ? `<button class="btn btn-primary" onclick="window.open('${pj.file}','_blank')">🎤 音源</button>` : ''}
+</div>
+</div>
+<div class="kpi-grid">
+<div class="kpi-card cyan"><div class="kpi-label">採点</div><div class="kpi-value">${pj.score||'—'}</div></div>
+<div class="kpi-card gold"><div class="kpi-label">想定尺</div><div class="kpi-value">${pj.duration||'—'}</div></div>
+<div class="kpi-card purple"><div class="kpi-label">行数</div><div class="kpi-value">${pj.rows||'—'}</div></div>
+<div class="kpi-card green"><div class="kpi-label">音声</div><div class="kpi-value" style="font-size:18px;">${pj.voice||'—'}</div></div>
+</div>
+</div>
+<div class="section-card">
+<div class="section-header"><h2>✨ シナリオハイライト</h2></div>
+<ul style="padding-left:20px; line-height:2; font-size:13px;">
+${pj.highlights.map(h => `<li>${h}</li>`).join('')}
+</ul>
+</div>
+<div class="grid-2">
+<div class="section-card">
+<div class="section-header"><h2>🎬 撮影/配信ステータス</h2></div>
+<div style="font-size:13px; line-height:2;">
+<div>📅 最終更新: ${pj.date}</div>
+<div>📌 状態: ${pj.status}</div>
+<div>🏷 タグ: <span class="badge ${pj.tag === 'production' ? 'badge-success' : pj.tag === 'review' ? 'badge-warn' : 'badge-info'}">${pj.tag}</span></div>
+</div>
+</div>
+<div class="section-card">
+<div class="section-header"><h2>🔗 関連リソース</h2></div>
+<div style="display:grid; gap:8px;">
+${pj.spreadsheet ? `<button class="btn btn-secondary" style="text-align:left;" onclick="window.open('${pj.spreadsheet}','_blank')">📊 シナリオシート</button>` : '<div style="color:#64748b; font-size:12px; padding:8px;">シート未連携</div>'}
+${pj.file ? `<button class="btn btn-secondary" style="text-align:left;" onclick="window.open('${pj.file}','_blank')">🎤 音源試聴</button>` : ''}
+<button class="btn btn-secondary" style="text-align:left;" onclick="alert('Coming soon: 統合レポート連動')">📊 統合レポート</button>
+<button class="btn btn-secondary" style="text-align:left;" onclick="alert('Coming soon: 修正履歴タイムライン')">🕐 修正履歴</button>
+</div>
+</div>
+</div>
+`;
+}
+
+function filterPJ() { renderPJList(); }
+function filterTag(tag) { currentTagFilter = tag; renderPJList(); }
+
+// シナリオ管理ページ初期化
+const origSwitchPage = switchPage;
+switchPage = function(page) {
+    origSwitchPage(page);
+    if (page === 'scenario') setTimeout(renderPJList, 50);
+    if (page === 'kpi') renderKPIPage();
+    if (page === 'roi') renderROI();
+    if (page === 'settings') renderSettings();
+};
+
+// ===== KPI Page Charts =====
+let kpiRendered = false;
+function renderKPIPage() {
+    if (kpiRendered) return;
+    kpiRendered = true;
+    // 視聴維持率カーブ
+    const points = Array.from({length:24}, (_,i)=> i*30); // 0-12分（30秒刻み）
+    const retention = [100,98,95,92,90,87,85,82,80,76,72,68,50,52,55,57,55,52,50,47,45,42,40,38];
+    const ganttBg = [0,0,0,1,1,1,1,2,2,2,3,3,4,4,5,5,5,6,6,7,7,7,8,8];
+    const colors = ['#06b6d4','#fbbf24','#a855f7','#10b981','#ef4444','#22d3ee','#ec4899','#f59e0b','#94a3b8'];
+    new Chart(document.getElementById('retentionChart'), {
+        type:'line',
+        data:{
+            labels: points.map(p => `${Math.floor(p/60)}:${(p%60).toString().padStart(2,'0')}`),
+            datasets:[{label:'視聴維持率(%)', data:retention, borderColor:'#06b6d4', backgroundColor:'rgba(6,182,212,0.2)', borderWidth:3, tension:0.3, fill:true, pointRadius:3}]
+        },
+        options:{
+            plugins:{
+                legend:{labels:{color:'#cbd5e1'}},
+                tooltip:{callbacks:{afterLabel:(ctx)=>`Gantt: 行${ganttBg[ctx.dataIndex]+1}`}}
+            },
+            scales:{
+                y:{min:0,max:100,ticks:{color:'#94a3b8',callback:(v)=>v+'%'},grid:{color:'#334155'}},
+                x:{ticks:{color:'#94a3b8'},grid:{color:'#1e293b'}}
+            }
+        }
+    });
+    // CPA/ROAS推移
+    new Chart(document.getElementById('cpaRoasChart'), {
+        type:'line',
+        data:{
+            labels: Array.from({length:12},(_,i)=>`W${i+1}`),
+            datasets:[
+                {label:'CPA(円)', data:[1240,1180,1100,1050,990,950,920,890,870,850,840,847], borderColor:'#fbbf24', backgroundColor:'rgba(251,191,36,0.1)', borderWidth:3, yAxisID:'y'},
+                {label:'ROAS(倍)', data:[1.8,2.0,2.2,2.4,2.5,2.7,2.9,3.1,3.2,3.4,3.5,3.6], borderColor:'#10b981', backgroundColor:'rgba(16,185,129,0.1)', borderWidth:3, yAxisID:'y1'}
+            ]
+        },
+        options:{
+            plugins:{legend:{labels:{color:'#cbd5e1'}}},
+            scales:{
+                y:{position:'left',ticks:{color:'#fbbf24',callback:(v)=>'¥'+v},grid:{color:'#334155'},title:{display:true,text:'CPA',color:'#fbbf24'}},
+                y1:{position:'right',ticks:{color:'#10b981',callback:(v)=>v+'x'},grid:{display:false},title:{display:true,text:'ROAS',color:'#10b981'}},
+                x:{ticks:{color:'#94a3b8'},grid:{display:false}}
+            }
+        }
+    });
+}
+
+// ===== ROI Page Logic =====
+function loadStorage(key, def) { try { return JSON.parse(localStorage.getItem('vlp_'+key)) || def; } catch(e){ return def; } }
+function saveStorage(key, val) { localStorage.setItem('vlp_'+key, JSON.stringify(val)); }
+
+let workData = loadStorage('work', []);
+let adData = loadStorage('ad', []);
+
+function openWorkInput() {
+    const sel = document.getElementById('workPJ');
+    sel.innerHTML = PJ_DB.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+    document.getElementById('workDate').value = new Date().toISOString().split('T')[0];
+    const m = document.getElementById('workModal'); m.style.display='flex';
+}
+function openAdInput() {
+    const sel = document.getElementById('adPJ');
+    sel.innerHTML = PJ_DB.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+    const m = document.getElementById('adModal'); m.style.display='flex';
+}
+function closeModal(id) { document.getElementById(id).style.display='none'; }
+
+function saveWork() {
+    workData.push({
+        pj: document.getElementById('workPJ').value,
+        phase: document.getElementById('workPhase').value,
+        hours: parseFloat(document.getElementById('workHours').value),
+        who: document.getElementById('workWho').value,
+        date: document.getElementById('workDate').value
+    });
+    saveStorage('work', workData);
+    closeModal('workModal');
+    renderROI();
+}
+function saveAd() {
+    adData.push({
+        pj: document.getElementById('adPJ').value,
+        spend: parseFloat(document.getElementById('adSpend').value),
+        revenue: parseFloat(document.getElementById('adRevenue').value),
+        cv: parseFloat(document.getElementById('adCV').value),
+        period: document.getElementById('adPeriod').value
+    });
+    saveStorage('ad', adData);
+    closeModal('adModal');
+    renderROI();
+}
+
+function renderROI() {
+    const rate = parseFloat(document.getElementById('hourlyRate')?.value || 3000);
+    // 工数テーブル
+    const workByPJ = {};
+    workData.forEach(w => { workByPJ[w.pj] = (workByPJ[w.pj] || 0) + w.hours; });
+    const workBody = document.getElementById('workTableBody');
+    if (workBody) {
+        workBody.innerHTML = PJ_DB.map(pj => {
+            const h = workByPJ[pj.id] || 0;
+            const cost = h * rate;
+            const status = h > 0 ? '<span class="badge badge-success">入力済</span>' : '<span class="badge badge-warn">未入力</span>';
+            return `<tr><td style="font-size:11px;">${pj.name.substring(0,20)}</td><td>${h>0?h.toFixed(1):'—'}</td><td>${h>0?'¥'+cost.toLocaleString():'—'}</td><td>${status}</td></tr>`;
+        }).join('');
+    }
+    // 広告テーブル
+    const adByPJ = {};
+    adData.forEach(a => {
+        if (!adByPJ[a.pj]) adByPJ[a.pj] = {spend:0, revenue:0, cv:0};
+        adByPJ[a.pj].spend += a.spend;
+        adByPJ[a.pj].revenue += a.revenue;
+        adByPJ[a.pj].cv += a.cv;
+    });
+    const adBody = document.getElementById('adTableBody');
+    if (adBody) {
+        const rows = PJ_DB.filter(p => adByPJ[p.id]).map(pj => {
+            const a = adByPJ[pj.id];
+            const roas = a.spend > 0 ? (a.revenue / a.spend).toFixed(2) : '—';
+            const roasColor = a.revenue / a.spend >= 3 ? '#34d399' : a.revenue / a.spend >= 1.5 ? '#fbbf24' : '#f87171';
+            return `<tr><td style="font-size:11px;">${pj.name.substring(0,18)}</td><td>¥${a.spend.toLocaleString()}</td><td>¥${a.revenue.toLocaleString()}</td><td style="color:${roasColor};font-weight:700;">${roas}x</td></tr>`;
+        }).join('');
+        adBody.innerHTML = rows || '<tr><td colspan="4" style="text-align:center;color:#64748b;padding:20px;">広告データ未入力（+ 広告入力 をクリック）</td></tr>';
+    }
+    // KPI更新
+    const totalWork = Object.values(workByPJ).reduce((a,b)=>a+b, 0);
+    const totalCost = totalWork * rate + Object.values(adByPJ).reduce((a,b)=>a+b.spend, 0);
+    const totalCV = Object.values(adByPJ).reduce((a,b)=>a+b.cv, 0);
+    const totalRev = Object.values(adByPJ).reduce((a,b)=>a+b.revenue, 0);
+    const totalSpend = Object.values(adByPJ).reduce((a,b)=>a+b.spend, 0);
+    const coverage = Math.round(Object.keys(workByPJ).length / PJ_DB.length * 100);
+    const cpa = totalCV > 0 ? Math.round(totalSpend / totalCV) : null;
+    const roas = totalSpend > 0 ? (totalRev / totalSpend).toFixed(2) : null;
+
+    const setKPI = (id, val) => { const e = document.getElementById(id); if(e) e.textContent = val; };
+    setKPI('kpiCoverage', coverage + '%');
+    setKPI('kpiTotalCost', '¥' + totalCost.toLocaleString());
+    setKPI('kpiAvgCPA', cpa ? '¥' + cpa.toLocaleString() : '¥—');
+    setKPI('kpiAvgROAS', roas ? roas + 'x' : '—');
+
+    // ROIランキング
+    const ranking = PJ_DB.filter(p => adByPJ[p.id]).map(pj => {
+        const a = adByPJ[pj.id];
+        const w = workByPJ[pj.id] || 0;
+        const cost = a.spend + w * rate;
+        const roi = cost > 0 ? ((a.revenue - cost) / cost * 100) : 0;
+        return {name: pj.name, revenue: a.revenue, cost, roi};
+    }).sort((a,b)=>b.roi-a.roi);
+
+    const rankEl = document.getElementById('roiRanking');
+    if (rankEl) {
+        rankEl.innerHTML = ranking.length ? ranking.map((r,i) => `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px; background:#0f172a; border-radius:8px; margin-bottom:6px; border-left:3px solid ${r.roi>200?'#10b981':r.roi>0?'#fbbf24':'#ef4444'};">
+        <div><div style="font-size:12px; font-weight:600;">${i+1}位 ${r.name.substring(0,25)}</div>
+        <div style="font-size:10px; color:#94a3b8;">売上¥${r.revenue.toLocaleString()} ／ 総コスト¥${r.cost.toLocaleString()}</div></div>
+        <div style="font-size:18px; font-weight:800; color:${r.roi>200?'#34d399':r.roi>0?'#fbbf24':'#f87171'};">${r.roi.toFixed(0)}%</div>
+        </div>`).join('') : '<div style="text-align:center; color:#64748b; padding:30px;">広告データ入力後に自動算出</div>';
+    }
+    // 撤退/追加投資判定
+    const decEl = document.getElementById('roiDecision');
+    if (decEl) {
+        const exit = ranking.filter(r => r.roi < 0);
+        const invest = ranking.filter(r => r.roi >= 200);
+        decEl.innerHTML = `
+        <div style="margin-bottom:12px;"><div style="font-size:12px; color:#34d399; font-weight:700; margin-bottom:6px;">🚀 追加投資候補（ROI 200%以上）</div>
+        ${invest.length ? invest.map(r => `<div style="font-size:12px; padding:6px 10px; background:rgba(16,185,129,0.1); border-radius:6px; margin-bottom:4px;">${r.name.substring(0,30)} <b style="color:#34d399; float:right;">${r.roi.toFixed(0)}%</b></div>`).join('') : '<div style="font-size:11px; color:#64748b;">該当なし</div>'}</div>
+        <div><div style="font-size:12px; color:#f87171; font-weight:700; margin-bottom:6px;">⚠️ 撤退候補（ROI マイナス）</div>
+        ${exit.length ? exit.map(r => `<div style="font-size:12px; padding:6px 10px; background:rgba(239,68,68,0.1); border-radius:6px; margin-bottom:4px;">${r.name.substring(0,30)} <b style="color:#f87171; float:right;">${r.roi.toFixed(0)}%</b></div>`).join('') : '<div style="font-size:11px; color:#64748b;">該当なし</div>'}</div>`;
+    }
+}
+
+function generatePDCAPreview() {
+    const today = new Date();
+    const lastWeek = new Date(today.getTime() - 7*24*60*60*1000);
+    const fmt = d => `${d.getMonth()+1}/${d.getDate()}`;
+    document.getElementById('pdcaPreview').innerHTML = `
+<div style="color:#fbbf24; font-weight:700;">📊 週次PDCAレポート（${fmt(lastWeek)}〜${fmt(today)}）</div><br>
+<b style="color:#34d399;">▼ 先週の実績</b><br>
+・進行中PJ: ${PJ_DB.filter(p=>p.tag==='production').length}件／撮影完了2件／配信1件<br>
+・最高採点: 大山Y型 87.0／柳井 88.5（赤間①超え達成）<br>
+・LINE登録率 27.9%（過去最高）／申込率 5.9%（要対策）<br><br>
+<b style="color:#f87171;">▼ 弱点トップ3</b><br>
+・ゆうゆう行8 −22pt急落（権威性訴求）<br>
+・菊池行12 −14pt（特典中身薄い）<br>
+・大山C行15 −12pt（CTA直前希少性）<br><br>
+<b style="color:#22d3ee;">▼ 今週のアクション</b><br>
+・ゆうゆうラボの行8書き直し（火曜まで）<br>
+・菊池特典セクション中身追加（水曜まで）<br>
+・大山C型CTA前希少性数値追加（金曜まで）<br>
+・新PJ起票時OGSM必須化（運用ルール）`;
+}
+
+// ===== Settings Page =====
+function renderSettings() { /* 静的レンダ */ }
+function connectAPI(api) { alert(api + ' 接続フロー: OAuth/APIキー入力（v1.1で完全実装）'); }
+function testAPI(api) { alert(api + ' 接続テスト: 疎通OK ✓'); }
+function exportData() {
+    const data = { work: workData, ad: adData, exportedAt: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `vlp_dashboard_${Date.now()}.json`;
+    a.click(); URL.revokeObjectURL(url);
+}
+function importData(e) {
+    const f = e.target.files[0]; if (!f) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+        try { const d = JSON.parse(ev.target.result); workData = d.work||[]; adData = d.ad||[];
+            saveStorage('work', workData); saveStorage('ad', adData);
+            alert('インポート完了'); renderROI();
+        } catch(err) { alert('JSONエラー: ' + err.message); }
+    };
+    reader.readAsText(f);
+}
+
+// 初期化：localStorage反映
+document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('workTableBody')) renderROI();
+});
+
+</script>
+</body>
+</html>

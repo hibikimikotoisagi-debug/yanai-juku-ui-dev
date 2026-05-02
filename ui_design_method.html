@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>🎨 UI効率設計メソッド｜柳井塾</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.0/dist/mermaid.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; background:#0f172a; color:#e2e8f0; padding:20px; }
+.container { max-width:1900px; margin:0 auto; }
+.header { background:linear-gradient(135deg,#1e293b 0%,#0f172a 100%); padding:28px 32px; border-radius:16px; margin-bottom:20px; border:1px solid #334155; }
+h1 { font-size:26px; font-weight:800; background:linear-gradient(90deg,#fbbf24,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.subtitle { color:#94a3b8; margin-top:6px; font-size:14px; }
+
+.tabs-nav { display:flex; gap:8px; margin-bottom:16px; flex-wrap:wrap; }
+.tab-btn { padding:10px 18px; background:#1e293b; border:1px solid #334155; color:#94a3b8; border-radius:8px; cursor:pointer; font-size:13px; transition:all 0.15s; font-weight:600; }
+.tab-btn.active { background:linear-gradient(90deg,#0ea5e9,#06b6d4); color:white; border-color:transparent; }
+
+.view { background:#1e293b; padding:28px; border-radius:12px; border:1px solid #334155; min-height:600px; }
+.view.hidden { display:none; }
+
+/* 7ステップ横並び */
+.steps { display:grid; grid-template-columns:repeat(7,1fr); gap:8px; margin-bottom:24px; position:relative; }
+.step { background:#0f172a; padding:16px 12px; border-radius:10px; border-top:4px solid; position:relative; cursor:pointer; transition:all 0.2s; }
+.step:hover { transform:translateY(-3px); }
+.step.s1 { border-top-color:#ef4444; }
+.step.s2 { border-top-color:#f97316; }
+.step.s3 { border-top-color:#fbbf24; }
+.step.s4 { border-top-color:#10b981; }
+.step.s5 { border-top-color:#06b6d4; }
+.step.s6 { border-top-color:#a855f7; }
+.step.s7 { border-top-color:#ec4899; }
+.step-num { font-size:11px; color:#64748b; font-weight:600; }
+.step-title { font-size:14px; font-weight:700; color:white; margin:6px 0; }
+.step-icon { font-size:24px; margin:8px 0; }
+.step-desc { font-size:11px; color:#94a3b8; line-height:1.5; }
+.current-marker { position:absolute; bottom:-30px; left:50%; transform:translateX(-50%); background:#fbbf24; color:#000; padding:4px 12px; border-radius:12px; font-size:10px; font-weight:700; white-space:nowrap; }
+.current-marker::before { content:''; position:absolute; top:-6px; left:50%; transform:translateX(-50%); border-left:6px solid transparent; border-right:6px solid transparent; border-bottom:6px solid #fbbf24; }
+
+/* 詳細マトリクス */
+table { width:100%; border-collapse:collapse; font-size:13px; margin-top:20px; }
+th { background:#0f172a; padding:12px; text-align:left; color:#94a3b8; font-weight:600; border-bottom:2px solid #06b6d4; }
+td { padding:14px 12px; border-bottom:1px solid #334155; vertical-align:top; }
+tr:hover { background:rgba(6,182,212,0.05); }
+.step-cell { font-weight:700; color:white; }
+.role-yanai { color:#fbbf24; font-weight:600; }
+.role-claude { color:#06b6d4; font-weight:600; }
+.role-staff { color:#a855f7; font-weight:600; }
+
+/* アンチパターン */
+.anti-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+.anti-card { background:#0f172a; padding:16px; border-radius:10px; border-left:3px solid #ef4444; }
+.anti-title { color:#f87171; font-weight:700; font-size:14px; margin-bottom:8px; }
+.anti-desc { font-size:12px; color:#cbd5e1; line-height:1.6; }
+.fix { color:#34d399; font-size:12px; margin-top:6px; padding-top:6px; border-top:1px dashed #334155; }
+
+/* 7原則 */
+.principle-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.principle-card { background:#0f172a; padding:18px; border-radius:10px; border-top:3px solid #06b6d4; }
+.principle-num { font-size:32px; font-weight:800; background:linear-gradient(90deg,#06b6d4,#0ea5e9); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.principle-name { font-size:14px; font-weight:700; color:white; margin:6px 0 8px; }
+.principle-desc { font-size:12px; color:#94a3b8; line-height:1.6; }
+
+/* 比較 */
+.compare-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.compare-card { padding:20px; border-radius:12px; }
+.compare-bad { background:linear-gradient(135deg,#7f1d1d 0%,#1e293b 100%); border:1px solid #ef4444; }
+.compare-good { background:linear-gradient(135deg,#064e3b 0%,#1e293b 100%); border:1px solid #10b981; }
+.compare-title { font-size:14px; font-weight:700; margin-bottom:12px; }
+.compare-list { font-size:13px; line-height:1.9; padding-left:20px; }
+.compare-list li::marker { color:#fbbf24; }
+
+.mermaid { background:#0f172a; padding:20px; border-radius:8px; }
+
+.note { padding:14px 18px; background:rgba(6,182,212,0.1); border-left:3px solid #06b6d4; border-radius:6px; margin:14px 0; font-size:13px; line-height:1.7; }
+.warning { padding:14px 18px; background:rgba(239,68,68,0.1); border-left:3px solid #ef4444; border-radius:6px; margin:14px 0; font-size:13px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+<h1>🎨 UI効率設計メソッド｜行き当たりばったりを止める7ステップ</h1>
+<div class="subtitle">「思いつきベース」から「構造化設計」へ。柳井塾の動画LP Hub構築で実証した方法論</div>
+</div>
+
+<div class="tabs-nav">
+<div class="tab-btn active" onclick="switchTab('flow')">🚀 7ステップ全体図</div>
+<div class="tab-btn" onclick="switchTab('matrix')">📋 ステップ別役割マトリクス</div>
+<div class="tab-btn" onclick="switchTab('compare')">⚔️ 行き当たりばったり vs 構造化</div>
+<div class="tab-btn" onclick="switchTab('anti')">🚫 7つのアンチパターン</div>
+<div class="tab-btn" onclick="switchTab('principle')">💎 効率の7原則</div>
+<div class="tab-btn" onclick="switchTab('current')">📍 今ここ＆次の一手</div>
+</div>
+
+<!-- ===== ビュー1: 7ステップ全体図 ===== -->
+<div class="view" id="view-flow">
+<h2 style="font-size:18px; margin-bottom:18px;">🚀 UI設計 7ステップ — 上流から下流へ</h2>
+
+<div class="steps">
+<div class="step s1">
+<div class="step-num">STEP 1</div>
+<div class="step-icon">🎯</div>
+<div class="step-title">目的・ゴール</div>
+<div class="step-desc">何を解決するUIか？1文で定義</div>
+</div>
+<div class="step s2">
+<div class="step-num">STEP 2</div>
+<div class="step-icon">👥</div>
+<div class="step-title">ユーザー特定</div>
+<div class="step-desc">誰が使う？どんなJobsで来る？</div>
+</div>
+<div class="step s3">
+<div class="step-num">STEP 3</div>
+<div class="step-icon">🗂</div>
+<div class="step-title">情報設計(IA)</div>
+<div class="step-desc">どんなデータを どう構造化するか</div>
+</div>
+<div class="step s4">
+<div class="step-num">STEP 4</div>
+<div class="step-icon">🔀</div>
+<div class="step-title">ユーザーフロー</div>
+<div class="step-desc">入口→ゴールまでの最短経路</div>
+</div>
+<div class="step s5">
+<div class="step-num">STEP 5</div>
+<div class="step-icon">📐</div>
+<div class="step-title">ワイヤーフレーム</div>
+<div class="step-desc">配置・優先度のラフスケッチ</div>
+<div class="current-marker">📍 ここまで完了</div>
+</div>
+<div class="step s6">
+<div class="step-num">STEP 6</div>
+<div class="step-icon">🎨</div>
+<div class="step-title">ビジュアル設計</div>
+<div class="step-desc">色・タイポ・コンポーネント</div>
+</div>
+<div class="step s7">
+<div class="step-num">STEP 7</div>
+<div class="step-icon">🔁</div>
+<div class="step-title">構築・反復</div>
+<div class="step-desc">コード化→テスト→改善ループ</div>
+</div>
+</div>
+
+<div class="note" style="margin-top:48px;">
+💡 <b>重要な順序ルール</b>：上流（1-3）が固まらないまま下流（5-7）に進むと、何度も作り直しになる。「相談しながら下流から作る」のは下流から上流に戻る回数が増えて非効率。
+</div>
+
+<h3 style="font-size:14px; margin:24px 0 12px; color:#fbbf24;">🌊 各ステップの依存関係</h3>
+<div class="mermaid">
+flowchart LR
+    G[🎯 目的・ゴール] --> U[👥 ユーザー]
+    U --> IA[🗂 情報設計]
+    IA --> F[🔀 フロー]
+    F --> W[📐 ワイヤーフレーム]
+    W --> V[🎨 ビジュアル]
+    V --> B[🔁 構築・反復]
+    B -.->|発見した問題は| G
+
+    style G fill:#ef4444,color:#fff
+    style U fill:#f97316,color:#fff
+    style IA fill:#fbbf24,color:#000
+    style F fill:#10b981,color:#fff
+    style W fill:#06b6d4,color:#fff
+    style V fill:#a855f7,color:#fff
+    style B fill:#ec4899,color:#fff
+</div>
+</div>
+
+<!-- ===== ビュー2: 役割マトリクス ===== -->
+<div class="view hidden" id="view-matrix">
+<h2 style="font-size:18px; margin-bottom:18px;">📋 ステップ別 役割マトリクス — 誰が何を担当するか</h2>
+<div class="note">
+柳井さん＝判断・方向性／Claude＝原案・候補生成／スタッフ＝実装支援。各ステップで誰が主役かを明確化。
+</div>
+
+<table>
+<thead>
+<tr>
+<th style="width:6%;">#</th>
+<th style="width:14%;">ステップ</th>
+<th style="width:22%;">入力（前提）</th>
+<th style="width:22%;">アウトプット（成果物）</th>
+<th style="width:12%;">主役</th>
+<th style="width:24%;">判断ポイント</th>
+</tr>
+</thead>
+<tbody>
+
+<tr>
+<td class="step-cell">1</td>
+<td class="step-cell">🎯 目的・ゴール</td>
+<td>解決したい課題</td>
+<td>ゴール1文（例：「マスターシート初見でも10秒で全体把握」）</td>
+<td><span class="role-yanai">柳井</span></td>
+<td>誰のどんな問題を、どんな状態に変える？</td>
+</tr>
+
+<tr>
+<td class="step-cell">2</td>
+<td class="step-cell">👥 ユーザー特定</td>
+<td>ゴール</td>
+<td>ペルソナ＋Jobs To Be Done（柳井／スタッフ／JV相手）</td>
+<td><span class="role-yanai">柳井</span> + <span class="role-claude">Claude</span></td>
+<td>主要3ユーザーは誰？それぞれ何を求めて来る？</td>
+</tr>
+
+<tr>
+<td class="step-cell">3</td>
+<td class="step-cell">🗂 情報設計(IA)</td>
+<td>ユーザーペルソナ</td>
+<td>サイトマップ／データモデル／カテゴリ階層</td>
+<td><span class="role-claude">Claude</span></td>
+<td>データの「真実の唯一源」はどこ？分類は？</td>
+</tr>
+
+<tr>
+<td class="step-cell">4</td>
+<td class="step-cell">🔀 ユーザーフロー</td>
+<td>サイトマップ</td>
+<td>入口→ゴールまでの操作経路図</td>
+<td><span class="role-claude">Claude</span></td>
+<td>1ゴール何クリック？離脱しそうな分岐は？</td>
+</tr>
+
+<tr>
+<td class="step-cell">5</td>
+<td class="step-cell">📐 ワイヤーフレーム</td>
+<td>ユーザーフロー</td>
+<td>各画面の配置・優先順位・コンポーネント一覧</td>
+<td><span class="role-claude">Claude</span></td>
+<td>1画面の主役は何？従属要素は？</td>
+</tr>
+
+<tr>
+<td class="step-cell">6</td>
+<td class="step-cell">🎨 ビジュアル設計</td>
+<td>ワイヤーフレーム</td>
+<td>デザインシステム（色・タイポ・コンポーネント）</td>
+<td><span class="role-claude">Claude</span></td>
+<td>ブランドトーンは？SaaS風 or 業務系？</td>
+</tr>
+
+<tr>
+<td class="step-cell">7</td>
+<td class="step-cell">🔁 構築・反復</td>
+<td>デザインシステム＋IA</td>
+<td>動作するプロトタイプ／本番サイト</td>
+<td><span class="role-claude">Claude</span> + <span class="role-staff">スタッフ</span></td>
+<td>実際に使ってみて摩擦がある箇所は？</td>
+</tr>
+
+</tbody>
+</table>
+</div>
+
+<!-- ===== ビュー3: 比較 ===== -->
+<div class="view hidden" id="view-compare">
+<h2 style="font-size:18px; margin-bottom:18px;">⚔️ 行き当たりばったり vs 構造化アプローチ</h2>
+
+<div class="compare-grid">
+<div class="compare-card compare-bad">
+<div class="compare-title" style="color:#f87171;">❌ 行き当たりばったり（今までの作り方）</div>
+<ol class="compare-list">
+<li>「ダッシュボード作って」と発注</li>
+<li>Claude が即コード書く</li>
+<li>「あ、シナリオ管理は全PJ見たい」と追加要望</li>
+<li>Claude が部分修正</li>
+<li>「サイト全体構造を可視化したい」と新要望</li>
+<li>Claude がまた別画面作る</li>
+<li>気づくと画面が分散・重複・整合性なし</li>
+</ol>
+<div style="margin-top:14px; padding:10px; background:rgba(0,0,0,0.3); border-radius:6px; font-size:12px;">
+<b>結果</b>：<br>
+・同じことを何度も作り直す<br>
+・全体像が見えない<br>
+・優先順位が後付け<br>
+・ユーザーが本当に欲しい機能を後で発見<br>
+・5回以上の手戻り
+</div>
+</div>
+
+<div class="compare-card compare-good">
+<div class="compare-title" style="color:#34d399;">✅ 構造化アプローチ（推奨）</div>
+<ol class="compare-list">
+<li>STEP 1：ゴール「全PJを10秒で把握」と1文確定</li>
+<li>STEP 2：ペルソナ3つ（柳井/スタッフ/JV）と JTBD 整理</li>
+<li>STEP 3：データを「PJ→バージョン→行→単語」階層化</li>
+<li>STEP 4：「入室→PJ選択→詳細→撮影GO」フロー固定</li>
+<li>STEP 5：8セクションのワイヤー1枚で全体合意</li>
+<li>STEP 6：デザインシステム（ダーク+シアン+ゴールド）確定</li>
+<li>STEP 7：実装→使う→直す のループだけ回す</li>
+</ol>
+<div style="margin-top:14px; padding:10px; background:rgba(0,0,0,0.3); border-radius:6px; font-size:12px;">
+<b>結果</b>：<br>
+・上流で固まってから実装するので手戻り激減<br>
+・全画面の整合性が自動的に取れる<br>
+・優先順位が事前に決まる<br>
+・「あれも欲しい」が出ても STEP 3 に戻って判断<br>
+・1〜2回の反復で完成
+</div>
+</div>
+</div>
+</div>
+
+<!-- ===== ビュー4: アンチパターン ===== -->
+<div class="view hidden" id="view-anti">
+<h2 style="font-size:18px; margin-bottom:18px;">🚫 7つのアンチパターン — UI設計でやってはいけないこと</h2>
+
+<div class="anti-grid">
+<div class="anti-card">
+<div class="anti-title">① ユーザーが誰か不明確のまま作る</div>
+<div class="anti-desc">「とりあえず使いやすく」では誰にも刺さらない。柳井さん専用？スタッフ向け？JV相手？で全く設計が変わる。</div>
+<div class="fix">✅ 修正：STEP 2でペルソナ3つを文章化。各人がどんな質問を持って来るか書き出す</div>
+</div>
+
+<div class="anti-card">
+<div class="anti-title">② 機能リストから始める</div>
+<div class="anti-desc">「シナリオ管理」「KPI推移」「ライブラリ」と機能名から並べると、肝心の<b>体験</b>が抜ける。</div>
+<div class="fix">✅ 修正：STEP 4でユーザーフロー（経路）から逆算して画面を配置</div>
+</div>
+
+<div class="anti-card">
+<div class="anti-title">③ ビジュアルから入る</div>
+<div class="anti-desc">「色をシアンで」「フォント大きく」と表面から決めると、IAやフローが歪む。</div>
+<div class="fix">✅ 修正：STEP 5でワイヤー（白黒・四角と文字だけ）を先に作る</div>
+</div>
+
+<div class="anti-card">
+<div class="anti-title">④ 全部の機能を1画面に詰める</div>
+<div class="anti-desc">「とりあえず全部見える方がいい」は迷子の元。ユーザーは1画面で1ジョブを完了したい。</div>
+<div class="fix">✅ 修正：1画面=1主目的。それ以外は「見るだけ」のサマリ・ナビに格下げ</div>
+</div>
+
+<div class="anti-card">
+<div class="anti-title">⑤ ナビゲーションを後付けする</div>
+<div class="anti-desc">画面が増えてから「どう繋ぐ？」と考えると、サイドバーに無理やり押し込むだけになる。</div>
+<div class="fix">✅ 修正：STEP 3-4でナビ構造を先に決める（IA→フロー→ナビ）</div>
+</div>
+
+<div class="anti-card">
+<div class="anti-title">⑥ Coming Soonを乱発</div>
+<div class="anti-desc">「v1.1で実装」が多いとユーザーは「何ができないのか」を学習させられる。</div>
+<div class="fix">✅ 修正：MVP範囲を狭く取り、未実装は最初から非表示。完成度高い1%を見せる</div>
+</div>
+
+<div class="anti-card">
+<div class="anti-title">⑦ 仕様書なしで作り続ける</div>
+<div class="anti-desc">指示の都度コードを変えると、何が「正解」か分からなくなる。Claudeも何度も同じ判断を迫られる。</div>
+<div class="fix">✅ 修正：STEP 1-5を1ドキュメントに残す。「ここに書いた通り作る」と Claude にも明示</div>
+</div>
+
+<div class="anti-card">
+<div class="anti-title">⑧ ユーザーテストをスキップ</div>
+<div class="anti-desc">作って終わり、はNG。実際に触ると<b>必ず</b>想定外の摩擦が出る。</div>
+<div class="fix">✅ 修正：STEP 7で「3人に5分使ってもらう」を必須化。摩擦点をログ化</div>
+</div>
+</div>
+
+<div class="warning" style="margin-top:24px;">
+⚠️ <b>柳井塾の現状診断</b>：今のダッシュボード制作は <b>①②③⑥⑦</b> に該当。STEP 1-3 を遡って固める必要あり。
+</div>
+</div>
+
+<!-- ===== ビュー5: 7原則 ===== -->
+<div class="view hidden" id="view-principle">
+<h2 style="font-size:18px; margin-bottom:18px;">💎 効率を上げる7つの原則</h2>
+
+<div class="principle-grid">
+<div class="principle-card">
+<div class="principle-num">01</div>
+<div class="principle-name">ゴールが全てを決める</div>
+<div class="principle-desc">迷ったら「ゴールに近づくか？」で判断。ゴールから外れる機能は容赦なく削除する。</div>
+</div>
+
+<div class="principle-card">
+<div class="principle-num">02</div>
+<div class="principle-name">3クリック以内ルール</div>
+<div class="principle-desc">どの主要ジョブも入口から3クリック以内で完了できる構造にする。4クリック以上ならIAを再構成。</div>
+</div>
+
+<div class="principle-card">
+<div class="principle-num">03</div>
+<div class="principle-name">1画面1主役</div>
+<div class="principle-desc">1画面で達成すべきジョブは1つ。サブ要素は20%以下のスペースに抑える。視線誘導が明確になる。</div>
+</div>
+
+<div class="principle-card">
+<div class="principle-num">04</div>
+<div class="principle-name">繰り返しの3原則</div>
+<div class="principle-desc">同じパターン（カード・ボタン・テーブル）を全画面で再利用。新しい形は3画面以上で必要になってから作る。</div>
+</div>
+
+<div class="principle-card">
+<div class="principle-num">05</div>
+<div class="principle-name">プログレッシブ・ディスクロージャー</div>
+<div class="principle-desc">最初は概要だけ、深掘りはクリックで段階的に。情報量を一度に出さない。</div>
+</div>
+
+<div class="principle-card">
+<div class="principle-num">06</div>
+<div class="principle-name">仮説→実装→学習ループ</div>
+<div class="principle-desc">作る前に「これでこのユーザーは満足するはず」と仮説を書く。実装後に検証して書き換える。</div>
+</div>
+
+<div class="principle-card">
+<div class="principle-num">07</div>
+<div class="principle-name">「捨てる」が最大の機能</div>
+<div class="principle-desc">追加機能より「不要を削る」方が体験を上げる。20%削るたびに使いやすくなる。</div>
+</div>
+</div>
+</div>
+
+<!-- ===== ビュー6: 今ここ＆次の一手 ===== -->
+<div class="view hidden" id="view-current">
+<h2 style="font-size:18px; margin-bottom:18px;">📍 今ここ＆次の一手 — 動画LP Hub の現在地</h2>
+
+<div class="note">
+<b>診断結果</b>：いきなり STEP 5（ワイヤー）から作り始めた状態。STEP 1-4 を遡って固めると、以降の手戻りが激減する。
+</div>
+
+<table>
+<thead>
+<tr>
+<th style="width:8%;">STEP</th>
+<th style="width:18%;">ステップ</th>
+<th style="width:24%;">完了状況</th>
+<th style="width:25%;">残作業</th>
+<th style="width:25%;">担当</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>🎯 目的・ゴール</td>
+<td>⚠️ 暗黙的にしかない</td>
+<td>ゴール1文を明文化（例案：「マスターシート初見でも10秒で全PJ把握＋3クリックで撮影GO」）</td>
+<td><span class="role-yanai">柳井</span> 判断</td>
+</tr>
+<tr>
+<td>2</td>
+<td>👥 ユーザー特定</td>
+<td>❌ 未定義</td>
+<td>ペルソナ3つ作成（柳井／スタッフ／JV相手）＋ 各JTBD 3つずつ</td>
+<td><span class="role-yanai">柳井</span>+<span class="role-claude">Claude</span> 共作</td>
+</tr>
+<tr>
+<td>3</td>
+<td>🗂 情報設計(IA)</td>
+<td>🟡 部分的にあり（サイトマップHTMLで可視化済）</td>
+<td>データモデル整理（PJ→バージョン→行→単語）＋ 真実の唯一源を確定</td>
+<td><span class="role-claude">Claude</span> 主導</td>
+</tr>
+<tr>
+<td>4</td>
+<td>🔀 ユーザーフロー</td>
+<td>🟡 部分的にあり（フローチャートあり）</td>
+<td>主要3ジョブの最短経路を確定（新規PJ起票／既存PJレビュー／撮影GO）</td>
+<td><span class="role-claude">Claude</span> 主導</td>
+</tr>
+<tr>
+<td>5</td>
+<td>📐 ワイヤーフレーム</td>
+<td>✅ 実装済</td>
+<td>STEP 1-2 確定後に再点検（ゴールから外れる画面は削除）</td>
+<td><span class="role-claude">Claude</span></td>
+</tr>
+<tr>
+<td>6</td>
+<td>🎨 ビジュアル設計</td>
+<td>✅ 実装済（ダーク+シアン+ゴールド）</td>
+<td>そのまま継続OK。STEP 5で削った画面の色も削除</td>
+<td><span class="role-claude">Claude</span></td>
+</tr>
+<tr>
+<td>7</td>
+<td>🔁 構築・反復</td>
+<td>🟡 v1.0 完成・反復未着手</td>
+<td>STEP 1-2 完成後に「3人に5分使ってもらう」テスト</td>
+<td><span class="role-yanai">柳井</span>+<span class="role-staff">スタッフ</span></td>
+</tr>
+</tbody>
+</table>
+
+<h3 style="font-size:16px; margin:24px 0 14px; color:#fbbf24;">🎯 推奨する次の3ステップ（合計30分で完了可能）</h3>
+
+<div class="principle-grid">
+<div class="principle-card" style="border-top-color:#ef4444;">
+<div class="principle-num" style="background:linear-gradient(90deg,#ef4444,#f97316); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">10分</div>
+<div class="principle-name">ゴール1文を確定</div>
+<div class="principle-desc">「動画LP Hub は、___ が ___ を ___ するためのツール」を1文埋める。柳井さん10分で書ける。</div>
+</div>
+
+<div class="principle-card" style="border-top-color:#fbbf24;">
+<div class="principle-num" style="background:linear-gradient(90deg,#fbbf24,#f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">10分</div>
+<div class="principle-name">ペルソナ3つ＋JTBD作成</div>
+<div class="principle-desc">柳井さんが箇条書きで「誰が」「何しに来る」「どう帰りたい」を書く。Claudeがマトリクス化。</div>
+</div>
+
+<div class="principle-card" style="border-top-color:#10b981;">
+<div class="principle-num" style="background:linear-gradient(90deg,#10b981,#059669); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">10分</div>
+<div class="principle-name">8セクションを再点検</div>
+<div class="principle-desc">ゴール×ペルソナで「これ要らないかも」が見えてくる。削るリストをClaudeが提示。</div>
+</div>
+</div>
+
+<div class="note" style="margin-top:24px;">
+💡 <b>進め方の提案</b>：このページの右上「📍 今ここ」マークを基準に、上流から順に固める。柳井さんが10分×3 = 30分の判断で、ダッシュボードの精度が一気に上がる。
+</div>
+</div>
+
+</div>
+
+<script>
+mermaid.initialize({ startOnLoad: true, theme: 'dark', themeVariables: { fontFamily: 'inherit' } });
+function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    ['flow','matrix','compare','anti','principle','current'].forEach(t => {
+        document.getElementById('view-' + t).classList.toggle('hidden', t !== tab);
+    });
+}
+</script>
+</body>
+</html>
