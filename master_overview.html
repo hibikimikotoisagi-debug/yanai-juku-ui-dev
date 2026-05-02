@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>🌐 柳井塾 業務自動化 マスタービュー v1.0｜全体俯瞰地図</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; background:#0a0e1a; color:#e2e8f0; padding:24px; line-height:1.6; }
+.container { max-width:1500px; margin:0 auto; }
+
+.hero { background:linear-gradient(135deg,#0c4a6e 0%,#1e293b 50%,#3b0764 100%); padding:36px 40px; border-radius:18px; margin-bottom:24px; border:1px solid #06b6d4; }
+.hero h1 { font-size:32px; font-weight:800; background:linear-gradient(90deg,#fbbf24,#06b6d4,#a855f7,#ec4899); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px; }
+.hero .v { font-size:13px; color:#94a3b8; margin-bottom:14px; }
+.hero .lead { font-size:15px; color:#cbd5e1; line-height:1.8; }
+
+.section { background:#1e293b; padding:28px 32px; border-radius:14px; margin-bottom:22px; border:1px solid #334155; }
+.section-title { font-size:22px; font-weight:800; margin-bottom:18px; padding-left:12px; border-left:4px solid; }
+.t1 { color:#fbbf24; border-left-color:#fbbf24; }
+.t2 { color:#06b6d4; border-left-color:#06b6d4; }
+.t3 { color:#a855f7; border-left-color:#a855f7; }
+.t4 { color:#10b981; border-left-color:#10b981; }
+.t5 { color:#ec4899; border-left-color:#ec4899; }
+.t6 { color:#22d3ee; border-left-color:#22d3ee; }
+
+.kpi-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin-bottom:24px; }
+.kpi { background:#1e293b; padding:16px; border-radius:10px; border:1px solid #334155; text-align:center; }
+.kpi-label { font-size:10px; color:#94a3b8; margin-bottom:4px; }
+.kpi-value { font-size:22px; font-weight:800; }
+.kpi-value.cyan { background:linear-gradient(90deg,#06b6d4,#0ea5e9); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi-value.gold { background:linear-gradient(90deg,#fbbf24,#f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi-value.purple { background:linear-gradient(90deg,#a855f7,#7c3aed); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi-value.green { background:linear-gradient(90deg,#10b981,#059669); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi-value.pink { background:linear-gradient(90deg,#ec4899,#f472b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi-value.cy2 { background:linear-gradient(90deg,#22d3ee,#06b6d4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+
+/* レイヤー図 */
+.layer-stack { display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+.layer-row { display:grid; grid-template-columns:120px 1fr; gap:14px; align-items:stretch; }
+.l-label { background:#0f172a; border-radius:10px; padding:14px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; border-left:4px solid; }
+.l-label .num { font-size:11px; color:#94a3b8; font-weight:700; }
+.l-label .name { font-size:12px; color:white; font-weight:700; margin-top:4px; }
+.bl1 { border-left-color:#fbbf24; }
+.bl2 { border-left-color:#06b6d4; }
+.bl3 { border-left-color:#ec4899; }
+.bl4 { border-left-color:#10b981; }
+.bl5 { border-left-color:#a855f7; }
+.bl6 { border-left-color:#22d3ee; }
+
+.row-content { display:grid; gap:8px; }
+.row-1 { grid-template-columns:1fr; }
+.row-2 { grid-template-columns:1fr 1fr; }
+.row-3 { grid-template-columns:1fr 1fr 1fr; }
+.row-4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+
+.block { background:#0f172a; padding:14px; border-radius:8px; border-top:3px solid #94a3b8; }
+.block.gold { border-top-color:#fbbf24; }
+.block.cyan { border-top-color:#06b6d4; }
+.block.pink { border-top-color:#ec4899; }
+.block.green { border-top-color:#10b981; }
+.block.purple { border-top-color:#a855f7; }
+.block.cy2 { border-top-color:#22d3ee; }
+.block .name { font-size:13px; font-weight:700; color:white; margin-bottom:4px; }
+.block .desc { font-size:11px; color:#cbd5e1; line-height:1.5; }
+
+/* 物理資産マップ */
+.asset-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:14px; }
+.asset-card { background:#0f172a; padding:18px; border-radius:10px; border-left:3px solid #06b6d4; }
+.asset-card h3 { font-size:14px; color:#22d3ee; margin-bottom:8px; font-weight:700; }
+.asset-card .where { font-size:11px; color:#fbbf24; margin-bottom:6px; }
+.asset-card ul { padding-left:18px; }
+.asset-card li { font-size:12px; line-height:1.7; color:#cbd5e1; }
+.asset-card a { color:#22d3ee; text-decoration:none; word-break:break-all; }
+.asset-card a:hover { text-decoration:underline; }
+
+/* テーブル */
+.tbl { width:100%; border-collapse:collapse; margin-top:14px; font-size:13px; }
+.tbl th { background:#0f172a; padding:12px 14px; text-align:left; color:#94a3b8; font-weight:600; border-bottom:1px solid #334155; }
+.tbl td { padding:12px 14px; border-bottom:1px solid #1e293b; vertical-align:top; }
+.tbl tr:hover td { background:#0f172a; }
+
+/* データフロー */
+.flow { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-top:14px; }
+.flow-step { padding:14px 10px; background:#0f172a; border-radius:8px; border-top:3px solid #06b6d4; text-align:center; position:relative; }
+.flow-step::after { content:'→'; position:absolute; right:-12px; top:50%; transform:translateY(-50%); color:#06b6d4; font-size:20px; font-weight:bold; z-index:10; }
+.flow-step:last-child::after { display:none; }
+.flow-num { font-size:10px; color:#22d3ee; font-weight:700; }
+.flow-name { font-size:12px; font-weight:700; color:white; margin:4px 0; }
+.flow-desc { font-size:10px; color:#94a3b8; line-height:1.4; }
+
+/* 進捗バー */
+.progress-row { display:flex; align-items:center; gap:14px; margin-bottom:10px; }
+.progress-label { width:200px; font-size:13px; color:#cbd5e1; }
+.progress-bar { flex:1; background:#0f172a; border-radius:8px; height:24px; position:relative; overflow:hidden; }
+.progress-fill { background:linear-gradient(90deg,#06b6d4,#10b981); height:100%; border-radius:8px; }
+.progress-text { position:absolute; right:8px; top:50%; transform:translateY(-50%); font-size:11px; color:white; font-weight:700; }
+
+/* CTA */
+.cta-bar { display:flex; gap:8px; margin-top:18px; flex-wrap:wrap; }
+.cta { padding:8px 14px; border-radius:8px; background:#334155; color:white; text-decoration:none; font-size:12px; font-weight:600; }
+.cta.primary { background:linear-gradient(90deg,#06b6d4,#0ea5e9); }
+.cta.gold { background:linear-gradient(90deg,#fbbf24,#f59e0b); color:#000; }
+.cta.pink { background:linear-gradient(90deg,#ec4899,#a855f7); }
+
+.note { padding:14px 18px; background:rgba(6,182,212,0.1); border-left:3px solid #06b6d4; border-radius:6px; margin:14px 0; font-size:13px; line-height:1.7; color:#cbd5e1; }
+
+/* PJ位置マップ */
+.pj-map { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px; }
+.pj-col { background:#0f172a; padding:18px; border-radius:10px; border-top:4px solid; }
+.pj-col.l1c { border-top-color:#06b6d4; }
+.pj-col.l2c { border-top-color:#ec4899; }
+.pj-col.l3c { border-top-color:#a855f7; }
+.pj-col h3 { font-size:14px; margin-bottom:6px; font-weight:700; }
+.pj-col .l1c-h { color:#22d3ee; }
+.pj-col .role { font-size:11px; color:#94a3b8; font-style:italic; margin-bottom:10px; }
+.pj-col ul { padding-left:18px; }
+.pj-col li { font-size:12px; color:#cbd5e1; line-height:1.7; margin-bottom:4px; }
+.pj-col li b { color:white; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="hero">
+<h1>🌐 柳井塾 業務自動化 マスタービュー v1.0</h1>
+<div class="v">「今の全体像」を1枚で把握する俯瞰地図 ｜ 2026-05-02 起票</div>
+<div class="lead">
+<b style="color:#fbbf24;">10の塊</b> × <b style="color:#06b6d4;">11Hub × 3層</b> × <b style="color:#ec4899;">5データフロー</b> × <b style="color:#10b981;">物理資産（Drive＋GitHub＋メモリ）</b> ＋ <b style="color:#a855f7;">進捗状況</b><br>
+これ1枚で「今、全体がどう繋がっていて・どこに何があり・どこまで進んだか」が完全に分かる。
+</div>
+<div class="cta-bar">
+<a class="cta primary" href="automation_architecture.html">🏗 アーキテクチャ詳細</a>
+<a class="cta gold" href="ui_dev_ogsm.html">🎯 マスターOGSM v1.3</a>
+<a class="cta pink" href="positioning.html">📍 ポジショニング</a>
+<a class="cta" href="funnel_hub.html">🚀 ファネルHub</a>
+<a class="cta" href="master_pj_dashboard.html">🗺 全PJ俯瞰</a>
+</div>
+</div>
+
+<div class="kpi-grid">
+<div class="kpi"><div class="kpi-label">アーキ塊</div><div class="kpi-value gold">10</div></div>
+<div class="kpi"><div class="kpi-label">UI Hub</div><div class="kpi-value cyan">11</div></div>
+<div class="kpi"><div class="kpi-label">3層構造</div><div class="kpi-value pink">3</div></div>
+<div class="kpi"><div class="kpi-label">スキル</div><div class="kpi-value purple">60+</div></div>
+<div class="kpi"><div class="kpi-label">メモリ</div><div class="kpi-value green">100+</div></div>
+<div class="kpi"><div class="kpi-label">公開HTML</div><div class="kpi-value cy2">12本</div></div>
+</div>
+
+<!-- ===== 1. アーキテクチャ全体図（10の塊×6階層） ===== -->
+<div class="section">
+<h2 class="section-title t1">🏗 1. アーキテクチャ全体図｜10の塊 × 6階層</h2>
+<div class="note">
+全業務自動化を支える基盤構造。下から上へ：基盤 → 思考 → 流通 → 制作 → 顧客接点 → UI出力。
+</div>
+
+<div class="layer-stack">
+<div class="layer-row">
+<div class="l-label bl6"><div class="num">L6 出力</div><div class="name">UI</div></div>
+<div class="row-content row-1">
+<div class="block cy2"><div class="name">⭐ 11 Hub（柳井さん／スタッフ／顧客が見る画面）</div><div class="desc">★1動画LP制作／★2数値管理／★3経理人事／★4PDCA定例／★5スポーク統合／★6SNS投稿管理／★7プロデュース／★8全PJ俯瞰／★9ファネル自動構築／★10社長クローン／★11自己育て直しコーチング</div></div>
+</div>
+</div>
+
+<div class="layer-row">
+<div class="l-label bl5"><div class="num">L5 接点</div><div class="name">マーケ・配信・計測</div></div>
+<div class="row-content row-3">
+<div class="block green"><div class="name">🛒 マーケ・販売 ⑥</div><div class="desc">UTAGE／Meta広告／YouTube／SNS（Threads/IG/X/FB）／LINE公式</div></div>
+<div class="block green"><div class="name">🎓 講座・配信 ⑦</div><div class="desc">講座PF／スライド／教科書／NotebookLM</div></div>
+<div class="block green"><div class="name">📊 計測・分析 ⑤</div><div class="desc">数値管理シート／YT/Meta/IG/LINE/UTAGE Analytics</div></div>
+</div>
+</div>
+
+<div class="layer-row">
+<div class="l-label bl3"><div class="num">L4 制作</div><div class="name">AI生成</div></div>
+<div class="row-content row-1">
+<div class="block pink"><div class="name">🎨 AI生成エンジン群 ④</div><div class="desc">Claude（思考・テキスト・コード）／Gemini（画像）／HeyGen（アバター動画）／ElevenLabs（多言語音声）／Cloud TTS（日本語ナレ）／Whisper（文字起こし）／Remotion・FFmpeg（動画合成）</div></div>
+</div>
+</div>
+
+<div class="layer-row">
+<div class="l-label bl2"><div class="num">L3 流通</div><div class="name">倉庫＆通信</div></div>
+<div class="row-content row-2">
+<div class="block cyan"><div class="name">📂 情報倉庫（DB）②</div><div class="desc">Google Drive／Sheets（マスターシート群）／Docs／ローカル（~/yanai_juku/, ~/.claude/memory/）</div></div>
+<div class="block cyan"><div class="name">💬 コミュニケーション ③</div><div class="desc">ChatWork（社内本命）／LINE（顧客接点）／Zoom（会議）／Email（外部）</div></div>
+</div>
+</div>
+
+<div class="layer-row">
+<div class="l-label bl1"><div class="num">L2 思考</div><div class="name">司令塔</div></div>
+<div class="row-content row-1">
+<div class="block gold"><div class="name">🧠 Claude Code（司令塔・実装エンジン）①</div><div class="desc">Claude本体（Opus 4.7・1Mコンテキスト）／60+スキル／メモリシステム（100+md）／hooks（自動承認・違反検知）／★10 社長クローン（裏側で動く判断補助）</div></div>
+</div>
+</div>
+
+<div class="layer-row">
+<div class="l-label bl4"><div class="num">L1 基盤</div><div class="name">基盤・運用</div></div>
+<div class="row-content row-3">
+<div class="block purple"><div class="name">🔐 認証 ⑧</div><div class="desc">macOS Keychain／Google OAuth／ChatWork Token／各APIキー</div></div>
+<div class="block purple"><div class="name">🤖 自動化エンジン ⑨</div><div class="desc">launchd／hooks／/loop /schedule／定期スクリプト</div></div>
+<div class="block purple"><div class="name">🛠 開発・運用 ⑩</div><div class="desc">Mac／ターミナル／Cursor／Python・Node／git</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ===== 2. 11Hub × 3層構造マップ ===== -->
+<div class="section">
+<h2 class="section-title t2">🎯 2. 11Hub × 3層構造マップ</h2>
+<div class="note">
+社内最適化（手足）→ 外部販売（商品）→ 横串（頭脳）の3層が揃って初めて「AI右腕化」が完成し、自社実証→商品化→販売の循環が回る。
+</div>
+
+<div class="pj-map">
+<div class="pj-col l1c">
+<h3 class="l1c-h">第1層：社内業務最適化Hub（★1〜★8）</h3>
+<div class="role">右腕化メソッドの「手足」</div>
+<ul>
+<li><b>★1</b> 動画LP制作Hub 🟢</li>
+<li><b>★2</b> 数値管理シート自動化Hub 🟡</li>
+<li><b>★3</b> 経理・人事 自動化Hub 🔴</li>
+<li><b>★4</b> PDCA定例運用Hub 🔴</li>
+<li><b>★5</b> スポークマスター統合Hub 🔴</li>
+<li><b>★6</b> SNS自動投稿管理Hub 🟡</li>
+<li><b>★7</b> プロデュースPJ統合Hub 🔴</li>
+<li><b>★8</b> 全PJ俯瞰マスターHub 🟣</li>
+</ul>
+</div>
+
+<div class="pj-col l2c">
+<h3 style="color:#f472b6;">第2層：外部販売Hub（★9・★11）</h3>
+<div class="role">右腕化メソッドの「商品」</div>
+<ul>
+<li><b>★9 🚀</b> ファネル自動構築Hub<br>
+<span style="font-size:10px;color:#94a3b8;">SNS広告→LP→LINE→セミナー→成約 全自動<br>→ 中小企業／個人事業主向け販売</span></li>
+<li><b>★11 🌱</b> 自己育て直しコーチングHub<br>
+<span style="font-size:10px;color:#94a3b8;">週1ライブ／6歳ゴールデンエイジ理論<br>→ 毒親育ち起業家向け販売</span></li>
+</ul>
+</div>
+
+<div class="pj-col l3c">
+<h3 style="color:#c084fc;">第3層：横串Hub（★10）</h3>
+<div class="role">右腕化メソッドの「頭脳」</div>
+<ul>
+<li><b>★10 👤</b> 社長クローンHub<br>
+<span style="font-size:10px;color:#94a3b8;">柳井さんの思想・戦略・価値観・判断基準を<br>Claudeメモリ化（7階層×100問インタビュー）<br>→ 全Hubの裏側で「社長判断」を提供<br>→ 将来商品化候補</span></li>
+</ul>
+</div>
+</div>
+</div>
+
+<!-- ===== 3. データフロー（5ステップ） ===== -->
+<div class="section">
+<h2 class="section-title t3">🔄 3. データフロー｜5ステップで1サイクル</h2>
+<div class="flow">
+<div class="flow-step"><div class="flow-num">STEP 1</div><div class="flow-name">📊 データ収集</div><div class="flow-desc">YouTube/Meta/IG/LINE/UTAGE API から日次取込→Sheets格納</div></div>
+<div class="flow-step"><div class="flow-num">STEP 2</div><div class="flow-name">📂 倉庫格納</div><div class="flow-desc">Drive/Sheetsに構造化／ローカルメモリにも反映</div></div>
+<div class="flow-step"><div class="flow-num">STEP 3</div><div class="flow-name">🧠 Claude判断</div><div class="flow-desc">司令塔がスキル＋メモリ＋クローン参照→次アクション決定</div></div>
+<div class="flow-step"><div class="flow-num">STEP 4</div><div class="flow-name">🎨 制作・配信</div><div class="flow-desc">AI生成エンジン群で出力→マーケ/配信レイヤーへ</div></div>
+<div class="flow-step"><div class="flow-num">STEP 5</div><div class="flow-name">🎯 UI可視化</div><div class="flow-desc">Hub画面で人間が確認→ChatWork承認→STEP 1へ</div></div>
+</div>
+</div>
+
+<!-- ===== 4. 物理資産マップ（どこに何があるか） ===== -->
+<div class="section">
+<h2 class="section-title t4">📦 4. 物理資産マップ｜どこに何があるか</h2>
+<div class="note">
+全資産が「どこに格納されているか」を一覧化。Drive＋GitHub＋ローカル＋メモリの4箇所に分散。
+</div>
+
+<div class="asset-grid">
+
+<div class="asset-card">
+<h3>📂 Google Drive</h3>
+<div class="where">業務自動化/UI開発プロジェクト/</div>
+<ul>
+<li>🎨 ROOT: <a href="https://drive.google.com/drive/folders/1JtW0V5nlXCoef0pV43x8sJaFSCjBFrJD" target="_blank">UI開発プロジェクト</a></li>
+<li>📊 マスターシート（15タブ・ヘッダ22pt/本文20pt）: <a href="https://docs.google.com/spreadsheets/d/1g1YP3HrbdqLiFGjwag-CX7YbbT_54c7l2KZNpAJnaxs/edit" target="_blank">開く</a></li>
+<li>📁 22フォルダ（00_テンプレート〜07_HTMLファイル_公開可能）</li>
+<li>🔒 機密フォルダ: 06_HTMLファイル/_機密_本人専用/（clone系2本）</li>
+<li>🌐 公開HTML: 07_HTMLファイル_公開可能/（12本・リンク共有設定済）</li>
+</ul>
+</div>
+
+<div class="asset-card">
+<h3>🌐 GitHub Pages（公開URL）</h3>
+<div class="where">https://hibikimikotoisagi-debug.github.io/yanai-juku-ui-dev/</div>
+<ul>
+<li>📂 リポジトリ: <a href="https://github.com/hibikimikotoisagi-debug/yanai-juku-ui-dev" target="_blank">github.com/hibikimikotoisagi-debug/yanai-juku-ui-dev</a></li>
+<li>🌐 公開URL: <a href="https://hibikimikotoisagi-debug.github.io/yanai-juku-ui-dev/" target="_blank">公開トップページ</a></li>
+<li>🌐 12本HTML をブラウザで直接表示可</li>
+<li>🔄 git push で1分以内に更新反映</li>
+<li>🔒 機密2本は除外（公開しない）</li>
+</ul>
+</div>
+
+<div class="asset-card">
+<h3>💾 Claude Code メモリ</h3>
+<div class="where">~/.claude/projects/-Users-seiyuikeda-Downloads/memory/</div>
+<ul>
+<li>📚 100+ md ファイル（user/feedback/project/reference/clone）</li>
+<li>📖 MEMORY.md（インデックス・常時読込）</li>
+<li>👤 clone/ サブフォルダ：社長クローンインタビュー記録（L1階層8本）</li>
+<li>🎯 重要：project_ui_dev_master_objective_goal.md（OGSM v1.0）</li>
+<li>🎯 重要：reference_yanai_juku_automation_architecture.md（10の塊）</li>
+</ul>
+</div>
+
+<div class="asset-card">
+<h3>🛠 ローカル開発環境</h3>
+<div class="where">/tmp/scenario_viz/dashboard/ ＋ ~/yanai_juku/</div>
+<ul>
+<li>📁 /tmp/scenario_viz/dashboard/：14本のHTML（最新版）</li>
+<li>📁 /tmp/yanai_pub/：GitHub Pages公開用ステージング</li>
+<li>📁 ~/yanai_juku/：本業のスクリプト群（gdrive/, project_tracker/, course_platform/）</li>
+<li>🔧 ~/yanai_juku/scripts/gdrive/gdrive_helpers.py：Drive権限付与共通ヘルパー</li>
+<li>🔧 ~/yanai_juku/scripts/gdrive/setup_ui_dev_project.py：本PJ構築スクリプト</li>
+</ul>
+</div>
+
+<div class="asset-card">
+<h3>🛠 Claude Code スキル</h3>
+<div class="where">~/.claude/skills/ ＋ プラグイン</div>
+<ul>
+<li>📚 60+スキル（kamishibai-design / video-lp-scenario / lp-fv-creator etc.）</li>
+<li>🎨 視覚系：gemini-visual-creator / lp-fv-creator / instagram-carousel</li>
+<li>🎬 動画系：edit-video / video-lp-scenario / video-render</li>
+<li>📝 文章系：copy-connotation-auditor / tenioha-checker / lp-catchcopy-creator</li>
+<li>🤖 メタ系：advanced-skill-creator / skill-improver / shadow-approver</li>
+</ul>
+</div>
+
+<div class="asset-card">
+<h3>💬 ChatWork（コミュニケーション）</h3>
+<div class="where">柳井塾の社内コミュチャネル本命</div>
+<ul>
+<li>👥 メンバー：柳井／池田／田口／藤田／奥村／小川 他</li>
+<li>📂 PJ別ルーム多数（Room IDメモリ管理）</li>
+<li>🤖 send-staff スキルで自動送信可</li>
+<li>📊 PDCA定例ルーム（Room 401453543）</li>
+<li>📨 経費削減指示は組織-自動化会議へルーティング</li>
+</ul>
+</div>
+
+</div>
+</div>
+
+<!-- ===== 5. 接続マップ（誰が何をどこで使うか） ===== -->
+<div class="section">
+<h2 class="section-title t5">👥 5. 接続マップ｜誰が・何を・どこで使うか</h2>
+
+<table class="tbl">
+<thead>
+<tr>
+<th style="width:120px;">利用者</th>
+<th>使うHub</th>
+<th>使うツール</th>
+<th>主な目的</th>
+</tr>
+</thead>
+<tbody>
+<tr><td><b>柳井さん</b></td><td>★8（俯瞰）／★1〜★11全部</td><td>Claude Code＋Drive＋ChatWork＋GitHub Pages</td><td>判断・戦略・優先順位決定</td></tr>
+<tr><td>池田さん</td><td>★1（動画LP）／★2（数値管理）／★5（スポーク）</td><td>Drive＋ChatWork＋スポーク1マスター</td><td>講座生コーチ業務の自動化</td></tr>
+<tr><td>田口さん</td><td>★3（経理・人事）</td><td>Drive＋ChatWork＋スポーク3マスター</td><td>経理・人事業務の自動化</td></tr>
+<tr><td>奥村さん</td><td>★6（SNS自動投稿）／★7（プロデュース）</td><td>Drive＋ChatWork＋SNS各種</td><td>SNS運用代行</td></tr>
+<tr><td>藤田さん</td><td>★7（プロデュース／菊池PJ）</td><td>ChatWork＋PJ別シート</td><td>菊池JV PJ管理</td></tr>
+<tr><td>小川さん</td><td>★1（動画LP関連／特典・動線）</td><td>ChatWork＋Drive</td><td>特典設置・動線改善</td></tr>
+<tr><td>受講生</td><td>★11（コーチング）</td><td>講座PF＋LINE＋Zoom</td><td>自己育て直し学習</td></tr>
+<tr><td>顧客（個人事業主）</td><td>★9販売版／★11販売版</td><td>UTAGE LP＋LINE＋Zoom</td><td>「右腕化メソッド」購入・受講</td></tr>
+<tr><td>顧客（法人）</td><td>★9販売版（オーダーメイド）</td><td>UTAGE＋専用ChatWorkルーム</td><td>「AI右腕化」サービス購入</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== 6. 進捗状況 ===== -->
+<div class="section">
+<h2 class="section-title t6">📊 6. 進捗状況｜13週ロードマップとクローン構築</h2>
+
+<h3 style="font-size:15px; color:#22d3ee; margin-top:6px; margin-bottom:10px;">▼ 13週ロードマップ（2026-05-02〜2026-08-02）</h3>
+<div class="progress-row">
+<div class="progress-label">W1: ★1動画LP制作Hub</div>
+<div class="progress-bar"><div class="progress-fill" style="width:80%;"></div><div class="progress-text">80% 進行中</div></div>
+</div>
+<div class="progress-row">
+<div class="progress-label">W2-3: ★2数値管理Hub</div>
+<div class="progress-bar"><div class="progress-fill" style="width:20%;"></div><div class="progress-text">20% OGSM定義済</div></div>
+</div>
+<div class="progress-row">
+<div class="progress-label">W4-5: ★9ファネル自動構築</div>
+<div class="progress-bar"><div class="progress-fill" style="width:15%;"></div><div class="progress-text">15% v0.1ワイヤー</div></div>
+</div>
+<div class="progress-row">
+<div class="progress-label">W6: 共通デザインシステム</div>
+<div class="progress-bar"><div class="progress-fill" style="width:0%;"></div><div class="progress-text" style="color:#94a3b8;">0% 未着手</div></div>
+</div>
+<div class="progress-row">
+<div class="progress-label">W7-8: ★3経理・人事Hub</div>
+<div class="progress-bar"><div class="progress-fill" style="width:0%;"></div><div class="progress-text" style="color:#94a3b8;">0% 未着手</div></div>
+</div>
+<div class="progress-row">
+<div class="progress-label">W9-13: ★4〜★8</div>
+<div class="progress-bar"><div class="progress-fill" style="width:0%;"></div><div class="progress-text" style="color:#94a3b8;">0% 未着手</div></div>
+</div>
+
+<h3 style="font-size:15px; color:#22d3ee; margin-top:24px; margin-bottom:10px;">▼ 社長クローン構築進捗（★10）</h3>
+<div class="progress-row">
+<div class="progress-label">L1 人生背景・原体験</div>
+<div class="progress-bar"><div class="progress-fill" style="width:75%;"></div><div class="progress-text">75% Q1-1とQ1-8深掘り完了</div></div>
+</div>
+<div class="progress-row">
+<div class="progress-label">L2 価値観・思想</div>
+<div class="progress-bar"><div class="progress-fill" style="width:40%;"></div><div class="progress-text">40% L1から派生</div></div>
+</div>
+<div class="progress-row">
+<div class="progress-label">L3 経営理念・ミッション</div>
+<div class="progress-bar"><div class="progress-fill" style="width:50%;"></div><div class="progress-text">50% 紙芝居メソッド確定</div></div>
+</div>
+<div class="progress-row">
+<div class="progress-label">L4 戦略・優先順位</div>
+<div class="progress-bar"><div class="progress-fill" style="width:60%;"></div><div class="progress-text">60% 倍々成長/プロデューサーモデル</div></div>
+</div>
+<div class="progress-row">
+<div class="progress-label">L5 判断パターン</div>
+<div class="progress-bar"><div class="progress-fill" style="width:55%;"></div><div class="progress-text">55% 3年前気づき/逃げ癖自覚</div></div>
+</div>
+<div class="progress-row">
+<div class="progress-label">L6 言葉・人格</div>
+<div class="progress-bar"><div class="progress-fill" style="width:30%;"></div><div class="progress-text">30% 自然蓄積中</div></div>
+</div>
+<div class="progress-row">
+<div class="progress-label">L7 専門知識</div>
+<div class="progress-bar"><div class="progress-fill" style="width:65%;"></div><div class="progress-text">65% 6歳GE理論/失敗成功パターン</div></div>
+</div>
+</div>
+
+<!-- ===== 7. 次のアクション ===== -->
+<div class="section">
+<h2 class="section-title t1">🎬 7. 次のアクション（優先順位順）</h2>
+
+<table class="tbl">
+<thead>
+<tr>
+<th style="width:60px;">優先</th>
+<th>アクション</th>
+<th>担当</th>
+<th>期限</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>P1</td><td>★1 動画LP制作Hub 残機能完成（KPI/ROI/設定ページ100%）</td><td>柳井／池田</td><td>W1（〜5/8）</td></tr>
+<tr><td>P1</td><td>★2 数値管理シート自動化Hub 構築開始（Sheets API連携）</td><td>柳井／池田</td><td>W2-3（〜5/22）</td></tr>
+<tr><td>P1</td><td>社長クローン L1残り＋L2価値観 集中インタビュー</td><td>柳井</td><td>継続中</td></tr>
+<tr><td>P2</td><td>★9 ファネル自動構築Hub 自社実証開始</td><td>柳井／奥村</td><td>W4-5（〜6/5）</td></tr>
+<tr><td>P2</td><td>共通デザインシステム抽出（design-system.css）</td><td>柳井</td><td>W6（〜6/12）</td></tr>
+<tr><td>P3</td><td>★3 経理・人事 Hub 構築（田口さん向け）</td><td>田口さん／柳井</td><td>W7-8</td></tr>
+<tr><td>P3</td><td>残り★4〜★8、★11 順次構築</td><td>各担当</td><td>W9-13</td></tr>
+<tr style="background:rgba(251,191,36,0.08);"><td>🎯</td><td><b>3ヶ月ゴール達成評価</b></td><td>柳井</td><td><b>2026-08-02</b></td></tr>
+</tbody>
+</table>
+</div>
+
+<div style="text-align:center; padding:24px; color:#64748b; font-size:12px;">
+🌐 柳井塾 業務自動化 マスタービュー v1.0 ｜ 2026-05-02 起票<br>
+公開URL: <a href="https://hibikimikotoisagi-debug.github.io/yanai-juku-ui-dev/master_overview.html" style="color:#22d3ee;">https://hibikimikotoisagi-debug.github.io/yanai-juku-ui-dev/master_overview.html</a>
+</div>
+
+</div>
+</body>
+</html>
