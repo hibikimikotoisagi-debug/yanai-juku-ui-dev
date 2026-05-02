@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📊 マーケティングHub サンプル｜AI右腕化メソッド</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;background:#0a0e1a;color:#e2e8f0;padding:24px;line-height:1.6}.container{max-width:1400px;margin:0 auto}
+.notice{background:linear-gradient(90deg,#7f1d1d,#991b1b);padding:8px 24px;text-align:center;font-size:11px;color:white;font-weight:600;border-radius:8px;margin-bottom:16px}
+.back{display:inline-block;padding:6px 14px;background:#334155;color:white;text-decoration:none;border-radius:6px;font-size:12px;margin-bottom:16px}
+.back:hover{background:#475569}
+.hero{background:linear-gradient(135deg,#0c4a6e 0%,#1e293b 100%);padding:24px 32px;border-radius:14px;margin-bottom:20px;border:1px solid #06b6d4}
+.hero h1{font-size:24px;background:linear-gradient(90deg,#fbbf24,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800;margin-bottom:6px}
+.hero p{font-size:13px;color:#94a3b8}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi{background:#1e293b;padding:18px;border-radius:10px;border:1px solid #334155;border-left:4px solid;transition:all 0.2s}
+.kpi:hover{transform:translateY(-2px)}
+.kpi.cyan{border-left-color:#06b6d4}.kpi.gold{border-left-color:#fbbf24}.kpi.green{border-left-color:#10b981}.kpi.purple{border-left-color:#a855f7}
+.kpi-label{font-size:11px;color:#94a3b8;margin-bottom:6px}.kpi-val{font-size:30px;font-weight:800;color:white}
+.kpi-trend{font-size:11px;margin-top:6px}.up{color:#34d399}.down{color:#f87171}
+.section{background:#1e293b;padding:24px 28px;border-radius:14px;margin-bottom:20px;border:1px solid #334155}
+.section h2{font-size:18px;font-weight:700;margin-bottom:14px;padding-left:10px;border-left:3px solid #06b6d4;color:#22d3ee}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{background:#0f172a;padding:10px;text-align:left;color:#94a3b8;font-weight:600;border-bottom:1px solid #334155}
+.tbl td{padding:10px;border-bottom:1px solid #1e293b}
+.tbl tr:hover td{background:#0f172a}
+.badge{display:inline-block;padding:3px 10px;border-radius:8px;font-size:10px;font-weight:600}
+.b-good{background:rgba(16,185,129,0.2);color:#34d399}.b-warn{background:rgba(251,191,36,0.2);color:#fbbf24}.b-bad{background:rgba(239,68,68,0.2);color:#f87171}
+.funnel{display:flex;flex-direction:column;gap:6px;padding:10px 0}
+.f-bar{padding:14px;border-radius:8px;color:white;display:flex;justify-content:space-between;align-items:center}
+.demo-tag{position:fixed;top:10px;right:10px;background:rgba(251,191,36,0.9);color:#000;padding:6px 14px;border-radius:6px;font-size:11px;font-weight:700;z-index:1000}
+</style>
+</head>
+<body>
+<div class="demo-tag">🎬 SAMPLE / ダミーデータ</div>
+
+<div class="container">
+<div class="notice">🔒 商談用サンプル｜数値はダミーです／無断転用・複製・第三者開示禁止</div>
+<a class="back" href="client_demo.html">← デモトップに戻る</a>
+
+<div class="hero">
+<h1>📊 マーケティングHub｜サンプル</h1>
+<p>広告→LP→メルマガ→セミナー→成約 の全ファネルを1画面で把握する Hub UI の実装サンプル</p>
+</div>
+
+<div class="kpi-grid">
+<div class="kpi cyan"><div class="kpi-label">📊 月間CV数</div><div class="kpi-val">487</div><div class="kpi-trend up">↑ +18% (前月比)</div></div>
+<div class="kpi gold"><div class="kpi-label">💰 ROAS</div><div class="kpi-val">3.6x</div><div class="kpi-trend up">↑ +0.4 (前月比)</div></div>
+<div class="kpi green"><div class="kpi-label">🎯 平均CPA</div><div class="kpi-val">¥847</div><div class="kpi-trend up">↑ -¥130改善</div></div>
+<div class="kpi purple"><div class="kpi-label">📈 LTV/CAC比</div><div class="kpi-val">4.2x</div><div class="kpi-trend up">↑ 健全水準</div></div>
+</div>
+
+<div class="grid-2">
+<div class="section">
+<h2>📈 ROAS / CPA 推移（過去12週）</h2>
+<canvas id="roasChart" height="180"></canvas>
+</div>
+<div class="section">
+<h2>💬 ファネル可視化（直近30日）</h2>
+<div class="funnel">
+<div class="f-bar" style="background:linear-gradient(90deg,#06b6d4,#0ea5e9);"><b>広告インプレッション</b><b>1,245,000</b></div>
+<div class="f-bar" style="background:linear-gradient(90deg,#0891b2,#0284c7);margin-left:8%;width:92%;"><b>クリック</b><b>14,940 (1.2%)</b></div>
+<div class="f-bar" style="background:linear-gradient(90deg,#0e7490,#0369a1);margin-left:18%;width:82%;"><b>LP登録</b><b>4,168 (27.9%)</b></div>
+<div class="f-bar" style="background:linear-gradient(90deg,#10b981,#059669);margin-left:32%;width:68%;"><b>セミナー参加</b><b>1,832 (43.9%)</b></div>
+<div class="f-bar" style="background:linear-gradient(90deg,#7c3aed,#6d28d9);margin-left:52%;width:48%;"><b>成約</b><b>108 (5.9%)</b></div>
+</div>
+</div>
+</div>
+
+<div class="section">
+<h2>🏆 媒体別パフォーマンス</h2>
+<table class="tbl">
+<thead><tr><th>媒体</th><th>広告費</th><th>CV数</th><th>CPA</th><th>ROAS</th><th>判定</th></tr></thead>
+<tbody>
+<tr><td>Meta広告 (Instagram)</td><td>¥420,000</td><td>187</td><td>¥2,246</td><td>4.2x</td><td><span class="badge b-good">優秀</span></td></tr>
+<tr><td>YouTube広告</td><td>¥380,000</td><td>142</td><td>¥2,676</td><td>3.8x</td><td><span class="badge b-good">優秀</span></td></tr>
+<tr><td>Threads オーガニック</td><td>¥0</td><td>89</td><td>¥0</td><td>∞</td><td><span class="badge b-good">優秀</span></td></tr>
+<tr><td>Facebook広告</td><td>¥150,000</td><td>42</td><td>¥3,571</td><td>2.1x</td><td><span class="badge b-warn">許容</span></td></tr>
+<tr><td>X (旧Twitter) 広告</td><td>¥80,000</td><td>15</td><td>¥5,333</td><td>1.2x</td><td><span class="badge b-bad">要対策</span></td></tr>
+<tr><td>Google検索広告</td><td>¥120,000</td><td>12</td><td>¥10,000</td><td>0.8x</td><td><span class="badge b-bad">撤退候補</span></td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="grid-2">
+<div class="section">
+<h2>🎯 媒体別投下シェア</h2>
+<canvas id="pieChart" height="180"></canvas>
+</div>
+<div class="section">
+<h2>📊 LP別CV率（直近7日）</h2>
+<canvas id="lpChart" height="180"></canvas>
+</div>
+</div>
+
+<div class="section" style="background:linear-gradient(135deg,#1e293b,#831843);border:1px solid #ec4899;">
+<h2 style="color:#f472b6;border-left-color:#ec4899;">🤖 AI自動分析（社長クローン提案）</h2>
+<div style="font-size:13px;line-height:1.9;color:#cbd5e1;padding:12px;background:rgba(0,0,0,0.3);border-radius:8px;">
+<b style="color:#fbbf24;">▼ 今週の最重要発見</b><br>
+1. <b>Threadsオーガニック</b>が広告費ゼロでCV89件＝<b style="color:#34d399;">最強の獲得経路</b>。ここに注力すべき<br>
+2. <b>X広告</b>と<b>Google検索広告</b>は<b style="color:#f87171;">撤退候補</b>（社長判断：撤退して予算をMeta/YouTubeに集約）<br>
+3. <b>セミナー参加→成約率5.9%</b>は業界平均(3%)を大幅超え。セミナー品質は維持<br>
+4. <b>LP登録→セミナー参加率43.9%</b>はもう少し改善余地あり。LINE配信の改善を提案<br><br>
+<b style="color:#22d3ee;">▼ 推奨アクション</b><br>
+・X広告・Google広告の予算をMeta/YouTubeへシフト → 月¥200K節約<br>
+・LINE配信の件名 A/B テスト開始 → CV +15%見込み<br>
+・Threadsの投稿頻度を週3→週5に増やす → 月CV +30件見込み
+</div>
+</div>
+
+</div>
+
+<script>
+new Chart(document.getElementById('roasChart'),{type:'line',data:{labels:['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'],datasets:[{label:'CPA(円)',data:[1240,1180,1100,1050,990,950,920,890,870,850,840,847],borderColor:'#fbbf24',yAxisID:'y',borderWidth:3,tension:0.3},{label:'ROAS(x)',data:[1.8,2.0,2.2,2.4,2.5,2.7,2.9,3.1,3.2,3.4,3.5,3.6],borderColor:'#10b981',yAxisID:'y1',borderWidth:3,tension:0.3}]},options:{plugins:{legend:{labels:{color:'#cbd5e1'}}},scales:{y:{position:'left',ticks:{color:'#fbbf24'},grid:{color:'#334155'}},y1:{position:'right',ticks:{color:'#10b981'},grid:{display:false}},x:{ticks:{color:'#94a3b8'},grid:{display:false}}}}});
+
+new Chart(document.getElementById('pieChart'),{type:'doughnut',data:{labels:['Meta','YouTube','Threads','Facebook','X','Google'],datasets:[{data:[420,380,0,150,80,120],backgroundColor:['#06b6d4','#ef4444','#10b981','#3b82f6','#fbbf24','#a855f7']}]},options:{plugins:{legend:{position:'right',labels:{color:'#cbd5e1',font:{size:11}}}}}});
+
+new Chart(document.getElementById('lpChart'),{type:'bar',data:{labels:['LP-A 動画LP','LP-B 診断LP','LP-C 通常LP','LP-D セミナーLP','LP-E 限定LP'],datasets:[{label:'CV率(%)',data:[8.2,5.9,3.4,12.1,4.7],backgroundColor:['#06b6d4','#0ea5e9','#3b82f6','#10b981','#a855f7']}]},options:{plugins:{legend:{display:false}},scales:{y:{ticks:{color:'#94a3b8',callback:v=>v+'%'},grid:{color:'#334155'}},x:{ticks:{color:'#94a3b8'},grid:{display:false}}}}});
+</script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔄 PDCA定例Hub サンプル｜AI右腕化メソッド</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;background:#0a0e1a;color:#e2e8f0;padding:24px;line-height:1.6}.container{max-width:1400px;margin:0 auto}
+.notice{background:linear-gradient(90deg,#7f1d1d,#991b1b);padding:8px 24px;text-align:center;font-size:11px;color:white;font-weight:600;border-radius:8px;margin-bottom:16px}
+.back{display:inline-block;padding:6px 14px;background:#334155;color:white;text-decoration:none;border-radius:6px;font-size:12px;margin-bottom:16px}
+.back:hover{background:#475569}
+.hero{background:linear-gradient(135deg,#0c4a6e 0%,#831843 100%);padding:24px 32px;border-radius:14px;margin-bottom:20px;border:1px solid #ec4899}
+.hero h1{font-size:24px;background:linear-gradient(90deg,#fbbf24,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800;margin-bottom:6px}
+.hero p{font-size:13px;color:#94a3b8}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi{background:#1e293b;padding:16px;border-radius:10px;border:1px solid #334155;text-align:center;border-left:4px solid #ec4899}
+.kpi-label{font-size:11px;color:#94a3b8;margin-bottom:4px}.kpi-val{font-size:24px;font-weight:800;background:linear-gradient(90deg,#fbbf24,#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.section{background:#1e293b;padding:24px 28px;border-radius:14px;margin-bottom:20px;border:1px solid #334155}
+.section h2{font-size:18px;font-weight:700;margin-bottom:14px;padding-left:10px;border-left:3px solid #ec4899;color:#f472b6}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.kanban{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.kcol{background:#0f172a;border-radius:8px;padding:12px;min-height:300px}
+.kcol h3{font-size:13px;margin-bottom:10px;color:#94a3b8;font-weight:700;border-bottom:1px solid #334155;padding-bottom:6px}
+.kcard{background:#1e293b;padding:10px 12px;border-radius:6px;margin-bottom:8px;border-left:3px solid;font-size:12px}
+.kcard.urgent{border-left-color:#ef4444}.kcard.high{border-left-color:#fbbf24}.kcard.normal{border-left-color:#06b6d4}.kcard.low{border-left-color:#94a3b8}
+.kcard .meta{font-size:10px;color:#94a3b8;margin-top:4px}
+.gantt-row{display:grid;grid-template-columns:160px 1fr;gap:10px;margin-bottom:8px;align-items:center}
+.gantt-label{font-size:12px;color:#cbd5e1}
+.gantt-bar-container{background:#0f172a;border-radius:6px;height:24px;position:relative}
+.gantt-bar{position:absolute;height:100%;border-radius:6px;display:flex;align-items:center;padding:0 8px;font-size:10px;color:white;font-weight:700}
+.demo-tag{position:fixed;top:10px;right:10px;background:rgba(251,191,36,0.9);color:#000;padding:6px 14px;border-radius:6px;font-size:11px;font-weight:700;z-index:1000}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{background:#0f172a;padding:10px;text-align:left;color:#94a3b8;font-weight:600;border-bottom:1px solid #334155}
+.tbl td{padding:10px;border-bottom:1px solid #1e293b}
+.badge{display:inline-block;padding:3px 10px;border-radius:8px;font-size:10px;font-weight:600}
+.b-good{background:rgba(16,185,129,0.2);color:#34d399}.b-warn{background:rgba(251,191,36,0.2);color:#fbbf24}.b-bad{background:rgba(239,68,68,0.2);color:#f87171}
+</style>
+</head>
+<body>
+<div class="demo-tag">🎬 SAMPLE / ダミーデータ</div>
+
+<div class="container">
+<div class="notice">🔒 商談用サンプル｜数値はダミーです／無断転用・複製・第三者開示禁止</div>
+<a class="back" href="client_demo.html">← デモトップに戻る</a>
+
+<div class="hero">
+<h1>🔄 PDCA定例Hub｜サンプル</h1>
+<p>会議を1時間→30分に短縮。AIが事前に議題作成・改善案提示・タスク振り分けを自動実行</p>
+</div>
+
+<div class="kpi-grid">
+<div class="kpi"><div class="kpi-label">📅 今週の議題数</div><div class="kpi-val">8件</div></div>
+<div class="kpi"><div class="kpi-label">⏱ 会議時間（短縮後）</div><div class="kpi-val">30分</div></div>
+<div class="kpi"><div class="kpi-label">✅ 完了タスク（先週）</div><div class="kpi-val">23件</div></div>
+<div class="kpi"><div class="kpi-label">🎯 計画達成率</div><div class="kpi-val">87%</div></div>
+</div>
+
+<div class="section" style="background:linear-gradient(135deg,#1e293b,#831843);border:1px solid #ec4899;">
+<h2 style="color:#f472b6;">🤖 AI週次レポート（毎週月曜09:00自動生成）</h2>
+<div style="font-size:13px;line-height:1.9;color:#cbd5e1;padding:14px;background:rgba(0,0,0,0.3);border-radius:8px;">
+<b style="color:#fbbf24;">📅 2026-05-02 PDCA定例 議事台本</b><br><br>
+<b style="color:#34d399;">▼ 先週の達成（5項目）</b><br>
+1. ✅ 動画LP制作Hub v1.0 リリース完了<br>
+2. ✅ ★9 ファネル自動構築Hub OGSM v0.1 確定<br>
+3. ✅ 数値管理シート ★2着手準備<br>
+4. ✅ 島崎さんとSNS Hub仕様すり合わせ<br>
+5. ✅ 田口さんと経理Hub着手日程調整<br><br>
+<b style="color:#f87171;">▼ 残課題・ボトルネック（3項目）</b><br>
+1. ⚠️ ★2 数値管理Hub Sheets API連携：技術検討必要（担当：池田）<br>
+2. ⚠️ ★5 講座生コーチHub 棚卸し未完了：30業務中12業務まで（担当：池田泉）<br>
+3. ⚠️ 紙メディア広告ROI悪化：撤退判断要（社長判断待ち）<br><br>
+<b style="color:#22d3ee;">▼ 今週の優先アクション（社長クローン推奨順）</b><br>
+1. 🔴 紙メディア撤退決議（経営会議冒頭で5分で決定可）<br>
+2. 🔴 ★2 数値管理Hub 技術検討会議（火曜10:00 池田・柳井）<br>
+3. 🟡 ★5 棚卸し残18業務 集中対応（金曜まで・池田泉）<br>
+4. 🟡 島崎さんSNS Hub 仕様確定ミーティング（水曜14:00）<br><br>
+<b style="color:#fbbf24;">▼ 改善提案</b><br>
+・PDCA会議を週1→週2に増やすより、<b>このAIレポートの精度を上げる</b>方がスタッフ全員にとって有益<br>
+・「今週の優先アクション」を毎日朝にChatWorkに自動投稿することで、会議無しでも進捗管理可能
+</div>
+</div>
+
+<div class="section">
+<h2>📋 タスクボード（カンバン）</h2>
+<div class="kanban">
+<div class="kcol">
+<h3>📥 未着手 (5)</h3>
+<div class="kcard low">★3 経理Hub OGSM定義<div class="meta">担当: 田口さん｜期限: 5/10</div></div>
+<div class="kcard normal">★4 PDCA Hub UI設計<div class="meta">担当: 柳井｜期限: 5/15</div></div>
+<div class="kcard normal">★7 プロデュース統合設計<div class="meta">担当: 柳井｜期限: 5/20</div></div>
+<div class="kcard low">受講生Bさん フォロー<div class="meta">担当: 池田泉｜期限: 5/8</div></div>
+<div class="kcard low">広告クリエイティブ更新<div class="meta">担当: 島崎さん｜期限: 5/12</div></div>
+</div>
+<div class="kcol">
+<h3>🔄 進行中 (4)</h3>
+<div class="kcard urgent">★1 動画LP Hub 残機能<div class="meta">担当: 柳井｜期限: 5/8 ⚠️</div></div>
+<div class="kcard high">★2 数値管理Hub 構築<div class="meta">担当: 池田｜進捗: 20%</div></div>
+<div class="kcard high">★9 ファネル自社実証<div class="meta">担当: 小川｜進捗: 15%</div></div>
+<div class="kcard normal">紙メディア撤退検討<div class="meta">担当: 柳井｜要承認</div></div>
+</div>
+<div class="kcol">
+<h3>👀 レビュー (3)</h3>
+<div class="kcard normal">SNS投稿 5月分台本<div class="meta">担当: 島崎さん｜柳井レビュー待ち</div></div>
+<div class="kcard normal">セミナーLP A/Bテスト結果<div class="meta">担当: 池田｜柳井レビュー待ち</div></div>
+<div class="kcard normal">経理スポーク3 第1版<div class="meta">担当: 田口さん｜柳井レビュー待ち</div></div>
+</div>
+<div class="kcol">
+<h3>✅ 完了 (12 今週)</h3>
+<div class="kcard normal" style="opacity:0.6;">★1 KPIページ実装<div class="meta">完了: 5/2</div></div>
+<div class="kcard normal" style="opacity:0.6;">★1 ROIページ実装<div class="meta">完了: 5/2</div></div>
+<div class="kcard normal" style="opacity:0.6;">★1 設定ページ実装<div class="meta">完了: 5/2</div></div>
+<div class="kcard normal" style="opacity:0.6;">★9 OGSM v0.1<div class="meta">完了: 5/2</div></div>
+<div class="kcard normal" style="opacity:0.6;">マスタービュー v2.0<div class="meta">完了: 5/2</div></div>
+<div class="kcard normal" style="opacity:0.4;font-size:10px;">他7件...</div>
+</div>
+</div>
+</div>
+
+<div class="grid-2">
+<div class="section">
+<h2>📊 週次計画達成率（過去8週）</h2>
+<canvas id="achievementChart" height="180"></canvas>
+</div>
+<div class="section">
+<h2>👥 担当者別タスク負荷</h2>
+<canvas id="loadChart" height="180"></canvas>
+</div>
+</div>
+
+<div class="section">
+<h2>📅 13週ロードマップ｜今どこにいるか</h2>
+<div class="gantt-row">
+<div class="gantt-label">★1 動画LP制作Hub</div>
+<div class="gantt-bar-container"><div class="gantt-bar" style="left:0%;width:7%;background:#10b981;">W1 80%</div></div>
+</div>
+<div class="gantt-row">
+<div class="gantt-label">★2 数値管理Hub</div>
+<div class="gantt-bar-container"><div class="gantt-bar" style="left:7%;width:14%;background:#fbbf24;">W2-3 構築開始</div></div>
+</div>
+<div class="gantt-row">
+<div class="gantt-label">★9 ファネル自動構築</div>
+<div class="gantt-bar-container"><div class="gantt-bar" style="left:21%;width:14%;background:#06b6d4;">W4-5 自社実証</div></div>
+</div>
+<div class="gantt-row">
+<div class="gantt-label">共通デザインシステム</div>
+<div class="gantt-bar-container"><div class="gantt-bar" style="left:35%;width:7%;background:#a855f7;">W6 抽出</div></div>
+</div>
+<div class="gantt-row">
+<div class="gantt-label">★3 経理人事Hub</div>
+<div class="gantt-bar-container"><div class="gantt-bar" style="left:42%;width:14%;background:#ec4899;">W7-8 構築</div></div>
+</div>
+<div class="gantt-row">
+<div class="gantt-label">★4 PDCA定例Hub</div>
+<div class="gantt-bar-container"><div class="gantt-bar" style="left:56%;width:7%;background:#06b6d4;">W9</div></div>
+</div>
+<div class="gantt-row">
+<div class="gantt-label">★5 講座生コーチHub</div>
+<div class="gantt-bar-container"><div class="gantt-bar" style="left:63%;width:7%;background:#10b981;">W10</div></div>
+</div>
+<div class="gantt-row">
+<div class="gantt-label">★6 SNS自動投稿Hub</div>
+<div class="gantt-bar-container"><div class="gantt-bar" style="left:70%;width:7%;background:#fbbf24;">W11</div></div>
+</div>
+<div class="gantt-row">
+<div class="gantt-label">★7 プロデュース統合</div>
+<div class="gantt-bar-container"><div class="gantt-bar" style="left:77%;width:7%;background:#a855f7;">W12</div></div>
+</div>
+<div class="gantt-row">
+<div class="gantt-label">★8 全PJ俯瞰マスター</div>
+<div class="gantt-bar-container"><div class="gantt-bar" style="left:84%;width:7%;background:#ef4444;">W13</div></div>
+</div>
+<div class="gantt-row" style="margin-top:14px;">
+<div class="gantt-label" style="color:#fbbf24;font-weight:700;">🎯 3ヶ月ゴール達成</div>
+<div class="gantt-bar-container"><div class="gantt-bar" style="left:91%;width:9%;background:linear-gradient(90deg,#fbbf24,#ef4444);">8/2 評価</div></div>
+</div>
+</div>
+
+</div>
+
+<script>
+new Chart(document.getElementById('achievementChart'),{type:'line',data:{labels:['W-7','W-6','W-5','W-4','W-3','W-2','W-1','W0'],datasets:[{label:'計画達成率(%)',data:[72,75,78,80,82,85,86,87],borderColor:'#34d399',backgroundColor:'rgba(16,185,129,0.2)',borderWidth:3,tension:0.3,fill:true},{label:'目標',data:[80,80,80,80,80,80,80,80],borderColor:'#fbbf24',borderWidth:2,borderDash:[5,5],pointRadius:0}]},options:{plugins:{legend:{labels:{color:'#cbd5e1'}}},scales:{y:{min:50,max:100,ticks:{color:'#94a3b8',callback:v=>v+'%'},grid:{color:'#334155'}},x:{ticks:{color:'#94a3b8'},grid:{display:false}}}}});
+
+new Chart(document.getElementById('loadChart'),{type:'bar',data:{labels:['柳井','池田','池田泉','田口','島崎','小川'],datasets:[{label:'進行中タスク数',data:[8,5,4,3,4,2],backgroundColor:'#06b6d4'},{label:'今週完了',data:[6,4,3,2,3,2],backgroundColor:'#10b981'}]},options:{plugins:{legend:{labels:{color:'#cbd5e1'}}},scales:{y:{ticks:{color:'#94a3b8'},grid:{color:'#334155'}},x:{ticks:{color:'#94a3b8'},grid:{display:false}}}}});
+</script>
+</body>
+</html>
