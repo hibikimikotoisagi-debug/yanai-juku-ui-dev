@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📊 AI右腕化メソッド｜全体像サンプル（商談用）</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif; background:#0a0e1a; color:#e2e8f0; padding:24px; line-height:1.6; }
+.container { max-width:1300px; margin:0 auto; }
+
+/* 透かし */
+.watermark { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9999; opacity:0.04; background-image:repeating-linear-gradient(-45deg,transparent 0,transparent 200px,rgba(255,255,255,0.5) 200px,rgba(255,255,255,0.5) 400px); }
+.watermark-text { position:fixed; bottom:50%; left:50%; transform:translate(-50%,50%) rotate(-30deg); font-size:80px; font-weight:900; color:rgba(255,255,255,0.03); pointer-events:none; z-index:9999; white-space:nowrap; }
+
+/* 機密注意ヘッダ */
+.notice { background:linear-gradient(90deg,#7f1d1d,#991b1b); padding:10px 24px; text-align:center; font-size:12px; color:white; font-weight:600; border-radius:8px; margin-bottom:16px; }
+
+.hero { background:linear-gradient(135deg,#0c4a6e 0%,#1e293b 50%,#3b0764 100%); padding:36px 40px; border-radius:18px; margin-bottom:24px; border:1px solid #06b6d4; }
+.hero h1 { font-size:30px; font-weight:800; background:linear-gradient(90deg,#fbbf24,#06b6d4,#a855f7); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:8px; }
+.hero .v { font-size:13px; color:#94a3b8; margin-bottom:14px; }
+.hero .lead { font-size:15px; color:#cbd5e1; line-height:1.8; }
+
+.section { background:#1e293b; padding:28px 32px; border-radius:14px; margin-bottom:22px; border:1px solid #334155; }
+.section-title { font-size:22px; font-weight:800; margin-bottom:18px; padding-left:12px; border-left:4px solid; }
+.t1 { color:#fbbf24; border-left-color:#fbbf24; }
+.t2 { color:#06b6d4; border-left-color:#06b6d4; }
+.t3 { color:#a855f7; border-left-color:#a855f7; }
+.t4 { color:#10b981; border-left-color:#10b981; }
+.t5 { color:#ec4899; border-left-color:#ec4899; }
+
+.kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+.kpi { background:#1e293b; padding:18px; border-radius:10px; border:1px solid #334155; text-align:center; }
+.kpi-label { font-size:11px; color:#94a3b8; margin-bottom:4px; }
+.kpi-value { font-size:28px; font-weight:800; }
+.kpi-value.cyan { background:linear-gradient(90deg,#06b6d4,#0ea5e9); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi-value.gold { background:linear-gradient(90deg,#fbbf24,#f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi-value.green { background:linear-gradient(90deg,#10b981,#059669); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.kpi-value.purple { background:linear-gradient(90deg,#a855f7,#7c3aed); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+
+/* レイヤー図 */
+.layer-stack { display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+.layer-row { display:grid; grid-template-columns:120px 1fr; gap:14px; align-items:stretch; }
+.l-label { background:#0f172a; border-radius:10px; padding:14px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; border-left:4px solid; }
+.l-label .num { font-size:11px; color:#94a3b8; font-weight:700; }
+.l-label .name { font-size:12px; color:white; font-weight:700; margin-top:4px; }
+.bl1 { border-left-color:#fbbf24; } .bl2 { border-left-color:#06b6d4; } .bl3 { border-left-color:#ec4899; } .bl4 { border-left-color:#10b981; } .bl5 { border-left-color:#a855f7; } .bl6 { border-left-color:#22d3ee; }
+
+.row-content { display:grid; gap:8px; }
+.row-1 { grid-template-columns:1fr; } .row-2 { grid-template-columns:1fr 1fr; } .row-3 { grid-template-columns:1fr 1fr 1fr; }
+
+.block { background:#0f172a; padding:14px; border-radius:8px; border-top:3px solid #94a3b8; }
+.block.gold { border-top-color:#fbbf24; } .block.cyan { border-top-color:#06b6d4; } .block.pink { border-top-color:#ec4899; } .block.green { border-top-color:#10b981; } .block.purple { border-top-color:#a855f7; } .block.cy2 { border-top-color:#22d3ee; }
+.block .name { font-size:13px; font-weight:700; color:white; margin-bottom:4px; }
+.block .desc { font-size:11px; color:#cbd5e1; line-height:1.5; }
+
+/* Hub例 */
+.hub-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px; }
+.hub-card { background:#0f172a; padding:18px; border-radius:10px; border-left:4px solid #06b6d4; }
+.hub-card h3 { font-size:14px; color:#22d3ee; margin-bottom:6px; font-weight:700; }
+.hub-card p { font-size:12px; color:#cbd5e1; line-height:1.6; }
+
+/* ベネフィット */
+.benefit-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px; }
+.benefit-card { background:#0f172a; padding:20px; border-radius:10px; border-top:4px solid #fbbf24; text-align:center; }
+.benefit-card .icon { font-size:36px; margin-bottom:8px; }
+.benefit-card h3 { font-size:14px; color:#fbbf24; margin-bottom:6px; font-weight:700; }
+.benefit-card .num { font-size:32px; font-weight:800; background:linear-gradient(90deg,#fbbf24,#f59e0b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin:8px 0; }
+.benefit-card p { font-size:11px; color:#cbd5e1; }
+
+/* テーブル */
+.tbl { width:100%; border-collapse:collapse; margin-top:14px; font-size:13px; }
+.tbl th { background:#0f172a; padding:12px 14px; text-align:left; color:#94a3b8; font-weight:600; border-bottom:1px solid #334155; }
+.tbl td { padding:12px 14px; border-bottom:1px solid #1e293b; vertical-align:top; }
+
+/* データフロー */
+.flow { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-top:14px; }
+.flow-step { padding:14px 10px; background:#0f172a; border-radius:8px; border-top:3px solid #06b6d4; text-align:center; position:relative; }
+.flow-step::after { content:'→'; position:absolute; right:-12px; top:50%; transform:translateY(-50%); color:#06b6d4; font-size:20px; font-weight:bold; z-index:10; }
+.flow-step:last-child::after { display:none; }
+.flow-num { font-size:10px; color:#22d3ee; font-weight:700; }
+.flow-name { font-size:12px; font-weight:700; color:white; margin:4px 0; }
+.flow-desc { font-size:10px; color:#94a3b8; line-height:1.4; }
+
+.note { padding:14px 18px; background:rgba(6,182,212,0.1); border-left:3px solid #06b6d4; border-radius:6px; margin:14px 0; font-size:13px; line-height:1.7; color:#cbd5e1; }
+.warn { padding:14px 18px; background:rgba(239,68,68,0.1); border-left:3px solid #ef4444; border-radius:6px; margin:14px 0; font-size:13px; line-height:1.7; color:#cbd5e1; }
+
+.footer { padding:24px; text-align:center; color:#64748b; font-size:11px; margin-top:32px; border-top:1px solid #334155; }
+.footer .copyright { color:#fbbf24; font-weight:700; margin-bottom:8px; }
+</style>
+</head>
+<body>
+
+<div class="watermark"></div>
+<div class="watermark-text">SAMPLE / 商談限定</div>
+
+<div class="container">
+
+<div class="notice">
+🔒 <b>商談用サンプル資料</b>｜本資料は柳井塾とパートナー法人コンサル様の商談目的でのみ提供されます／<b>無断転用・複製・第三者開示を禁じます</b>
+</div>
+
+<div class="hero">
+<h1>📊 AI右腕化メソッド｜業務自動化の全体像</h1>
+<div class="v">中小企業向け 業務自動化サービス サンプル資料</div>
+<div class="lead">
+人件費を<b style="color:#fbbf24;">3ヶ月で1/3</b>に圧縮する実証済みメソッドを、Claude AI と Hub UI で実装します。<br>
+本資料では、私たちが構築する「<b style="color:#34d399;">業務自動化の全体構造</b>」と「<b style="color:#06b6d4;">設計思想</b>」を概観いただけます。<br>
+具体的な導入計画・カスタマイズ内容は別途ご提案資料にてご説明します。
+</div>
+</div>
+
+<!-- ===== ベネフィット ===== -->
+<div class="section">
+<h2 class="section-title t1">🎯 導入で実現する3つの結果</h2>
+<div class="benefit-grid">
+<div class="benefit-card">
+<div class="icon">💰</div>
+<h3>人件費</h3>
+<div class="num">1/3 に削減</div>
+<p>月人件費 300万円 → 100万円<br>(3ヶ月で実装)</p>
+</div>
+<div class="benefit-card">
+<div class="icon">⏱</div>
+<h3>業務時間</h3>
+<div class="num">76% 短縮</div>
+<p>1業務 8時間 → 2時間<br>(テンプレ再利用)</p>
+</div>
+<div class="benefit-card">
+<div class="icon">📈</div>
+<h3>新人立ち上げ</h3>
+<div class="num">2h → 10分</div>
+<p>担当者キャッチアップ時間<br>属人化を解消</p>
+</div>
+</div>
+</div>
+
+<!-- ===== 自動化アーキテクチャ ===== -->
+<div class="section">
+<h2 class="section-title t2">🏗 自動化アーキテクチャの全体像</h2>
+<div class="note">
+業務全体を支える基盤構造を6階層で整理。下から上へ：基盤 → 思考 → 流通 → 制作 → 顧客接点 → UI出力。<br>
+私たちは「<b style="color:#fbbf24;">この10の塊全てを統合的に設計・運用</b>」できる稀有なパートナーです。
+</div>
+
+<div class="layer-stack">
+<div class="layer-row">
+<div class="l-label bl6"><div class="num">L6 出力</div><div class="name">UI</div></div>
+<div class="row-content row-1">
+<div class="block cy2"><div class="name">⭐ Hub UI（経営者／スタッフ／顧客が見る画面）</div><div class="desc">業務領域別に1つずつ「Hub」と呼ぶ統合UIを構築。1画面で状況把握・操作・改善が完結する設計</div></div>
+</div>
+</div>
+
+<div class="layer-row">
+<div class="l-label bl5"><div class="num">L5 接点</div><div class="name">マーケ・配信・計測</div></div>
+<div class="row-content row-3">
+<div class="block green"><div class="name">🛒 マーケ・販売</div><div class="desc">広告／LP／メルマガ／SNS／LINE一元化</div></div>
+<div class="block green"><div class="name">🎓 配信</div><div class="desc">講座／資料／動画／自動配信</div></div>
+<div class="block green"><div class="name">📊 計測・分析</div><div class="desc">各APIから日次自動取込→可視化</div></div>
+</div>
+</div>
+
+<div class="layer-row">
+<div class="l-label bl3"><div class="num">L4 制作</div><div class="name">AI生成</div></div>
+<div class="row-content row-1">
+<div class="block pink"><div class="name">🎨 AI生成エンジン群</div><div class="desc">Claude（テキスト・コード）／Gemini（画像）／HeyGen（動画）／音声合成／文字起こし／動画編集 を業務に組み込み</div></div>
+</div>
+</div>
+
+<div class="layer-row">
+<div class="l-label bl2"><div class="num">L3 流通</div><div class="name">倉庫＆通信</div></div>
+<div class="row-content row-2">
+<div class="block cyan"><div class="name">📂 情報倉庫</div><div class="desc">Google Drive / Sheets / Docs を構造化DBとして活用</div></div>
+<div class="block cyan"><div class="name">💬 コミュニケーション</div><div class="desc">社内チャット／顧客接点／会議 を一元管理</div></div>
+</div>
+</div>
+
+<div class="layer-row">
+<div class="l-label bl1"><div class="num">L2 思考</div><div class="name">司令塔</div></div>
+<div class="row-content row-1">
+<div class="block gold"><div class="name">🧠 Claude AI（司令塔・実装エンジン）</div><div class="desc">業務スキル・組織知識・判断ルールを学習させたClaude AIが、全業務の指令塔として動作</div></div>
+</div>
+</div>
+
+<div class="layer-row">
+<div class="l-label bl4"><div class="num">L1 基盤</div><div class="name">基盤</div></div>
+<div class="row-content row-3">
+<div class="block purple"><div class="name">🔐 認証・セキュリティ</div><div class="desc">macOS Keychain / OAuth で安全に管理</div></div>
+<div class="block purple"><div class="name">🤖 自動化エンジン</div><div class="desc">スケジューラ＋hooks＋定期スクリプト</div></div>
+<div class="block purple"><div class="name">🛠 開発・運用</div><div class="desc">Mac＋Cursor＋Python/Node＋git</div></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ===== Hub例 ===== -->
+<div class="section">
+<h2 class="section-title t3">⭐ Hub UI 構築例（業種別カスタマイズ）</h2>
+<div class="note">
+御社の業務領域に応じて、必要なHubを段階的に構築します。<br>
+標準で<b style="color:#fbbf24;">8〜11個のHub</b>を3ヶ月で稼働させ、業務全体を1つの統合UIから動かせる状態を作ります。
+</div>
+
+<div class="hub-grid">
+<div class="hub-card">
+<h3>📊 マーケティングHub</h3>
+<p>広告／LP／集客の全データを1画面に。CV率・CPA・ROASを日次で自動可視化。</p>
+</div>
+<div class="hub-card">
+<h3>📈 数値管理Hub</h3>
+<p>各種APIから日次データ取込。経営判断に必要な数値を1画面で。</p>
+</div>
+<div class="hub-card">
+<h3>💼 経理・人事Hub</h3>
+<p>売上予測／PJ別会計／経費／人件費を経営者目線で見える化。</p>
+</div>
+<div class="hub-card">
+<h3>🔄 PDCA定例Hub</h3>
+<p>会議短縮・AIレポート自動生成・既読管理。週次PDCAを30分で完了。</p>
+</div>
+<div class="hub-card">
+<h3>📱 SNS自動投稿Hub</h3>
+<p>主要SNSプラットフォームを一元管理＋投稿予約＋過去ログFAQ化。</p>
+</div>
+<div class="hub-card">
+<h3>🚀 ファネル自動構築Hub</h3>
+<p>広告→LP→メルマガ→セミナー→成約 の全パネルをAIで自動構築。</p>
+</div>
+</div>
+</div>
+
+<!-- ===== データフロー ===== -->
+<div class="section">
+<h2 class="section-title t4">🔄 データフロー（5ステップで1サイクル）</h2>
+<div class="flow">
+<div class="flow-step"><div class="flow-num">STEP 1</div><div class="flow-name">📊 データ収集</div><div class="flow-desc">各種API から日次自動取込</div></div>
+<div class="flow-step"><div class="flow-num">STEP 2</div><div class="flow-name">📂 倉庫格納</div><div class="flow-desc">構造化DB に格納</div></div>
+<div class="flow-step"><div class="flow-num">STEP 3</div><div class="flow-name">🧠 AI判断</div><div class="flow-desc">Claude AI が次アクション決定</div></div>
+<div class="flow-step"><div class="flow-num">STEP 4</div><div class="flow-name">🎨 制作・配信</div><div class="flow-desc">AI生成 → 配信</div></div>
+<div class="flow-step"><div class="flow-num">STEP 5</div><div class="flow-name">🎯 UI可視化</div><div class="flow-desc">Hub画面で確認 → 承認</div></div>
+</div>
+</div>
+
+<!-- ===== 設計思想（差別化） ===== -->
+<div class="section">
+<h2 class="section-title t5">💎 私たちの差別化（vs SaaS／受託開発／AI単体）</h2>
+<table class="tbl">
+<thead>
+<tr>
+<th></th>
+<th style="color:#3b82f6;">汎用SaaS</th>
+<th style="color:#ef4444;">受託開発</th>
+<th style="color:#ec4899;">AI単体</th>
+<th style="background:rgba(251,191,36,0.15);color:#fbbf24;">私たち</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>業務フィット度</td><td>60%</td><td>95%</td><td>30%</td><td style="background:rgba(251,191,36,0.08);color:#34d399;font-weight:700;">100%</td></tr>
+<tr><td>導入スピード</td><td>2週間</td><td>12ヶ月+</td><td>即日</td><td style="background:rgba(251,191,36,0.08);color:#34d399;font-weight:700;">3ヶ月</td></tr>
+<tr><td>初期費用＋月額（30人想定）</td><td>¥45,000/月</td><td>¥1500万買切+</td><td>¥75,000/月</td><td style="background:rgba(251,191,36,0.08);color:#34d399;font-weight:700;">¥100万+¥15万/月〜</td></tr>
+<tr><td>業務全体カバー</td><td>★★★</td><td>★★★★</td><td>★★</td><td style="background:rgba(251,191,36,0.08);color:#34d399;font-weight:700;">★★★★★</td></tr>
+<tr><td>属人化解消</td><td>★★★</td><td>★★★★</td><td>★</td><td style="background:rgba(251,191,36,0.08);color:#34d399;font-weight:700;">★★★★★</td></tr>
+<tr><td>オーナー主導性</td><td>50%</td><td>10%</td><td>90%</td><td style="background:rgba(251,191,36,0.08);color:#34d399;font-weight:700;">100%</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== 導入プロセス ===== -->
+<div class="section">
+<h2 class="section-title t1">📅 標準導入プロセス（3ヶ月モデル）</h2>
+<table class="tbl">
+<thead><tr><th style="width:80px;">フェーズ</th><th>期間</th><th>内容</th></tr></thead>
+<tbody>
+<tr><td><b>Phase 1</b></td><td>Week 1-2</td><td>業務棚卸し／OGSM定義／優先Hub選定／アーキテクチャ設計</td></tr>
+<tr><td><b>Phase 2</b></td><td>Week 3-6</td><td>優先Hub構築（最初の2-3個）／Claude AI設定／既存ツール連携</td></tr>
+<tr><td><b>Phase 3</b></td><td>Week 7-10</td><td>残りHub構築／組織展開／スタッフトレーニング</td></tr>
+<tr><td><b>Phase 4</b></td><td>Week 11-12</td><td>最終調整／PDCA定着／効果測定／引き継ぎ</td></tr>
+<tr style="background:rgba(251,191,36,0.08);"><td><b>🎯 達成</b></td><td>3ヶ月後</td><td><b>人件費1/3 + 業務時間76%減 + 属人化ゼロ</b></td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== 次のステップ ===== -->
+<div class="section">
+<h2 class="section-title t2">🤝 次のステップ</h2>
+<div class="note">
+本資料では「全体像」のみご紹介しました。<br>
+御社の業務に最適化した<b style="color:#fbbf24;">具体的な導入計画</b>・<b style="color:#fbbf24;">Hub構成</b>・<b style="color:#fbbf24;">投資対効果（ROI）</b>については、別途個別提案資料にてご説明させていただきます。<br><br>
+ご興味をお持ちいただけましたら、私たちパートナーまでお気軽にお問い合わせください。
+</div>
+</div>
+
+<div class="footer">
+<div class="copyright">© 柳井塾 ｜ 本資料の無断転用・複製・第三者開示を禁じます</div>
+本資料は商談目的で限定提供されています／本資料に記載の方法論・構造・図表は当社の知的財産です／<br>
+パートナー契約に基づく利用以外での流用は契約違反となります<br><br>
+柳井塾 業務自動化サービス｜AI右腕化メソッド v1.0｜2026-05-02
+</div>
+
+</div>
+</body>
+</html>
